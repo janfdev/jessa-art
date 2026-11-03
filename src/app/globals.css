@@ -1,0 +1,214 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,700&display=swap");
+
+:root {
+  --ink: #494848;
+  --blush: #ffecec;
+  --pink: #ff9ec4;
+  --pink-deep: #f27aa8;
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #fff;
+  overflow: hidden;
+  font-family: "DM Sans", system-ui, -apple-system, sans-serif;
+}
+
+iframe.site {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* Music player floating pill */
+.music {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 100;
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+.music .btn {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px 10px 12px;
+  border-radius: 100px;
+  background: var(--blush);
+  color: var(--ink);
+  font: 700 13.5px/1 "DM Sans", system-ui, sans-serif;
+  position: relative;
+  isolation: isolate;
+  transition: transform 0.45s var(--spring);
+  filter: drop-shadow(0 10px 24px rgba(130, 95, 140, 0.16));
+}
+
+.music .btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--blush);
+  filter: url(#wobs);
+}
+
+.music .btn:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.music .btn .bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+}
+
+.music .btn .bars i {
+  width: 3px;
+  background: var(--pink-deep);
+  border-radius: 2px;
+  height: 40%;
+}
+
+.music.playing .btn .bars i {
+  animation: eq 0.9s ease-in-out infinite;
+}
+
+.music .btn .bars i:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.music .btn .bars i:nth-child(3) {
+  animation-delay: -0.6s;
+}
+
+@keyframes eq {
+  0%,
+  100% {
+    height: 30%;
+  }
+  50% {
+    height: 100%;
+  }
+}
+
+.music .btn .lbl {
+  display: inline-block;
+  max-width: 168px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.music .btn .lbl.run {
+  width: 168px;
+  mask-image: linear-gradient(90deg, transparent, #000 8px, #000 calc(100% - 16px), transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8px, #000 calc(100% - 16px), transparent);
+}
+
+.music .btn .lbl.run .mq {
+  display: inline-block;
+  animation: mq var(--dur, 12s) linear infinite;
+}
+
+.music:not(.playing) .btn .lbl.run .mq {
+  animation-play-state: paused;
+}
+
+@keyframes mq {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.music .panel {
+  position: absolute;
+  right: 0;
+  bottom: 52px;
+  width: 340px;
+  padding: 10px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(130, 95, 140, 0.2);
+  transform-origin: bottom right;
+  transform: scale(0.6) translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.5s var(--spring), opacity 0.2s;
+}
+
+.music.open .panel {
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.music .panel iframe {
+  display: block;
+  width: 100%;
+  height: 152px;
+  border: 0;
+  border-radius: 14px;
+}
+
+.music .panel .cap {
+  font: 700 12px/1 "DM Sans", system-ui, sans-serif;
+  color: var(--ink);
+  padding: 10px 6px 4px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.music .panel .cap a {
+  color: var(--pink-deep);
+  text-decoration: none;
+}
+
+/* Night mode styling */
+html.night,
+html.night body {
+  background: #17141b;
+}
+
+html.night .music .btn {
+  background: transparent;
+  color: #ece6f0;
+}
+
+html.night .music .btn::before {
+  background: #201c25;
+  box-shadow: inset 0 0 0 2px #ff9ec4, 0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+html.night .music .btn .bars i {
+  background: #ff9ec4;
+}
+
+html.night .music .panel {
+  background: #201c25;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55), inset 0 0 0 1.5px rgba(255, 255, 255, 0.12);
+}
+
+html.night .music .panel .cap {
+  color: #ece6f0;
+}
+
+html.night .music .panel .cap a {
+  color: #ff9ec4;
+}
+
+@media (max-width: 860px), (hover: none), (pointer: coarse) {
+  .music {
+    display: none;
+  }
+}
