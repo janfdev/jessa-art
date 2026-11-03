@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Bridging physical and digital · Jessa Wolfe</title>
+<meta name="description" content="Bringing physical auctions onto ACV's digital marketplace. A service design and leadership case study by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="lock.css?v=4" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ ACV Auctions</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Bridging">
+      <div class="tag">01 · Bridging</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Bridging physical and digital auctions</span><span class="typed"><span class="t" data-text="Bridging physical and digital auctions"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#about">About the project</a><a class="wob" href="#research">Research</a><a class="wob" href="#built">What we built</a><a class="wob" href="#role">My role</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/bridging/cover.mp4" poster="image/bridging/cover-poster.jpg" autoplay muted loop playsinline></video></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Design manager and program lead</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Context">
+      <div class="tag">04 · Context</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Context</div><div class="v">ACV Auctions, 2025</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Focus">
+      <div class="tag">05 · Focus</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Focus</div><div class="v">Service design, enterprise UX, team leadership</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Team">
+      <div class="tag">06 · Team</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Team</div><div class="v">8 designers and 1 researcher</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="07 · The question" id="about">
+      <div class="tag">07 · The question</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Two worlds that never spoke to each other.</span><span class="typed"><span class="t" data-text="Two worlds that never spoke to each other."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">ACV grew up as a digital wholesale marketplace. Physical auctions, where cars run live through a lane, ran on their own disconnected tools, staff, and rituals. To grow supply we had to make the physical auction a first-class citizen of the digital platform, without breaking the human rhythm that makes a live sale work.</p>
+        <p class="pasted">The job wasn’t to digitize the auction. It was to connect the physical floor and the digital marketplace into one experience for buyers, sellers, and the staff running the sale.</p></div>
+    </div>
+    <div class="stats group">
+    <div class="slot stat sub paste" data-name="08 · Auctions">
+      <div class="tag">08 · Auctions</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">10+</div><p>physical auctions to bring online, then scale</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="09 · Supply">
+      <div class="tag">09 · Supply</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">+200–400%</div><p>target lift in commercial supply, 20 to 40K vehicles</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="10 · Experiences">
+      <div class="tag">10 · Experiences</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">3</div><p>connected experiences: buyer, seller, and operations, on one platform</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="11 · On the floor" id="research">
+      <div class="tag">11 · On the floor</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">We started on the auction floor.</span><span class="typed"><span class="t" data-text="We started on the auction floor."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">We shadowed and interviewed every role in the live-auction ecosystem, on site in Austin and Dallas. I wanted to see how each role really works, where the system lags the human, and where signals get lost in the clutter.</p><div class="bullets pasted"><div class="b wob"><b>Auctioneer.</b> Chant leader and pace-setter. Reads the floor against online and keeps momentum.</div><div class="b wob"><b>Block clerk.</b> System operator: bid entry, lights, announcements, and outcome logging.</div><div class="b wob"><b>Seller rep.</b> Calls SELL or PASS, negotiates reserves, protects the seller’s number.</div><div class="b wob"><b>Buyer.</b> Competes for vehicles and needs transparency, on the floor and online.</div></div></div>
+    </div>
+    <div class="slot prose" data-name="12 · Listening">
+      <div class="tag">12 · Listening</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Before we built it, we went and listened.</span><span class="typed"><span class="t" data-text="Before we built it, we went and listened."></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">Two discovery tracks anchored the program: a buyer purchase-path study and a seller selling-path study. We paired dealer and expert interviews with a teardown of how the rest of the industry runs its online lanes: Manheim, Adesa, OpenLane, eBlock, Edge Pipeline, and Stockwave.</p></div>
+    </div>
+    <div class="stats group">
+    <div class="slot stat sub paste" data-name="13 · Proxy wins">
+      <div class="tag">13 · Proxy wins</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">~1%</div><p>how often a remote proxy bid beats the floor. The room almost always wins</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="14 · A week">
+      <div class="tag">14 · A week</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">7–10</div><p>auctions a single dealer runs online via Simulcast, because they refuse to be stuck at one</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="15 · Interviews">
+      <div class="tag">15 · Interviews</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">40+</div><p>across dealers, GMs, ops, and seller reps</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="16 · Findings">
+      <div class="tag">16 · Findings</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Five findings that set the brief.</span><span class="typed"><span class="t" data-text="Five findings that set the brief."></span><span class="caret"></span></span></span></h2><div class="bullets pasted"><div class="b wob"><b>The floor and the cloud are already merging.</b> Dealers don’t bid online as a fallback. They do it to be in many sales at once. Simulcast is how they scale their week.</div><div class="b wob"><b>Online bidders are second-class on the floor.</b> Floor bids get priority and proxies almost never win. Remote bidders can’t even see who they’re bidding against.</div><div class="b wob"><b>Every auction is its own island.</b> Separate registrations, run lists in different tools, post-sale handled platform by platform.</div><div class="b wob"><b>Simulcast is a tab-juggling act.</b> The best tools put every lane on one screen with chat, autobid, and alerts. The rest force a tab per lane.</div><div class="b wob"><b>Selling still runs on Google Docs.</b> Floors, run lists, and pickups coordinated by text, email, and spreadsheets. Mission-critical, fully manual.</div></div></div>
+    </div>
+    <div class="slot prose quote blush" data-name="17 · Chris">
+      <div class="tag">17 · Chris</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">“I usually attend about 7 to 10 auctions a week online. I prefer Simulcast, that way I’m not stuck to one auction.”</span><span class="typed"><span class="t" data-text="“I usually attend about 7 to 10 auctions a week online. I prefer Simulcast, that way I’m not stuck to one auction.”"></span><span class="caret"></span></span></span></h2><p class="pasted">Chris, independent dealer</p></div>
+    </div>
+    <div class="slot prose" data-name="18 · What we built" id="built">
+      <div class="tag">18 · What we built</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">One platform, three connected experiences.</span><span class="typed"><span class="t" data-text="One platform, three connected experiences."></span><span class="caret"></span></span></span></h2><p class="pasted">Meet dealers where they already are, make the floor legible and fair to a remote bidder, and replace manual coordination with live, connected tools.</p></div>
+    </div>
+    <div class="brandgrid group">
+    <div class="slot bcard sub paste" data-name="19 · Buyers">
+      <div class="tag">19 · Buyers</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/bridging/srp.mp4" poster="image/bridging/srp-poster.jpg" autoplay muted loop playsinline></video><h4>For buyers: buy from a physical auction, digitally.</h4><p>Live physical-auction events in search and a new event directory. A universal VDP with condition reports, announcements, proxy and watchlist. Simulcast to watch the lane and bid on floor inventory in real time. Won, checkout, and post-sale in one flow.</p></div>
+    </div>
+    <div class="slot bcard sub paste" data-name="20 · Sellers">
+      <div class="tag">20 · Sellers</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/bridging/shot-seller.jpg" alt=""><h4>For sellers: run your sale from the lane, in real time.</h4><p>My Inventory and Active Selling show what’s ready and what’s running. A new seller rep tool manages vehicles live: SELL or PASS, reserves, counters. Floor and online activity, pricing guidance, and announcements in one view.</p></div>
+    </div>
+    <div class="slot bcard sub paste" data-name="21 · Operations">
+      <div class="tag">21 · Operations</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/bridging/ops-portal.mp4" poster="image/bridging/ops-portal-poster.jpg" autoplay muted loop playsinline></video><h4>For ops: run the whole event from one portal.</h4><p>An operations portal as the single home for every internal tool and role. Net-new tools for event and lane management, a block tool for the clerk and auctioneer, reconditioning, check-in and check-out, inspections, and bidder badges.</p></div>
+    </div>
+    <div class="slot bcard sub paste" data-name="22 · Directory">
+      <div class="tag">22 · Directory</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/bridging/shot-buyer.jpg" alt=""><h4>An auction directory, finally.</h4><p>Simulcast events, digital events, and featured seller events in one place, with the next date, the cadence, and a way in.</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="23 · Service map">
+      <div class="tag">23 · Service map</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">One service, mapped end to end.</span><span class="typed"><span class="t" data-text="One service, mapped end to end."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">To run a physical auction in-house on ACV’s tools, I mapped each role’s day-of-sale journey, every job tied to the tool that does it, then connected the maps so a hand-off in one journey triggers the next. A vehicle checked in by ops shows up live for the buyer, on the block for the auctioneer, and in the seller’s lane view.</p>
+        <div class="chain pasted"><span>Check-in</span><span>Inspect</span><span>Recondition</span><span>Assign lane</span><span>Live block</span><span>Sold</span><span>Checkout</span><span>Titles and transport</span></div></div>
+    </div>
+    <div class="group screens wide">
+    <div class="slot screen wide sub paste" data-name="24 · Operations journey">
+      <div class="tag">24 · Operations journey</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/bridging/journey-ops.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="25 · Digital buyer">
+      <div class="tag">25 · Digital buyer</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/bridging/journey-buyer-digital.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="26 · Physical buyer">
+      <div class="tag">26 · Physical buyer</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/bridging/journey-buyer-physical.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="27 · Seller">
+      <div class="tag">27 · Seller</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/bridging/journey-seller.jpg" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="28 · My role" id="role">
+      <div class="tag">28 · My role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Leading the design program.</span><span class="typed"><span class="t" data-text="Leading the design program."></span><span class="caret"></span></span></span></h2><div class="bullets pasted"><div class="b wob"><b>Set the direction</b> across a dozen-plus connected systems and three audiences.</div><div class="b wob"><b>Managed 8 designers and 1 researcher,</b> aligning each workstream to shared jobs-to-be-done and one readiness roadmap.</div><div class="b wob"><b>Owned the global navigation,</b> the operations portal entrance, and the connected-apps architecture that stitched the tools together.</div><div class="b wob"><b>Drove the competitive analysis</b> and a continuous usability program with real auction staff.</div><div class="b wob"><b>Sequenced the enterprise rollout</b> with product and engineering across many teams.</div></div></div>
+    </div>
+    <div class="stats group">
+    <div class="slot stat sub paste" data-name="29 · Features">
+      <div class="tag">29 · Features</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">50+</div><p>new features mapped and designed across buyer, seller, and staff roles</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="30 · Tools">
+      <div class="tag">30 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">6+</div><p>net-new tools: block tool, event sale assignment, reconditioning, lane monitor, bidder badges, ops portal</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="31 · Personas">
+      <div class="tag">31 · Personas</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">4</div><p>researched on site, feeding a living service-design map of the live auction</p></div>
+    </div>
+    </div>
+    <div class="slot prose quote" data-name="32 · North star">
+      <div class="tag">32 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The floor and the marketplace, finally in sync.</span><span class="typed"><span class="t" data-text="The floor and the marketplace, finally in sync."></span><span class="caret"></span></span></span></h2><p class="pasted">One connected experience for everyone who touches the sale.</p></div>
+    </div>
+    <div class="slot prose tools" id="tools" data-name="33 · Tools">
+      <div class="tag">33 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Simple tools, used well.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/figma.svg" alt=""><b>Figma</b><small>Service maps, flows and the program</small></div><div class="tlc"><img src="image/tools/microsoftexcel.svg" alt=""><b>Excel</b><small>Tracking, planning and the numbers</small></div><div class="tlc"><img src="image/tools/html5.svg" alt=""><b>HTML</b><small>Structure, built by hand</small></div><div class="tlc"><img src="image/tools/css.svg" alt=""><b>CSS</b><small>Layout, styling and motion</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>Interactions and the working prototype</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="app.html#work">← Back to work</a><a class="wob" href="app.html#hi">Say hi</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+<script src="lock.js?v=6"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

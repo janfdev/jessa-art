@@ -1,0 +1,703 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Mochiboard · Jessa Wolfe</title>
+<meta name="description" content="Mochiboard, a cozy planning canvas for Mac and Windows with Mochi inside. She sorts your ideas, explores fonts, pulls screens from Mobbin and builds wireframes and whole landing pages. Designed and built by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="mb-toolbox.css?v=3" />
+<link rel="stylesheet" href="mb-new.css?v=6" />
+<style>
+  /* Mochiboard: every feature is a short screen recording on a soft pastel card */
+  body.mboard .cs-cover .content { background: #fff4f7; }
+  body.mboard .cs-cover video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  body.mboard .mb-vids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; width: 100%; }
+  body.mboard .mb-vid { padding: 18px 18px 16px; }
+  body.mboard .mb-vid.wide { grid-column: 1 / -1; }
+  body.mboard .sky { --fill: var(--sky); } body.mboard .blush { --fill: var(--blush); } body.mboard .mint { --fill: var(--mint); }
+  body.mboard .butter { --fill: var(--butter); } body.mboard .lilac { --fill: var(--lilac); } body.mboard .peach { --fill: var(--peach); }
+  body.mboard .mb-vid:nth-child(odd) { transform: rotate(-.4deg); } body.mboard .mb-vid:nth-child(even) { transform: rotate(.4deg); }
+  body.mboard .mb-vid.wide { transform: none; }
+  body.mboard .mb-vid .win { border-radius: 16px; overflow: hidden; background: #fff; box-shadow: 0 10px 28px rgba(120, 80, 120, .14); }
+  body.mboard .mb-vid .win i.bar { display: flex; gap: 6px; padding: 9px 12px; background: #fff; border-bottom: 1px solid #f1e8ee; }
+  body.mboard .mb-vid .win i.bar b { width: 9px; height: 9px; border-radius: 50%; background: #ffc2d6; } body.mboard .mb-vid .win i.bar b + b { background: #ffe39a; } body.mboard .mb-vid .win i.bar b + b + b { background: #b9ecd0; }
+  body.mboard .mb-vid video[controls] { aspect-ratio: 16 / 9; background: #1c1920; cursor: pointer; }
+  body.mboard .mb-vid video { width: 100%; height: auto; display: block; background: #fbf7fa; }
+  body.mboard .mb-vid h4 { margin: 14px 4px 4px; font-size: 18px; letter-spacing: -.01em; }
+  body.mboard .mb-vid p { margin: 0 4px; font-size: 15px; line-height: 1.45; font-weight: 500; color: #4a4552; }
+  body.mboard .note { font: 700 21px/1.2 'Caveat', cursive; color: #4a4552; margin: 8px 4px 0; }
+
+  /* the toolbox: a sideways scroller, one card per tool: what it is, then why it's there */
+  body.mboard .mb-tools { display: flex; gap: 18px; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 4px; padding: 34px 4px 22px; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 70px), transparent); mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 70px), transparent); }
+  body.mboard .mb-tools.mid { -webkit-mask-image: linear-gradient(90deg, transparent, #000 70px, #000 calc(100% - 70px), transparent); mask-image: linear-gradient(90deg, transparent, #000 70px, #000 calc(100% - 70px), transparent); }
+  body.mboard .mb-tools.end { -webkit-mask-image: linear-gradient(90deg, transparent, #000 70px); mask-image: linear-gradient(90deg, transparent, #000 70px); }
+  body.mboard .mb-tools::-webkit-scrollbar { display: none; }
+  body.mboard .mb-tool { flex: 0 0 300px; scroll-snap-align: start; padding: 22px 22px 20px; }
+  body.mboard .mb-tool:nth-child(odd) { transform: rotate(-.6deg); } body.mboard .mb-tool:nth-child(even) { transform: rotate(.6deg); }
+  body.mboard .mb-tool .content { display: flex; flex-direction: column; height: 100%; }
+  body.mboard .mb-tool .ic { width: 48px; height: 48px; border-radius: 15px; background: #fff; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(120, 80, 120, .1); }
+  body.mboard .mb-tool .ic svg { width: 24px; height: 24px; }
+  body.mboard .mb-tool .ic svg, body.mboard .mb-tool .ic svg * { stroke: #3d3640; }
+  body.mboard .mb-tool h4 { margin: 18px 0 8px; font-size: 22px; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; color: #2f2a33; }
+  body.mboard .mb-tool .what { margin: 0 0 18px; font-size: 15.5px; line-height: 1.5; font-weight: 500; color: #3d3640; }
+  body.mboard .mb-tool .why { margin: auto 0 0; padding: 14px 16px; border-radius: 16px; background: rgba(255, 255, 255, .72); font-size: 14.5px; line-height: 1.5; font-weight: 500; color: #4a4552; }
+  body.mboard .mb-tool .why::before { content: "Why"; display: block; margin-bottom: 4px; font: 800 11px/1 var(--font, 'DM Sans'); letter-spacing: .14em; text-transform: uppercase; color: #3d3640; }
+  body.mboard .mb-tool .why b { font-weight: 700; color: #3d3640; }
+  body.mboard .mb-tools-nav { display: flex; align-items: center; justify-content: flex-end; gap: 10px; width: 100%; margin: -46px 0 0; position: relative; z-index: 2; }
+  body.mboard .mb-tools-nav span { margin-right: auto; font: 700 21px/1 'Caveat', cursive; color: #8a8190; }
+  body.mboard .mb-tools-nav button { width: 46px; height: 46px; border-radius: 50%; border: 0; background: #fff; box-shadow: 0 6px 16px rgba(120, 80, 120, .16); display: grid; place-items: center; cursor: pointer; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), opacity .2s; }
+  body.mboard .mb-tools-nav button:hover { transform: scale(1.08); }
+  body.mboard .mb-tools-nav button:disabled { opacity: .35; cursor: default; transform: none; }
+  body.mboard .mb-tools-nav svg { width: 20px; height: 20px; fill: none; stroke: #3d3640; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* feedback: one quote at a time, typed out, then what I did pops in underneath */
+  body.mboard .mb-say { --fill: transparent; padding: 10px 0 0; width: 100%; }
+  body.mboard .mb-say .box::before { display: none; } body.mboard .mb-say .box { outline: 0; } body.mboard .mb-say .box .h, body.mboard .mb-say .box .pill { display: none; } body.mboard .mb-say.done .tag { opacity: 0; }
+  body.mboard .mb-say .content { min-height: 300px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; }
+  body.mboard .say-n { font: 700 22px/1 'Caveat', cursive; color: #8a8190; margin-bottom: 14px; }
+  body.mboard .say-q { margin: 0; max-width: 860px; font-size: clamp(26px, 3.4vw, 42px); line-height: 1.18; font-weight: 700; letter-spacing: -.02em; color: var(--ink); text-wrap: balance; min-height: 2.4em; }
+  body.mboard .say-q .qm { font-family: 'Caveat', cursive; color: #f07fae; font-size: 1.5em; line-height: 0; vertical-align: -.22em; display: inline-block; transition: opacity .2s; }
+  body.mboard .say-q .qm.o { margin-right: .3em; } body.mboard .say-q .qm.c { margin-left: .06em; opacity: 0; } body.mboard .say-q.full .qm.c { opacity: 1; }
+  body.mboard .say-q .caret { display: inline-block; width: 3px; height: .9em; margin-left: 2px; vertical-align: -.08em; background: #f07fae; border-radius: 2px; animation: sayBlink 1s steps(1) infinite; }
+  body.mboard .say-q.full .caret { display: none; }
+  @keyframes sayBlink { 50% { opacity: 0; } }
+  body.mboard .say-a { margin: 22px 0 0; max-width: 640px; font-size: 19px; line-height: 1.5; font-weight: 500; color: #4a4552; opacity: 0; transform: translateY(14px) scale(.96); transition: opacity .35s, transform .55s cubic-bezier(.3, 1.6, .5, 1); }
+  body.mboard .say-a.on { opacity: 1; transform: none; }
+  body.mboard .say-a .arr { font: 700 30px/0 'Caveat', cursive; color: #f07fae; margin-right: 8px; vertical-align: -.12em; }
+  body.mboard .say-nav { display: flex; gap: 10px; margin-top: 26px; }
+  body.mboard .say-nav button { width: 40px; height: 40px; border-radius: 50%; border: 0; background: #fff; box-shadow: 0 6px 16px rgba(120, 80, 120, .16); font: 700 22px/1 'DM Sans'; color: #3d3640; cursor: pointer; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1); }
+  body.mboard .say-nav button:hover { transform: scale(1.1); }
+
+  /* try it, or download it: a little nudge right after the why */
+  body.mboard .mb-cta { --fill: var(--butter); }
+  body.mboard .mb-cta .content { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; padding: 26px 30px; }
+  body.mboard .mb-cta img { width: 64px; height: 64px; }
+  body.mboard .mb-cta .cta-t { flex: 1; min-width: 220px; } body.mboard .mb-cta h3 { margin: 0 0 4px; font-size: 22px; letter-spacing: -.01em; } body.mboard .mb-cta p { margin: 0; color: #4a4552; font-size: 15.5px; }
+  body.mboard .mb-cta .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  body.mboard .mb-cta a { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font-weight: 700; font-size: 16px; text-decoration: none; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  body.mboard .mb-cta a:hover { transform: rotate(-2deg) scale(1.05); }
+  body.mboard .mb-cta a.ink { background: #3d3640; --wb: #3d3640; color: #fff; } body.mboard .mb-cta a.soft { background: #fff; --wb: #fff; color: #3d3640; }
+
+  /* two logos side by side in one tool card */
+  body.mboard .tools .tlc .duo { display: flex; gap: 8px; }
+  body.mboard .tools .tlc .duo img { width: 40px; height: 40px; }
+
+  /* the download block */
+  body.mboard .mb-dl { --fill: var(--blush); }
+  body.mboard .mb-dl .content { display: flex; flex-direction: column; gap: 0; padding: 34px; }
+  body.mboard .mb-dl .dl-top { display: flex; align-items: center; gap: 30px; }
+  body.mboard .mb-dl .dl-words { min-width: 0; }
+  body.mboard .mb-dl .icon { width: 150px; height: 150px; }
+  body.mboard .mb-dl h2 { margin: 0 0 8px; }
+  body.mboard .mb-dl p { margin: 0 0 18px; color: #4a4552; }
+  body.mboard .mb-dl .get { display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; border-radius: 999px; background: #3d3640; color: #fff; font-weight: 700; font-size: 19px; text-decoration: none; --wb: #3d3640; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  body.mboard .mb-dl .get:hover { transform: rotate(-2deg) scale(1.05); }
+  body.mboard .mb-dl .get svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  body.mboard .mb-dl .try { display: inline-flex; align-items: center; margin-left: 12px; padding: 16px 28px; border-radius: 999px; background: #fff; --wb: #fff; color: #3d3640; font-weight: 700; font-size: 19px; text-decoration: none; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  body.mboard .mb-dl .try:hover { transform: rotate(-2deg) scale(1.05); }
+  body.mboard .mb-dl pre { margin: 20px 0 10px; padding: 16px 18px; border-radius: 16px; background: #fff; color: #3d3640; font: 500 14.5px/1.7 ui-monospace, 'SF Mono', Menlo, monospace; overflow-x: auto; white-space: pre; box-shadow: inset 0 0 0 1.5px #ffd6e6; }
+  body.mboard .mb-dl .howto { width: 100%; margin: 26px 0 0; padding: 22px 26px 20px; border-radius: 20px; background: #fff; text-align: left; box-shadow: 0 10px 26px rgba(150, 80, 120, .08); }
+  body.mboard .mb-dl .howto-t { font: 700 14.5px/1.3 'DM Sans'; color: #3d3640; margin-bottom: 8px; }
+  body.mboard .mb-dl .steps { margin: 0 0 12px; padding-left: 22px; display: grid; gap: 8px; font-size: 15px; line-height: 1.5; color: #4a4552; }
+  body.mboard .mb-dl .steps b { color: #3d3640; }
+  body.mboard .mb-dl small a { color: #c4417f; font-weight: 700; }
+  body.mboard .mb-dl small { color: #6b6470; font-size: 13.5px; line-height: 1.5; display: block; }
+  body.mboard .mb-dl .needs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; width: 100%; }
+  body.mboard .mb-dl .needs > div { padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, .7); font: 500 13.5px/1.45 'DM Sans'; color: #4a4552; }
+  body.mboard .mb-dl .needs b { display: block; margin-bottom: 3px; font-size: 14.5px; color: #3d3640; }
+
+  /* designers first, then everyone: two little cards with an arrow between */
+  body.mboard .pv { display: grid; grid-template-columns: 1fr 64px 1.25fr; align-items: center; gap: 6px; margin: 26px 0 24px; }
+  body.mboard .pv-card { position: relative; padding: 18px 20px 20px; border-radius: 22px; display: grid; gap: 8px; align-content: start; }
+  body.mboard .pv-then { background: var(--sky); rotate: -1.2deg; } body.mboard .pv-now { background: var(--blush); rotate: 1deg; }
+  body.mboard .pv-k { font: 800 11px/1 var(--font); letter-spacing: .14em; text-transform: uppercase; color: #6b6370; }
+  body.mboard .pv-card b { font: 800 22px/1.15 var(--font); letter-spacing: -.02em; color: #2f2a33; }
+  body.mboard .pv-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  body.mboard .pv-chips span { padding: 6px 11px; border-radius: 999px; background: rgba(255, 255, 255, .78); font: 600 13px/1 var(--font); color: #3d3640; }
+  body.mboard .pv-then .pv-chips span { color: #6b6370; }
+  body.mboard .pv-free { position: absolute; right: -10px; top: -14px; padding: 7px 12px; border-radius: 999px; background: #2f2a33; color: #fff; font: 700 13px/1 var(--font); font-style: normal; rotate: 6deg; box-shadow: 0 6px 14px rgba(47, 42, 51, .2); }
+  body.mboard .pv-arrow { width: 56px; fill: none; stroke: #b9b2c2; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; justify-self: center; }
+  @media (max-width: 760px) { body.mboard .pv { grid-template-columns: 1fr; } body.mboard .pv-arrow { rotate: 90deg; width: 44px; } }
+  html.night body.mboard .pv-then, html.night body.mboard .pv-now { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .18); }
+  html.night body.mboard .pv-card b { color: var(--ink); } html.night body.mboard .pv-k, html.night body.mboard .pv-chips span { color: var(--ink-soft); }
+  html.night body.mboard .pv-chips span { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .16); }
+  html.night body.mboard .pv-free { background: #ece6f0; color: #17141b; }
+
+  @media (max-width: 860px) {
+    body.mboard .mb-vids { grid-template-columns: 1fr; } body.mboard .mb-vid { transform: none !important; } body.mboard .say-a { font-size: 17px; }
+    body.mboard .mb-tool { flex-basis: 78vw; } body.mboard .mb-tools-nav { margin-top: -20px; } body.mboard .mb-tools-nav button { display: none; }
+    body.mboard .mb-dl .content { padding: 24px; } body.mboard .mb-dl .dl-top { flex-direction: column; align-items: flex-start; gap: 18px; } body.mboard .mb-dl .icon { width: 110px; height: 110px; }
+    body.mboard .mb-dl pre { white-space: pre-wrap; word-break: break-all; font-size: 13px; } body.mboard .mb-dl .needs { grid-template-columns: 1fr; } body.mboard .mb-dl .try { margin: 12px 0 0 0; }
+  }
+  body.mboard .mb-cta a.inl, body.mboard #new a.inl { all: unset; display: inline; cursor: pointer; font-weight: 700; color: var(--pink-deep); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+  html.night body.mboard .mb-cta a.inl, html.night body.mboard #new a.inl { color: var(--pink); }
+  body.mboard .mb-dl .mb-stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 2px; }
+  body.mboard .mb-dl .mb-stats span { padding: 7px 13px; border-radius: 999px; background: rgba(255, 255, 255, .75); font: 500 13.5px/1 'DM Sans'; color: #6b6370; }
+  body.mboard .mb-dl .mb-stats b { color: #3d3640; font-weight: 800; }
+  html.night body.mboard .mb-dl .mb-stats span { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .18); color: var(--ink-soft); }
+  html.night body.mboard .mb-dl .mb-stats b { color: var(--ink); }
+  /* the ending: pink Mochi hops along the wordmark; letters squish and bloom into the pastel rainbow.
+     The rainbow lives inside each letter (clipped to the text) and shows when the letter's own color fades out, so there's no second copy to misalign. */
+  .mb-hop { --wm: #ffc4dc; position: relative; width: 100%; margin: 28px auto 10px; text-align: center; user-select: none; overflow: visible; }
+  .mb-hop canvas { position: absolute; left: 0; top: 0; z-index: 2; image-rendering: pixelated; pointer-events: none; transform-origin: 50% 100%; }
+  .mb-hop .wm { display: inline-block; white-space: nowrap; font: 800 120px/.86 'DM Sans', sans-serif; letter-spacing: -.06em; color: var(--wm); text-decoration: none; }
+  .mb-hop .wm span { display: inline-block; transform-origin: 50% 100%; padding: 0 .02em; margin: 0 -.02em;
+    background: linear-gradient(115deg, #ff8fc2, #f8c95a, #6fd3a0, #8cc1ff, #b89bff, #ff8fc2) 0 0 / 300% 100%; -webkit-background-clip: text; background-clip: text; }
+  .mb-hop .wm span.boing { animation: mbBoing .62s cubic-bezier(.3, 1.6, .5, 1), mbBloom 2.4s ease-out; }
+  @keyframes mbBoing { 0% { transform: scale(1.06, .8); } 35% { transform: scale(.96, 1.08) translateY(-7%); } 65% { transform: scale(1.02, .97); } 100% { transform: none; } }
+  @keyframes mbBloom { 0% { color: var(--wm); background-position: 0 0; } 12%, 55% { color: transparent; } 100% { color: var(--wm); background-position: 100% 0; } }
+  html.night .mb-hop { --wm: #4a3346; }
+  /* live numbers, up top */
+  .mb-stats-top { margin-top: 6px; }
+  .mb-stat .content { position: relative; }
+  .mb-stat .content { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; height: 100%; text-align: center; }
+  .mb-stat .num { margin: 0; font-size: clamp(52px, 6vw, 84px); font-weight: 800; letter-spacing: -.05em; }
+  .mb-stat p { margin: 0; line-height: 1.35; }
+  .mb-stat .num em { font-style: normal; font-size: .5em; margin-left: .08em; vertical-align: .55em; color: #f3b93a; }
+  body.mboard .mb-dl .needs a { color: var(--pink-deep); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; } html.night body.mboard .mb-dl .needs a { color: var(--pink); }
+</style>
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page mboard">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Mochiboard</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+  <main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Mochiboard">
+      <div class="tag">01 · Mochiboard</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Mochiboard, a planning canvas with Mochi inside</span><span class="typed"><span class="t" data-text="Mochiboard, a planning canvas with Mochi inside"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#why">Why Mochi?</a><a class="wob" href="#love">Kind words</a><a class="wob" href="#walkthrough">Walkthrough</a><a class="wob" href="#download">Download and try it</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/mochiboard/cover.mp4" poster="image/mochiboard/cover.jpg" autoplay muted loop playsinline aria-label="A drawn Mochiboard window: someone asks Mochi for a landing page and she builds it, then fills the picture"></video></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Everything, solo</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Free, Mac + Windows</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Built with">
+      <div class="tag">05 · Built with</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Built with</div><div class="v">Claude Code</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Started">
+      <div class="tag">06 · Started</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Started</div><div class="v">Fall 2026</div></div>
+    </div>
+    </div>
+    <div class="slot prose quote blush" data-name="06a · How might we" id="hmw">
+      <div class="tag">06a · How might we</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">How might we keep design thinking alive when the building moves into Claude?</span><span class="typed"><span class="t" data-text="How might we keep design thinking alive when the building moves into Claude?"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">That’s the question underneath Mochiboard. Not “how do we rebuild Figma”, but what happens to the thinking when the making gets this fast. Claude Code can build an experience in an afternoon. The part it can’t do is hold the idea in a shape you can see, move around and argue with before it’s built. A chat is a list. A design is a space. Mochiboard is the space, and Claude is what you hand it to. <a href="#claude">Where it sits ↓</a></p>
+      </div>
+    </div>
+    <div class="slot prose" data-name="07 · Why" id="why">
+      <div class="tag">07 · Why</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">I wanted a planning space that felt like mine.</span><span class="typed"><span class="t" data-text="I wanted a planning space that felt like mine."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I plan everything on a canvas. Sticky notes, screenshots, half ideas, little arrows between them. I've used a lot of tools for that, and they're great, but none of them felt cozy. And none of them had Mochi.</p>
+        <p class="pasted">So I built Mochiboard. It's a soft, pastel canvas for your Mac or PC where Mochi lives in the corner. You dump ideas, she helps you sort them. You ask for fonts, she puts real type on the board. You describe an app, she wireframes it. Then she flies you right over to whatever she made.</p></div>
+    </div>
+    <div class="slot prose mb-pivot" data-name="07a · For everyone" id="everyone">
+      <div class="tag">07a · For everyone</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">It started as a tool for designers.</span><span class="typed"><span class="t" data-text="It started as a tool for designers."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I first built Mochiboard for designers, people like me who think in wireframes, fonts and flows. Then I noticed I was planning everything on it: my week, a birthday, a friend’s bakery idea. It wasn’t really a design tool. It was a place to think.</p>
+        <div class="pv pasted">
+          <div class="pv-card pv-then"><span class="pv-k">At first</span><b>For designers</b><div class="pv-chips"><span>Wireframes</span><span>Font explorer</span><span>App screens</span><span>User flows</span></div></div>
+          <svg class="pv-arrow" viewBox="0 0 60 30" aria-hidden="true"><path d="M4 18 C 18 6, 36 6, 52 15"/><path d="M44 8 L 53 15 L 43 20"/></svg>
+          <div class="pv-card pv-now"><span class="pv-k">Now</span><b>For anybody with an idea</b><div class="pv-chips"><span>Students</span><span>Small shops</span><span>Planners</span><span>Writers</span><span>Designers too</span></div><em class="pv-free">Free, always ✦</em></div>
+        </div>
+        <p class="pasted">So I opened it up for anybody and everybody. Notes, voice memos, videos, checklists and Mochi work for anyone with an idea, and the design tools are still there when you want them. And it’s completely free. No account, no subscription, no catch.</p></div>
+    </div>
+    <div class="slot prose mb-vows" data-name="07b · What I refused to build" id="promises">
+      <div class="tag">07b · What I refused to build</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I refused to build.</span><span class="typed"><span class="t" data-text="What I refused to build."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I’m a little tired of the best design tools living behind paywalls, and of every good idea turning into a subscription. So Mochiboard is also an argument. I wanted to prove you can make something people genuinely love because you care about the work, and then just give it to them.</p>
+        <ul class="vows pasted">
+          <li><b>No paywall.</b> Every feature, for everyone, forever. There’s a tip jar. That’s the whole business model.</li>
+          <li><b>No account.</b> Nothing to sign up for, nothing to remember, nothing to lose.</li>
+          <li><b>No cloud.</b> Your boards are plain files on your own computer. Nothing is uploaded.</li>
+          <li><b>No lock-in.</b> The code is open source. If I disappeared tomorrow, Mochiboard wouldn’t.</li>
+          <li><b>No AI required.</b> Mochi helps more with Claude connected, but every tool works without it, and she explains things herself.</li>
+          <li><b>No tracking.</b> No analytics, no ads, no cookies. I find out how it’s going when people tell me.</li>
+        </ul>
+        <p class="pasted">Every one of those was a moment where the normal move was to take something. People can tell when a thing was made by someone who loves the work. That’s the part I most wanted to prove, and the kind words just below are the proof I didn’t expect.</p></div>
+    </div>
+    <div class="slot prose mb-pivot" data-name="07c · Where it sits" id="claude">
+      <div class="tag">07c · Where it sits</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">It was never about rebuilding Figma.</span><span class="typed"><span class="t" data-text="It was never about rebuilding Figma."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">People sometimes ask if Mochiboard is trying to be Figma. It isn’t. If you have Figma, it’s a great tool and you should keep using it. Mochiboard is for the part that comes before, and for a problem I kept running into.</p>
+        <p class="pasted">A lot of my process has moved into Claude. I describe something, it builds it, we go back and forth. It’s fast, and I love it, but the design thinking gets lost in there. Everything lives as a long list of chats, in the order it happened, and I can’t see the whole idea at once. My brain doesn’t work in a list. It works on a table where I can move the pieces around until they make sense.</p>
+        <div class="pv pasted">
+          <div class="pv-card pv-then"><span class="pv-k">In a chat</span><b>A long list, in the order it happened</b><div class="pv-chips"><span>Scroll back to find it</span><span>Decisions buried</span><span>One thread at a time</span><span>Can’t see the whole</span></div></div>
+          <svg class="pv-arrow" viewBox="0 0 60 30" aria-hidden="true"><path d="M4 18 C 18 6, 36 6, 52 15"/><path d="M44 8 L 53 15 L 43 20"/></svg>
+          <div class="pv-card pv-now"><span class="pv-k">On a board</span><b>Pieces you can move until they make sense</b><div class="pv-chips"><span>See it all at once</span><span>Shape the thinking first</span><span>Flows, screens, notes side by side</span><span>Then hand it to Claude</span></div><em class="pv-free">That’s the whole idea ✦</em></div>
+        </div>
+        <p class="pasted">So that’s what Mochiboard is: an ideation space that sits in front of Claude. I organize the thinking here, the flows, the screens, the notes about why, and then I give Claude the experience the way I’ve defined it, instead of hoping it comes out of a prompt. The canvas is where the idea gets its shape. Claude is where it gets built.</p>
+      </div>
+    </div>
+    <div class="slot mb-cta paste" data-name="08 · Try it">
+      <div class="tag">08 · Try it</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/mochiboard/icon.png" alt=""><div class="cta-t"><h3>Want to play with it?</h3><p>It’s free. Try it right here in your browser, or take the app home for Mac or Windows. The full tour lives at <a class="inl" href="https://mochiboard.app" target="_blank" rel="noopener">mochiboard.app ↗</a></p></div><div class="btns"><a class="ink wob" href="apps/mochiboard/index.html" target="_blank" rel="noopener">Try it in your browser ↗</a><a class="soft wob" href="https://github.com/jessawolfe-ux/mochiboard/releases/latest/download/Mochiboard.zip">Download for Mac</a><a class="soft wob" href="https://github.com/jessawolfe-ux/mochiboard/releases/latest/download/Mochiboard-Setup.exe">Download for Windows</a></div></div>
+    </div>
+    <div class="stats group mb-stats-top">
+    <div class="slot stat mb-stat sub paste" data-name="08a · Downloads" style="--fill:var(--blush)">
+      <div class="tag">08a · Downloads</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num"><span data-mb="downloads">360</span></div><p>downloads on Mac<br>and Windows so far</p></div>
+    </div>
+    <div class="slot stat mb-stat sub paste" data-name="08b · Stars" style="--fill:var(--butter)">
+      <div class="tag">08b · Stars</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num"><span data-mb="stars">4</span></div><p>people starred it<br>on GitHub</p></div>
+    </div>
+    <div class="slot stat mb-stat sub paste" data-name="08c · Version" style="--fill:var(--mint)">
+      <div class="tag">08c · Version</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">v<span data-mb="version">1.3.1</span></div><p>and it updates<br>itself from Settings</p></div>
+    </div>
+    </div>
+    <div class="slot prose bare mb-love" data-name="08d · What people are saying" id="love">
+      <div class="tag">08d · What people are saying</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What people are saying.</span><span class="typed"><span class="t" data-text="What people are saying."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">A few of the notes people left on Threads and LinkedIn after launch. I read every single one.</p>
+        <div class="lv-wrap pasted"><canvas class="lv-goo" width="230" height="270" aria-label="Mochi, very happy to read these"></canvas><div class="lv-track" tabindex="0" aria-label="Comments, swipe for more"><figure class="lv"><blockquote>Mochiboard feels like more than a canvas, it’s a thoughtful home for the messy, essential work that happens before a polished screen.</blockquote><figcaption>Imran H., product designer &amp; strategist <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>Love how AI support meets designers where ideas begin, without making it a requirement.</blockquote><figcaption>Imran H. <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>Mochiboard is absolutely beautiful</blockquote><figcaption>uncle_cyril_ <i class="th">Threads</i></figcaption></figure><figure class="lv"><blockquote>Designers building the tools they wish they had is my favorite thing happening right now</blockquote><figcaption>Arthur M., design leader <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>Wow this doesn’t feel like a side project! 😆</blockquote><figcaption>Lai-Jing C. <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>Love the starry dark mode!</blockquote><figcaption>matthias_oel <i class="th">Threads</i></figcaption></figure><figure class="lv"><blockquote>Being able to explore the actual fonts on the board instead of getting a list of names 👀 that’s a nice detail</blockquote><figcaption>Alejandro H., product designer <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>Docs, wireframes, and memos all in one place? That’s amazing!</blockquote><figcaption>Aishat M. <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>An AI assistant that sorts my stickies and builds wireframes from a brainstorm session sounds like a dream</blockquote><figcaption>Katerina B., product designer <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>wow i can’t say anything, this design is too high level</blockquote><figcaption>dhikaa.gh <i class="th">Threads</i></figcaption></figure><figure class="lv"><blockquote>the UI is so fun and compelling</blockquote><figcaption>Zen L. <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>Me encanta, tenía mucho tiempo sin ver algo diferente</blockquote><figcaption>artejuliocesarg <i class="th">Threads</i></figcaption></figure><figure class="lv"><blockquote>Voice memos that transcribe themselves? I can imagine how handy that is when an idea strikes</blockquote><figcaption>Jennifer S. <i class="li">LinkedIn</i></figcaption></figure><figure class="lv"><blockquote>So cute 🙌🪐</blockquote><figcaption>genxcode.official <i class="th">Threads</i></figcaption></figure></div><div class="lv-nav"><span>swipe for more →</span><button class="lv-prev" type="button" aria-label="Previous comments"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button class="lv-next" type="button" aria-label="More comments"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div></div></div>
+    </div>
+    <div class="slot prose bare" data-name="09 · Walkthrough" id="walkthrough">
+      <div class="tag">09 · Walkthrough</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Watch me use it.</span><span class="typed"><span class="t" data-text="Watch me use it."></span><span class="caret"></span></span></span></h2><p class="pasted">A 10 minute walkthrough, with sound: setting it up, then planning a banking app with Mochi, from a brain dump to wireframes.</p></div>
+    </div>
+    <div class="slot mb-vid lilac wide sub paste" data-name="10 · Walkthrough video">
+      <div class="tag">10 · Walkthrough video</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/overview.mp4" poster="image/mochiboard/overview.jpg" controls playsinline preload="metadata" aria-label="Jessa walking through Mochiboard, with narration"></video></div></div>
+    </div>
+    <div class="slot prose quote" data-name="11 · The idea">
+      <div class="tag">11 · The idea</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A board that thinks with you, and still makes you smile.</span><span class="typed"><span class="t" data-text="A board that thinks with you, and still makes you smile."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot prose bare" data-name="12 · The tour" id="tour">
+      <div class="tag">12 · The tour</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Let me show you around.</span><span class="typed"><span class="t" data-text="Let me show you around."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">To show it off, I planned a pretend banking app called Penny, a bank for your first paycheck. Every video below is the real app.</p></div>
+    </div>
+    <div class="mb-vids group">
+    <div class="slot mb-vid lilac wide sub paste" data-name="13 · Meeting Mochi">
+      <div class="tag">13 · Meeting Mochi</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-onboarding.mp4" poster="image/mochiboard/mb-onboarding.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Mochi’s setup and tour"></video></div><h4>Meeting Mochi</h4><p>The first time you open it, Mochi says hi and walks you through setup: her color, light or dark, her helpers, how chatty she should be. Then she gives you a hands-on tour, and notices when you try each thing.</p><div class="note">setup should feel like meeting her, not configuring something</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="14 · No AI needed">
+      <div class="tag">14 · No AI needed</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Most of it doesn’t need AI at all.</span><span class="typed"><span class="t" data-text="Most of it doesn’t need AI at all."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I wanted the canvas to be great on its own. Mochi is the cherry on top, not the cake. Everything in this part works with her thinking switched off.</p></div>
+    </div>
+    <div class="mb-vids group">
+    <div class="slot mb-vid butter sub paste" data-name="15 · Notes">
+      <div class="tag">15 · Notes</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-notes.mp4" poster="image/mochiboard/mb-notes.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Styling a note, filing notes into a collection, writing in a doc"></video></div><h4>Notes, collections and docs</h4><p>Style a note from its little toolbar, add a label, drag cards into a collection, and open a doc for the longer thinking.</p></div>
+    </div>
+    <div class="slot mb-vid blush sub paste" data-name="16 · Dump it">
+      <div class="tag">16 · Dump it</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-capture.mp4" poster="image/mochiboard/mb-capture.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Typing ideas with Command K, then sorting them"></video></div><h4>Dump it, then sort it</h4><p>Press ⌘K anywhere and type. Ideas land in Unsorted so you never lose your place. When you’re ready, ask Mochi to sort them.</p></div>
+    </div>
+    <div class="slot mb-vid mint sub paste" data-name="17 · Voice memos">
+      <div class="tag">17 · Voice memos</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-audio.mp4" poster="image/mochiboard/mb-audio.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Recording a voice memo that writes itself out"></video></div><h4>Voice memos</h4><p>A little countdown, then talk. When you stop, it writes itself out right on the card, and Mochi offers to turn it into notes.</p></div>
+    </div>
+    <div class="slot mb-vid sky sub paste" data-name="18 · The canvas">
+      <div class="tag">18 · The canvas</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-tools.mp4" poster="image/mochiboard/mb-tools.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Placing cards, a stamp, drawing a loop and connecting two cards"></video></div><h4>The canvas itself</h4><p>Checklists, titles, colors that name themselves, stamps, drawing and curvy connectors. Loose and a little tilted, like paper on a desk.</p></div>
+    </div>
+    <div class="slot mb-vid lilac wide sub paste" data-name="19 · Wireframes by hand">
+      <div class="tag">19 · Wireframes by hand</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-wirecraft.mp4" poster="image/mochiboard/mb-wirecraft.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Building a phone screen from pieces that snap into place"></video></div><h4>Building a wireframe by hand</h4><p>Drop a phone screen, then pull pieces in. The nav bar snaps to the top, the tab bar to the bottom, and everything else lines up as you go.</p></div>
+    </div>
+    <div class="slot mb-vid peach sub paste" data-name="20 · Folders">
+      <div class="tag">20 · Folders</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-folders.mp4" poster="image/mochiboard/mb-folders.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Making a project and folders and dragging a board in"></video></div><h4>Projects and folders</h4><p>Make a project, add folders inside it, drag boards in. Then see it all on Home, where every folder has a little face.</p></div>
+    </div>
+    <div class="slot mb-vid butter sub paste" data-name="21 · Organized">
+      <div class="tag">21 · Organized</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-home.mp4" poster="image/mochiboard/mb-home.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Moving a board between folders, then switching to dark mode"></video></div><h4>Moving things around</h4><p>Right-click anything to rename, move or duplicate it. And yes, there’s a dark mode.</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="22 · Toolbox" id="toolbox">
+      <div class="tag">22 · Toolbox</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The toolbox, and why each tool is there.</span><span class="typed"><span class="t" data-text="The toolbox, and why each tool is there."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I’ll be honest: none of these tools are new. Figma, FigJam and Causal have most of them, and they do them well. What I wanted was all of them in one cozy place made for planning, sized for the way I actually think, with a little helper who can use every single one.</p></div>
+    </div>
+    <div class="mb-tools group">
+    <div class="slot mb-tool butter sub paste" data-name="23 · Notes">
+      <div class="tag">23 · Notes</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="notes" aria-hidden="true"></div><h4>Notes</h4><p class="what">Sticky notes with colors, sizes, bold and a little label like “step 1”.</p><p class="why">Most ideas start as one line. Notes tilt a bit so the board feels like paper, not a spreadsheet.</p></div>
+    </div>
+    <div class="slot mb-tool blush sub paste" data-name="24 · Quick capture">
+      <div class="tag">24 · Quick capture</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="capture" aria-hidden="true"></div><h4>Quick capture</h4><p class="what">⌘K from anywhere drops an idea into Unsorted.</p><p class="why">My brain jumps around. This lets me catch a thought <b>without losing my place</b>.</p></div>
+    </div>
+    <div class="slot mb-tool mint sub paste" data-name="25 · Collections">
+      <div class="tag">25 · Collections</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="collections" aria-hidden="true"></div><h4>Collections</h4><p class="what">Stacks that hold cards. Drag a card in and it lines up.</p><p class="why">Grouping is how I think, so it had to be <b>one drag</b>, not a menu.</p></div>
+    </div>
+    <div class="slot mb-tool sky sub paste" data-name="26 · Docs">
+      <div class="tag">26 · Docs</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="docs" aria-hidden="true"></div><h4>Docs</h4><p class="what">Real documents: styles, fonts, colors, lists and tables. Download them as a PDF or a Word file.</p><p class="why">Some ideas grow up. They need room to become paragraphs <b>without leaving the board</b>.</p></div>
+    </div>
+    <div class="slot mb-tool lilac sub paste" data-name="27 · Checklists">
+      <div class="tag">27 · Checklists</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="checklists" aria-hidden="true"></div><h4>Checklists</h4><p class="what">A to-do card you tick off right on the board.</p><p class="why">Half my notes are secretly to-do lists anyway.</p></div>
+    </div>
+    <div class="slot mb-tool peach sub paste" data-name="28 · Titles">
+      <div class="tag">28 · Titles</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="titles" aria-hidden="true"></div><h4>Titles</h4><p class="what">Big words to mark a part of the board.</p><p class="why">Boards get big. I wanted signposts I could read zoomed out.</p></div>
+    </div>
+    <div class="slot mb-tool blush sub paste" data-name="29 · Voice memos">
+      <div class="tag">29 · Voice memos</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="voice" aria-hidden="true"></div><h4>Voice memos</h4><p class="what">Talk instead of type. A 3, 2, 1 countdown, then Mochi writes it out.</p><p class="why">Some ideas come out faster out loud. The countdown came from testing: my first words kept getting cut off.</p></div>
+    </div>
+    <div class="slot mb-tool peach sub paste" data-name="29a · Videos">
+      <div class="tag">29a · Videos</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="video" aria-hidden="true"></div><h4>Videos</h4><p class="what">Record yourself right on the board, wide or phone-shaped. Flip the camera, then Mochi can write out what you said.</p><p class="why">Some ideas need a face and a voice. A ten-second video shows <b>how it should feel</b>, not just what it is.</p></div>
+    </div>
+    <div class="slot mb-tool butter sub paste" data-name="30 · Links">
+      <div class="tag">30 · Links</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="links" aria-hidden="true"></div><h4>Links</h4><p class="what">Paste a link and it becomes a card with a preview.</p><p class="why">My research lives in forty tabs. This gets it out of them.</p></div>
+    </div>
+    <div class="slot mb-tool mint sub paste" data-name="31 · Images">
+      <div class="tag">31 · Images</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="images" aria-hidden="true"></div><h4>Images</h4><p class="what">Drop or paste a picture, then crop it.</p><p class="why">Inspiration is mostly screenshots.</p></div>
+    </div>
+    <div class="slot mb-tool peach sub paste" data-name="32 · Colors">
+      <div class="tag">32 · Colors</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="colors" aria-hidden="true"></div><h4>Colors</h4><p class="what">Pick from a wheel and the color names itself. Save it to the board.</p><p class="why">I’m a designer. Colors deserve names, and every board has its own palette.</p></div>
+    </div>
+    <div class="slot mb-tool sky sub paste" data-name="33 · Shapes">
+      <div class="tag">33 · Shapes</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="shapes" aria-hidden="true"></div><h4>Shapes</h4><p class="what">Circles, stars, arrows and blobs in any color.</p><p class="why">For quick diagrams, and for fun.</p></div>
+    </div>
+    <div class="slot mb-tool lilac sub paste" data-name="34 · Stamps">
+      <div class="tag">34 · Stamps</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="stamps" aria-hidden="true"></div><h4>Stamps</h4><p class="what">A wheel of hand-drawn pixel stamps and little Mochis, some of them move.</p><p class="why">Feedback should be cute. A tiny Mochi says more than a thumbs up.</p></div>
+    </div>
+    <div class="slot mb-tool butter sub paste" data-name="35 · Draw">
+      <div class="tag">35 · Draw</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="draw" aria-hidden="true"></div><h4>Draw</h4><p class="what">A soft pen, a marker and a highlighter in any size, plus an eraser.</p><p class="why">Sometimes you just need to circle something.</p></div>
+    </div>
+    <div class="slot mb-tool mint sub paste" data-name="36 · Connectors">
+      <div class="tag">36 · Connectors</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="connectors" aria-hidden="true"></div><h4>Connectors</h4><p class="what">Curvy lines between cards. Bend them, add arrows, make them dashed.</p><p class="why">Thinking is mostly connecting things.</p></div>
+    </div>
+    <div class="slot mb-tool sky sub paste" data-name="37 · Wireframes">
+      <div class="tag">37 · Wireframes</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="wireframes" aria-hidden="true"></div><h4>Wireframes</h4><p class="what">Screens, boxes, text, icons and ready-made pieces that snap into place.</p><p class="why">Going from idea to layout <b>without leaving the board</b>, or opening another tool.</p></div>
+    </div>
+    <div class="slot mb-tool peach sub paste" data-name="38 · Projects + folders">
+      <div class="tag">38 · Projects + folders</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="folders" aria-hidden="true"></div><h4>Projects + folders</h4><p class="what">Projects hold folders, folders hold boards. Each folder has a little face.</p><p class="why">Planning is never one board. I wanted to see everything at once, and smile at it.</p></div>
+    </div>
+    <div class="slot mb-tool lilac sub paste" data-name="39 · Layers">
+      <div class="tag">39 · Layers</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="layers" aria-hidden="true"></div><h4>Layers</h4><p class="what">Everything on the board in one list. Rename, hide, lock and restack.</p><p class="why">Boards get busy. Sometimes you need to find the <b>one</b> thing.</p></div>
+    </div>
+    <div class="slot mb-tool butter sub paste" data-name="40 · Templates">
+      <div class="tag">40 · Templates</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="tx" data-tx="templates" aria-hidden="true"></div><h4>Templates</h4><p class="what">Affinity maps, journey maps and more, ready to fill in.</p><p class="why">A blank board is the hardest part. These give you a <b>starting shape</b>.</p></div>
+    </div>
+    </div>
+    <div class="mb-tools-nav"><span>scroll for more tools →</span><button class="tb-prev" aria-label="Previous tools"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><button class="tb-next" aria-label="More tools"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button></div>
+    <div class="slot prose" data-name="41 · Working with Mochi" id="mochi">
+      <div class="tag">41 · Working with Mochi</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Mochi does the busywork, you keep the taste.</span><span class="typed"><span class="t" data-text="Mochi does the busywork, you keep the taste."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Mochi runs on Claude Code on your computer. She can read the whole board, so she knows what you’re making. Every answer comes with two or three ideas for what to do next, so you never stare at a blank chat.</p></div>
+    </div>
+    <div class="mb-vids group">
+    <div class="slot mb-vid blush sub paste" data-name="42 · Chat">
+      <div class="tag">42 · Chat</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-chat.mp4" poster="image/mochiboard/mb-chat.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Asking Mochi what is missing"></video></div><h4>Ask her anything</h4><p>I asked what I was missing for a first banking app. She added a Trust group and a little launch list, then glided me right to it.</p></div>
+    </div>
+    <div class="slot mb-vid mint sub paste" data-name="43 · Fonts">
+      <div class="tag">43 · Fonts</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-fonts.mp4" poster="image/mochiboard/mb-fonts.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Mochi adding font cards"></video></div><h4>Real type, not font names</h4><p>Ask her to explore fonts and she puts real specimens on the board, from your computer or from Google Fonts. Click one to swap it, or type your own words in it.</p></div>
+    </div>
+    <div class="slot mb-vid peach sub paste" data-name="44 · Mobbin">
+      <div class="tag">44 · Mobbin</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-mobbin.mp4" poster="image/mochiboard/mb-mobbin.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Mochi pulling banking screens from Mobbin"></video></div><h4>Inspiration from Mobbin</h4><p>With the Mobbin connection, she pulls real app screens onto the board. Then you can ask what they have in common, and she writes it down next to them.</p></div>
+    </div>
+    <div class="slot mb-vid sky sub paste" data-name="45 · Wireframes">
+      <div class="tag">45 · Wireframes</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-wireframes.mp4" poster="image/mochiboard/mb-wireframes.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Mochi building three phone wireframes"></video></div><h4>Wireframes from a sentence</h4><p>“Wireframe Penny’s sign-up flow” turns into three real phone screens, built from the same pieces you use by hand, with arrows between them and a note under each one.</p></div>
+    </div>
+    <div class="slot mb-vid lilac wide sub paste" data-name="46 · Websites">
+      <div class="tag">46 · Websites</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-website.mp4" poster="image/mochiboard/mb-website.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Mochi building a landing page and drawing illustrations into it"></video></div><h4>A whole landing page</h4><p>She builds full pages from website sections, in your colors and fonts. Picture spots are labeled with what belongs there. Fill them with Higgsfield, or have Mochi draw simple illustrations for free.</p><div class="note">Higgsfield costs credits, so Mochi always shows the price first and waits for a yes</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="47 · Since launch" id="new">
+      <div class="tag">47 · Since launch</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">It keeps growing.</span><span class="typed"><span class="t" data-text="It keeps growing."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I use Mochiboard every day, so it keeps getting better. Here’s what I added since launch. Every update is on the <a class="inl" href="https://mochiboard.app/updates.html" target="_blank" rel="noopener">Mochiboard updates page ↗</a>.</p></div>
+    </div>
+    <div class="mb-vids group">
+    <div class="slot mb-vid sky wide sub paste" data-name="48 · Docs">
+      <div class="tag">48 · Docs</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-docs.mp4" poster="image/mochiboard/mb-docs.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Writing in a doc: a heading, a pink highlighted word, Mochi making a paragraph friendlier, then the download menu"></video></div><h4>Docs, for real</h4><p>Docs grew up. Styles, any font on your computer, colors and highlights from your board, lists, tables and pictures. Select a sentence and ask Mochi to make it shorter or friendlier. Then download it as a PDF or a Word file.</p><div class="note">downloads always come out as regular light pages, even when you write on a dark page</div></div>
+    </div>
+    <div class="slot mb-vid blush sub paste" data-name="49 · Make it yours">
+      <div class="tag">49 · Make it yours</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-colors.mp4" poster="image/mochiboard/mb-colors.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Picking a cursor color and the app colors, then giving one board a mint background"></video></div><h4>Make it yours</h4><p>Your name rides along on your cursor, in your color. Pick the board, dots, panels and accent too, or right-click a board to give just that one its own background.</p></div>
+    </div>
+    <div class="slot mb-vid lilac sub paste" data-name="50 · Layers">
+      <div class="tag">50 · Layers</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-layers.mp4" poster="image/mochiboard/mb-layers.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Clicking through the Layers list while Mochi points out each piece"></video></div><h4>Layers</h4><p>Everything on the board in one list, like Figma. Rename, hide, lock and restack. Pick a layer and Mochi pops up on it so you can find it.</p></div>
+    </div>
+    <div class="slot mb-vid butter sub paste" data-name="51 · Templates">
+      <div class="tag">51 · Templates</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-templates.mp4" poster="image/mochiboard/mb-templates.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Placing an affinity map template"></video></div><h4>Design thinking templates</h4><p>Affinity maps, journey maps, impact and effort, how might we. Each one comes with an example and a little how-to note from Mochi.</p></div>
+    </div>
+    <div class="slot mb-vid mint sub paste" data-name="52 · Reshape">
+      <div class="tag">52 · Reshape</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-reshape.mp4" poster="image/mochiboard/mb-reshape.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Resizing a wireframe button, then reaching inside it to resize just the box"></video></div><h4>Reshape wireframes</h4><p>Drag any corner to resize a piece. Double-click to reach inside a button and reshape just the part you want.</p></div>
+    </div>
+    <div class="slot mb-vid peach wide sub paste" data-name="53 · Pens + stamps">
+      <div class="tag">53 · Pens + stamps</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-pen.mp4" poster="image/mochiboard/mb-pen.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Sliding the pen size, drawing thick and thin lines, then placing pixel stamps"></video></div><h4>Any pen size, pixel stamps</h4><p>A slider for every thickness, and the stamps are all hand-drawn pixel art now, in Mochi’s style.</p></div>
+    </div>
+    <div class="slot mb-vid blush sub paste" data-name="53a · Dress up Mochi">
+      <div class="tag">53a · Dress up Mochi</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><div class="live du"><div class="du-stage"><canvas width="240" height="270" aria-label="Mochi, dressed up. Click her!"></canvas><p class="du-say" aria-live="polite"></p></div><div class="du-closet"><div class="du-tabs"></div><div class="du-items"></div></div></div></div><h4>Dress up Mochi</h4><p>Mochi has a closet now. Party hats, heart shades, a cozy scarf, a balloon. She wears her outfit everywhere she shows up. Go on, hover to try things on and click to wear them.</p><div class="note">the most important feature, honestly</div></div>
+    </div>
+    <div class="slot mb-vid sky sub paste" data-name="53b · Mochi’s music">
+      <div class="tag">53b · Mochi’s music</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><div class="live mu-wrap"><div class="mu"><header>Mochi’s music<i></i></header>
+          <div class="mu-now"><img class="mu-art" src="image/mochiboard/tx/px-strawberry.png" alt=""><div class="mu-meta"><b></b><small></small></div><span class="mu-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+          <div class="mu-ctl"><button class="mu-play" type="button" aria-label="Play"><svg viewBox="0 0 20 20"><path class="i-play" d="M6.5 4.2v11.6L16 10z"/><g class="i-pause"><rect x="5" y="4" width="3.6" height="12" rx="1.2"/><rect x="11.4" y="4" width="3.6" height="12" rx="1.2"/></g></svg></button><label class="mu-vol" title="Volume"><svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8v4h3l4 3.5v-11l-4 3.5z"/><path d="M13.5 7.5a3.5 3.5 0 0 1 0 5"/></svg><input type="range" min="0" max="1" step="0.01" value="0.6" aria-label="Volume"></label></div>
+          <div class="mu-list"></div></div></div></div><h4>Mochi’s music</h4><p>Three little lo-fi loops for focusing, each with a Mochi name. They loop right on the last bar, so the music never stops to breathe. Press play.</p><div class="note">I made these for my own work days</div></div>
+    </div>
+    <div class="slot mb-vid peach sub paste" data-name="53c · Videos">
+      <div class="tag">53c · Videos</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/mochiboard/mb-video.mp4" poster="image/mochiboard/mb-video.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Recording a phone-shaped video of Mochi right on the board, then playing it back"></video></div><h4>Videos on the board</h4><p>Record yourself wide or phone-shaped, flip the camera, then Mochi writes out what you said. A voice memo, but you can see how it should feel.</p></div>
+    </div>
+    <div class="slot mb-vid mint sub paste" data-name="53d · Windows">
+      <div class="tag">53d · Windows</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar winbar"><img src="image/mochiboard/icon.png" alt="">Mochiboard<span class="ctl"><svg viewBox="0 0 12 12"><path d="M1 6h10"/></svg><svg viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9"/></svg><svg viewBox="0 0 12 12"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9"/></svg></span></i><img src="image/mochiboard/mb-windows.jpg" alt="Mochiboard on a Windows PC: a little bakery board, with Ctrl shortcuts, the music widget and Mochi in a party hat" loading="lazy"></div><h4>Now on Windows</h4><p>Same board, same Mochi, on a PC. Shortcuts say Ctrl, voice memos get written out right on the computer, and it updates itself.</p><div class="note">because friends kept asking</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="54 · Little decisions" id="care">
+      <div class="tag">54 · Little decisions</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The small choices I care about most.</span><span class="typed"><span class="t" data-text="The small choices I care about most."></span><span class="caret"></span></span></span></h2>
+        <div class="bullets pasted"><div class="b wob"><b>She asks before spending.</b>Anything that costs credits shows the price and your balance first. That check can’t be turned off.</div><div class="b wob"><b>It works without AI.</b>Switch Mochi’s thinking off and the whole canvas still works. No account, no internet.</div><div class="b wob"><b>She takes you there.</b>When she makes something off screen, the board glides over and it glows for a second.</div><div class="b wob"><b>Your boards stay yours.</b>Everything is saved as files on your computer. Chats too, and you choose how long she remembers them.</div></div></div>
+    </div>
+    <div class="slot mb-dl paste" data-name="55 · Download" id="download">
+      <div class="tag">55 · Download</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="dl-top"><img class="icon" src="image/mochiboard/icon.png" alt="Mochiboard’s app icon"><div class="dl-words"><h2>Take Mochiboard home.</h2>
+          <p>It’s free and open source. It runs on a Mac (macOS 13 or newer) or a Windows 10 or 11 PC.</p>
+          <a class="get wob" href="https://github.com/jessawolfe-ux/mochiboard/releases/latest/download/Mochiboard.zip">Download for Mac <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
+          <a class="get wob" href="https://github.com/jessawolfe-ux/mochiboard/releases/latest/download/Mochiboard-Setup.exe">Download for Windows <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a><a class="try wob" href="apps/mochiboard/index.html" target="_blank" rel="noopener">Try it in your browser ↗</a></div></div>
+          <div class="howto"><div class="howto-t">Installing it on a Mac</div><ol class="steps"><li><b>Unzip it</b> and drag Mochiboard into your Applications folder.</li><li><b>Open it.</b> It’s signed and notarized with Apple, so it opens on the first double-click, and Mochi says hi.</li></ol><div class="howto-t" style="margin-top:14px">On Windows</div><ol class="steps"><li><b>Run Mochiboard-Setup.exe.</b> It installs in a few seconds, no admin needed.</li><li>If Windows says it <b>“protected your PC”</b>, click <b>More info</b>, then <b>Run anyway</b>. Just once, then Mochi says hi.</li></ol>
+          <small>After that it updates itself from Settings. Prefer the code? It’s all <a href="https://github.com/jessawolfe-ux/mochiboard" target="_blank" rel="noopener">on GitHub</a>. Everything else is at <a href="https://mochiboard.app" target="_blank" rel="noopener">mochiboard.app</a>.</small></div>
+          <div class="needs"><div><b>Just the app?</b>The whole canvas works: notes, docs, wireframes, drawing, folders, all of it. The browser version works the same way, no AI.</div><div><b>+ Claude Code</b>Mochi wakes up and can sort, plan, explore fonts and build screens. <a href="https://mochiboard.app/connect.html" target="_blank" rel="noopener">How to connect it ↗</a></div><div><b>+ Mobbin or Higgsfield</b>Optional. Real app screens, and real images (she always asks before spending credits).</div></div></div>
+    </div>
+    <div class="slot prose quote butter" data-name="56 · North star">
+      <div class="tag">56 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Planning should feel like playing.</span><span class="typed"><span class="t" data-text="Planning should feel like playing."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot prose tools" data-name="57 · Tools" id="tools">
+      <div class="tag">57 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">A native Mac app (and a Windows one) with a web canvas inside, built with Claude in the loop.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude Code</b><small>Building it, and Mochi’s brain</small></div><div class="tlc"><img src="image/mochiboard/icon.png" alt=""><b>Swift + WebKit</b><small>The Mac app around the canvas (Tauri on Windows)</small></div><div class="tlc"><span class="duo"><img src="image/tools/mobbin.png" alt="Mobbin"><img src="image/tools/higgsfield.png" alt="Higgsfield"></span><b>Mobbin + Higgsfield</b><small>Mochi’s optional helpers</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="https://mochiboard.app/#download" target="_blank" rel="noopener">Download Mochiboard →</a><a class="wob" href="apps/mochiboard/index.html" target="_blank" rel="noopener">Try it in your browser →</a><a class="wob" href="https://mochiboard.app" target="_blank" rel="noopener">Visit mochiboard.app ↗</a><a class="wob" href="mochi.html">Meet Mochi →</a><a class="wob" href="app.html#work">More work →</a></div>
+    <div class="mb-hop" aria-hidden="true"><canvas width="64" height="56"></canvas><a class="wm" href="https://mochiboard.app" target="_blank" rel="noopener" tabindex="-1">mochiboard</a></div>
+  </article>
+</main><script>
+  /* toolbox arrows: scroll one card at a time, and fade an arrow at either end */
+  (() => { const row = document.querySelector('.mb-tools'), prev = document.querySelector('.tb-prev'), next = document.querySelector('.tb-next'); if (!row) return;
+    const step = () => (row.querySelector('.mb-tool')?.offsetWidth || 300) + 18;
+    const sync = () => { const a = row.scrollLeft < 8, z = row.scrollLeft + row.clientWidth > row.scrollWidth - 8; prev.disabled = a; next.disabled = z; row.classList.toggle('mid', !a && !z); row.classList.toggle('end', z); };
+    prev.onclick = () => row.scrollBy({ left: -step() * 2, behavior: 'smooth' }); next.onclick = () => row.scrollBy({ left: step() * 2, behavior: 'smooth' });
+    row.addEventListener('scroll', sync, { passive: true }); addEventListener('resize', sync); sync(); })();
+
+  /* what I heard: type my quote, pop in what I did, hold, erase, next. Starts when you can see it; click to skip ahead. */
+  (() => { const box = document.querySelector('.mb-say'); if (!box) return;
+    const L = JSON.parse(box.querySelector('.say-data').textContent), q = box.querySelector('.say-q'), t = box.querySelector('.say-t'), a = box.querySelector('.say-a'), at = box.querySelector('.say-at'), n = box.querySelector('.say-n');
+    let i = 0, run = 0, seen = false, inView = false;
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    async function play(k) {
+      const me = ++run; i = (k + L.length) % L.length; const [quote, did] = L[i];
+      n.textContent = `${i + 1} of ${L.length}`; a.classList.remove('on'); q.classList.remove('full');
+      for (let c = t.textContent.length; c > 0; c--) { if (me !== run) return; t.textContent = t.textContent.slice(0, c - 1); await wait(12); }
+      at.textContent = did;
+      for (let c = 1; c <= quote.length; c++) { if (me !== run) return; t.textContent = quote.slice(0, c); await wait(quote[c - 1] === ' ' ? 26 : 38 + Math.random() * 30); }
+      q.classList.add('full'); await wait(450); if (me !== run) return; a.classList.add('on');
+      await wait(Math.max(3400, did.length * 42)); while (!inView && me === run) await wait(400);
+      if (me === run) play(i + 1);
+    }
+    new IntersectionObserver(([e]) => { inView = e.isIntersecting; if (inView && !seen) { seen = true; setTimeout(() => play(0), 500); } }, { threshold: .35 }).observe(box);
+    box.querySelector('.say-prev').onclick = e => { e.stopPropagation(); play(i - 1); };
+    box.querySelector('.say-next').onclick = e => { e.stopPropagation(); play(i + 1); };
+    box.addEventListener('click', () => play(i + 1));
+  })();
+</script>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+<script src="mb-stats.js?v=2"></script>
+<script src="mb-toolbox.js?v=1"></script>
+<script src="mb-goo.js?v=3"></script><script src="mb-new.js?v=4"></script><script src="mb-hop.js?v=2"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>/* public build: embedded, sound is off until the visitor turns it on (added by build-public.py) */
+(()=>{if(window.top===window) return; let on=false; try{on=sessionStorage.getItem("lum-sound")==="on";}catch(e){}
+  window.LUM_SOUND=on; const media=new Set(), gains=[];
+  const P=HTMLMediaElement.prototype, play=P.play;
+  P.play=function(){if(this.tagName==="AUDIO"){media.add(this); this.muted=!window.LUM_SOUND;} return play.apply(this,arguments);};
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(AC){const W=function(...a){const c=new AC(...a), g=c.createGain(); g.gain.value=window.LUM_SOUND?1:0; g.connect(c.destination);
+      Object.defineProperty(c,"destination",{get:()=>g}); gains.push(g); return c;}; W.prototype=AC.prototype; window.AudioContext=window.webkitAudioContext=W;}
+  const set=v=>{window.LUM_SOUND=v; media.forEach(m=>m.muted=!v); document.querySelectorAll("audio").forEach(m=>m.muted=!v);
+    gains.forEach(g=>g.gain.value=v?1:0); document.querySelectorAll("iframe").forEach(f=>{try{f.contentWindow.postMessage({lumSound:v},"*");}catch(e){}});};
+  addEventListener("message",e=>{if(e.data&&typeof e.data.lumSound==="boolean") set(e.data.lumSound);});})();</script>
+
+<meta charset="utf-8">
+<link rel="icon" href="favicon.svg?v=1" type="image/svg+xml"><link rel="apple-touch-icon" href="favicon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Aevum Research Corridor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Playable room 02: the Aevum research corridor (Episode 01, Scene 1, continuous). Built from room 01's pieces */
+:root{--cyan:#33c6ff;--ice:#bff4ff;--blue:#1f7cff;--display:"Michroma",ui-sans-serif,system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --cur:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L5 24 L10.5 19 L21 18.5 Z' fill='none' stroke='%2333c6ff' stroke-opacity='.3' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M5 3 L5 24 L10.5 19 L21 18.5 Z' fill='%230b2c5e' stroke='%23bff4ff' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M7.4 8.5 L7.4 18.5' stroke='%2333c6ff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 5 3,default}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:#02060f;color:#eaffff;overflow:hidden;font-family:"IBM Plex Sans",system-ui,sans-serif;cursor:var(--cur);display:grid;place-items:center}
+#stage{position:relative;overflow:hidden;border-radius:6px;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#0d1a2e}
+#stage>img.set{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+/* Ji-yoo */
+.who{position:absolute;bottom:20.4%;height:44%;   /* feet on the front strip of the floor, in front of the bed */
+  transform:translateX(-50%);display:flex;justify-content:center;pointer-events:none}
+.who i{display:block;height:100%;background-repeat:no-repeat}
+.who i.wk{aspect-ratio:var(--ar);background-size:calc(var(--n) * 100%) 100%}
+.who.l i.wk{transform:scaleX(-1)}
+.who i.th,.who i.dr{position:absolute;bottom:0;left:50%;transform:translateX(-50%);opacity:0}
+.who i.th{aspect-ratio:var(--ar2);background-size:calc(var(--n2) * 100%) 100%}
+.who i.dr{aspect-ratio:var(--ar3);background-size:calc(var(--n3) * 100%) 100%}
+.who.thinking i.th,.who.dooring i.dr{opacity:1}
+.who.thinking i.wk,.who.dooring i.wk,.who.dooring i.th{opacity:0}
+/* grounding: a tight dark contact shadow at the feet, a wider soft one, and a faint reflection in the glossy floor */
+.who::before,.who::after{content:"";position:absolute;left:50%;transform:translateX(-50%);border-radius:50%;pointer-events:none}
+.who::after{bottom:calc(var(--pad,2%) - 1%);width:46%;height:3%;background:radial-gradient(closest-side,rgba(25,18,10,.55),transparent);z-index:2}
+.who::before{bottom:calc(var(--pad,2%) - 2.5%);width:90%;height:7%;background:radial-gradient(closest-side,rgba(40,28,15,.22),transparent);z-index:-1}
+.who i{-webkit-box-reflect:below var(--rf,0px) linear-gradient(transparent 93%,rgba(255,255,255,.14))}
+
+/* hotspots: a small hologram tag that appears over whatever is in reach */
+.hot{all:unset;position:absolute;transform:translate(-50%,-100%);pointer-events:auto;cursor:var(--cur)}
+/* the action labels: small tilted Aevum hologram callouts. Smoked glass with a cyan edge, scanlines, corner ticks,
+   a glowing diamond key, the action in English with Korean underneath. They project in with a wipe and a flicker */
+.hot .tag{position:relative;display:inline-grid;grid-template-columns:auto auto;align-items:center;column-gap:11px;padding:7px 15px 7px 9px;white-space:nowrap;color:#fff;
+  background:linear-gradient(135deg,rgba(16,34,62,.66),rgba(8,20,42,.46));border:1px solid rgba(125,218,255,.6);border-radius:3px 13px 3px 13px;
+  box-shadow:0 0 0 1px rgba(51,198,255,.1),0 0 18px rgba(51,198,255,.3),inset 0 0 16px rgba(51,198,255,.14),0 12px 26px rgba(0,8,24,.38);
+  backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4);
+  transform-origin:50% 100%;opacity:0;transform:translateY(8px) rotate(-4deg) skewX(-7deg) scale(.94);transition:opacity .25s,transform .3s cubic-bezier(.2,1.4,.4,1)}
+.hot .tag::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.07) 0 1px,transparent 1px 3px)}
+.hot .tag::after,.hot .tag i.tk{content:"";position:absolute;width:9px;height:9px;pointer-events:none;filter:drop-shadow(0 0 4px var(--cyan))}
+.hot .tag::after{right:-5px;top:-5px;border-top:1.5px solid var(--ice);border-right:1.5px solid var(--ice)}
+.hot .tag i.tk{left:-5px;bottom:-5px;border-bottom:1.5px solid var(--ice);border-left:1.5px solid var(--ice)}
+.hot .tag kbd{font:600 11px var(--mono);display:grid;place-items:center;width:19px;height:19px;margin:0 3px;grid-row:span 2;transform:skewX(7deg) rotate(45deg);
+  background:linear-gradient(135deg,#f2fdff,#8fe2ff);border-radius:3px;box-shadow:0 0 0 2px rgba(51,198,255,.25),0 0 12px var(--cyan);color:#06142a}
+.hot .tag kbd b{transform:rotate(-45deg);font-weight:700}
+.hot .tag .l{font:600 11.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;text-shadow:0 0 10px rgba(120,215,255,.6)}
+.hot .tag .k{font:500 10.5px "Apple SD Gothic Neo","Noto Sans KR",sans-serif;letter-spacing:.12em;color:var(--ice);opacity:.85;margin-top:1px}
+.hot.near .tag,.hot:focus-visible .tag{opacity:1;transform:rotate(-4deg) skewX(-7deg)}
+.hot:focus-visible .tag{outline:2px solid #fff;outline-offset:3px}
+@media (prefers-reduced-motion:no-preference){
+  .hot.near .tag{animation:holoin .5s cubic-bezier(.2,.8,.2,1) both}
+  @keyframes holoin{0%{clip-path:inset(-60px 100% -60px 0);filter:brightness(2.2)}35%{filter:brightness(1.6)}45%{filter:brightness(.7)}60%{clip-path:inset(-60px -60px -60px 0);filter:brightness(1.4)}99%{clip-path:inset(-60px)}100%{clip-path:none;filter:none}}
+}
+.hot .pip{position:absolute;left:50%;top:100%;width:8px;height:8px;margin:6px 0 0 -4px;border-radius:50%;background:#bff4ff;box-shadow:0 0 0 3px rgba(51,198,255,.25),0 0 12px var(--cyan);opacity:.55;transition:opacity .25s}
+.hot.near .pip{opacity:1}
+@media (prefers-reduced-motion:no-preference){.hot .pip{animation:pip 2s ease-in-out infinite}@keyframes pip{50%{box-shadow:0 0 0 7px rgba(51,198,255,0),0 0 12px var(--cyan)}}}
+
+/* slug at the start, subtitle line, controls */
+.slug{position:absolute;left:3%;top:5%;font:500 12px var(--mono);letter-spacing:.24em;text-transform:uppercase;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.5);opacity:0;transition:opacity 1.2s}
+.slug b{display:block;font:400 22px var(--display);letter-spacing:.1em;margin-top:6px;text-transform:none}
+.slug.on{opacity:1}
+/* spoken / observed lines: plain text over the scene, no box, with a soft shadow so it reads on any background */
+.sub{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);width:max-content;max-width:74%;text-align:center;
+  font-size:clamp(17px,1.7vw,24px);font-weight:500;line-height:1.45;letter-spacing:.01em;color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.55),0 2px 14px rgba(0,0,0,.45),0 0 30px rgba(0,0,0,.25);opacity:0;transition:opacity .4s}
+.sub.on{opacity:1}
+.sub em{display:block;font:500 11px var(--mono);letter-spacing:.24em;text-transform:uppercase;color:#bff4ff;font-style:normal;margin-bottom:6px;
+  text-shadow:0 1px 2px rgba(0,0,0,.6),0 0 12px rgba(0,0,0,.4)}
+.hud{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:flex;gap:16px;font:500 10.5px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:rgba(220,236,255,.55)}
+.hud kbd{font:inherit;color:#fff;border:.5px solid rgba(255,255,255,.3);border-radius:4px;padding:1px 6px;margin-right:5px}
+.back{position:fixed;left:16px;top:14px;font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(220,236,255,.75);text-decoration:none;
+  padding:8px 14px;border-radius:999px;background:rgba(14,26,46,.4);border:.5px solid rgba(255,255,255,.16);cursor:var(--cur)}
+.back:hover{color:#fff}
+
+/* end card */
+.end{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 50%,rgba(234,255,255,.96),rgba(191,244,255,.94) 40%,rgba(10,30,60,.96));
+  color:#06142a;opacity:0;pointer-events:none;transition:opacity 1.2s}
+.end.on{opacity:1;pointer-events:auto}
+.end div{display:grid;gap:12px;justify-items:center;text-align:center}
+.end small{font:500 11px var(--mono);letter-spacing:.3em;text-transform:uppercase;color:#1f5fa8}
+.end b{font:400 28px var(--display);letter-spacing:.08em}
+.end nav{display:flex;gap:10px;margin-top:12px}
+.end a,.end button{all:unset;cursor:var(--cur);font:500 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.7);border:.5px solid rgba(6,20,42,.2)}
+.end a:hover,.end button:hover{background:#fff}
+
+/* the line pops in word by word with a little bounce, then floats in a slow wave while it sits there */
+@media (prefers-reduced-motion:no-preference){
+  .sub .w{display:inline-block;animation:wpop .55s cubic-bezier(.3,1.6,.5,1) both,wbob 2.8s ease-in-out infinite;
+    animation-delay:calc(var(--i) * 45ms),calc(var(--i) * 45ms + .55s + var(--i) * 90ms)}
+  .sub em{animation:wpop .5s cubic-bezier(.3,1.6,.5,1) both,wbob 3.2s ease-in-out .5s infinite}
+  @keyframes wpop{0%{opacity:0;transform:translateY(12px) scale(.85)}100%{opacity:1;transform:none}}
+  @keyframes wbob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+}
+
+/* quests: a quiet list on the left of the scene. Plain text with a soft shadow, like the lines; a ring that fills when done */
+.quests{position:absolute;left:3%;top:22%;display:grid;gap:10px;pointer-events:none;max-width:26%}
+.quests h6{margin:0;font:500 10.5px var(--mono);letter-spacing:.28em;text-transform:uppercase;color:#bff4ff;text-shadow:0 1px 2px rgba(0,0,0,.6),0 0 12px rgba(0,0,0,.4);
+  display:flex;align-items:center;gap:10px}
+.quests h6::after{content:"";width:40px;height:1px;background:linear-gradient(90deg,rgba(191,244,255,.8),transparent)}
+.quest{display:grid;grid-template-columns:18px 1fr;gap:10px;align-items:start;color:#fff;font-size:clamp(15px,1.35vw,19px);font-weight:500;line-height:1.35;
+  text-shadow:0 1px 2px rgba(0,0,0,.55),0 2px 14px rgba(0,0,0,.45);transition:opacity .6s,color .6s}
+.quest i{width:14px;height:14px;margin-top:.22em;border-radius:50%;border:1.5px solid rgba(255,255,255,.9);box-shadow:0 0 8px rgba(51,198,255,.6),0 1px 3px rgba(0,0,0,.4);position:relative}
+.quest i::after{content:"";position:absolute;inset:2px;border-radius:50%;background:#fff;transform:scale(0);transition:transform .45s cubic-bezier(.3,1.6,.5,1)}
+.quest small{display:block;font:500 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:rgba(220,236,255,.75);margin-top:4px}
+.quest.done{color:rgba(255,255,255,.6)}
+.quest.done span>b{text-decoration:line-through;text-decoration-color:rgba(191,244,255,.8);text-decoration-thickness:1.5px}
+.quest.done i::after{transform:scale(1)}
+.quest.done i{box-shadow:0 0 14px rgba(51,198,255,.9),0 1px 3px rgba(0,0,0,.4)}
+.quests{opacity:0;transform:translateX(-10px);transition:opacity .6s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.quests.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:no-preference){.quest.new{animation:qin .6s cubic-bezier(.3,1.5,.5,1) both}@keyframes qin{from{opacity:0;transform:translateX(-14px)}}}
+
+/* hovering a quest lifts it into a pane of smoked glass (padding is always there, so nothing shifts) */
+.quest{pointer-events:auto;cursor:var(--cur);margin:-8px -12px;padding:8px 12px;border-radius:12px;border:.5px solid transparent;
+  transition:opacity .6s,color .6s,background .25s,border-color .25s,box-shadow .25s,backdrop-filter .25s}
+.quest:hover{background:rgba(14,26,46,.38);border-color:rgba(255,255,255,.22);
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.28),0 10px 28px rgba(0,8,24,.35);backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5)}
+
+/* embedded in the storyboard: full bleed, no frame; the storyboard's own controls sit across the top, so the room's overlays keep clear of them */
+.embed body{place-items:center}
+/* dreamy edges: soft blur and a warm haze toward the frame, the centre stays sharp */
+.dream{backdrop-filter:blur(4.5px) brightness(1.04);-webkit-backdrop-filter:blur(4.5px) brightness(1.04);
+  -webkit-mask:radial-gradient(ellipse 72% 70% at 50% 46%,transparent 58%,#000 100%);mask:radial-gradient(ellipse 72% 70% at 50% 46%,transparent 58%,#000 100%)}
+.haze{background:radial-gradient(ellipse 75% 72% at 50% 46%,transparent 55%,rgba(255,236,214,.16) 82%,rgba(40,30,50,.35) 100%);mix-blend-mode:normal}
+/* ---------- after the door: the talk (portraits slide in from the sides; the one speaking is lit) ---------- */
+.talk{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:0;transition:opacity .6s}
+.talk.on{opacity:1;pointer-events:auto;cursor:var(--cur)}
+.talk::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,12,28,.08) 30%,rgba(4,12,28,.62) 100%);pointer-events:none}
+.talk .tbg{position:absolute;inset:-4%;background:#dfe9f2 url("img/02-corridor.png?v=2") center/cover;opacity:0;transition:opacity 1.2s}
+.talk .tbg.on{opacity:1;animation:hall 26s linear forwards}
+@keyframes hall{from{transform:scale(1.02) translateX(1.5%)}to{transform:scale(1.12) translateX(-1.5%)}}
+.talk .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.talk .flash.go{animation:tflash 1.3s ease-out}
+@keyframes tflash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
+.talk .bust{position:absolute;bottom:0;height:min(80vh,780px);aspect-ratio:1;opacity:0;transition:transform .75s cubic-bezier(.2,.9,.25,1),opacity .6s,filter .35s}
+.talk .bust.l{left:max(1vw,calc(50% - 760px));transform:translateX(-45%)}
+.talk .bust.r{right:max(1vw,calc(50% - 760px));transform:translateX(45%)}
+.talk .bust.in{opacity:1;transform:none}
+/* Ji-yoo is always the tallest: everyone across from him stands a head lower */
+.talk .bust.r{height:min(72vh,702px)}
+.talk .bust.dim{filter:brightness(.55) saturate(.75) blur(.4px);transform:scale(.965);transform-origin:50% 100%}
+.talk .bust img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 0 22px rgba(51,198,255,.22));transition:opacity .35s}
+.talk .tbox{position:absolute;left:50%;bottom:5vh;width:min(900px,80vw);min-height:128px;transform:translateX(-50%) translateY(14px);opacity:0;transition:opacity .4s,transform .45s cubic-bezier(.2,1.2,.4,1);
+  padding:26px 34px 26px 34px;color:#fff}
+.talk .tbox.on{opacity:1;transform:translateX(-50%)}
+.talk .tbox::before{content:"";position:absolute;inset:0;border-radius:4px 22px 4px 22px;transform:skewX(-5deg);
+  background:linear-gradient(135deg,rgba(16,34,62,.78),rgba(8,20,42,.62));border:1px solid rgba(125,218,255,.6);
+  box-shadow:0 0 0 1px rgba(51,198,255,.1),0 0 26px rgba(51,198,255,.3),inset 0 0 22px rgba(51,198,255,.14),0 18px 40px rgba(0,8,24,.45);
+  backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4)}
+.talk .tbox::after{content:"";position:absolute;inset:0;border-radius:4px 22px 4px 22px;transform:skewX(-5deg);pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.06) 0 1px,transparent 1px 3px)}
+.talk .tname{position:absolute;top:-17px;left:40px;z-index:1;display:flex;align-items:baseline;gap:10px;padding:6px 16px 7px;border-radius:3px 11px 3px 11px;transform:skewX(-7deg) rotate(-2deg);
+  background:linear-gradient(135deg,#1b4f8a,#0e2f5c);border:1px solid rgba(125,218,255,.8);box-shadow:0 0 16px rgba(51,198,255,.45);transition:opacity .25s}
+.talk .tname b{font:400 12px var(--display);letter-spacing:.16em;text-transform:uppercase}
+.talk .tname span{font:400 12px "Gowun Batang",serif;color:var(--ice);opacity:.85}
+.talk.right .tname{left:auto;right:40px;transform:skewX(-7deg) rotate(2deg)}
+.talk .tname.hide{opacity:0}
+.talk .ttext{position:relative;z-index:1;margin:0;font:400 21px/1.55 "IBM Plex Sans",system-ui,sans-serif;letter-spacing:.005em;text-shadow:0 1px 8px rgba(0,10,30,.5)}
+.talk .ttext.think{font-style:italic;color:var(--ice)}
+.talk .ttext.narr{font-style:italic;color:rgba(255,255,255,.72);font-size:18px;text-align:center}
+.talk .ttext.placard{font:500 17px/1.6 var(--mono);letter-spacing:.32em;text-align:center;color:#e8f6ff}
+.talk .tnext{position:absolute;right:30px;bottom:14px;z-index:1;font:500 10px var(--mono);letter-spacing:.2em;color:var(--ice);opacity:0;transition:opacity .3s}
+.talk .tnext.on{opacity:.85;animation:tnext 1.4s ease-in-out infinite}
+@keyframes tnext{50%{opacity:.35;transform:translateX(3px)}}
+.talk .tblack{position:absolute;inset:0;background:#000;opacity:0;transition:opacity 1.4s;pointer-events:none;display:grid;place-items:center}
+.talk .tblack.on{opacity:1}
+/* the title's lockup, same as the title screen: the I is a pillar of light, a halo with a light orbiting its ring */
+.tblack .tlock{position:relative;display:grid;justify-items:center;gap:22px;transition:opacity 1.2s}
+.tblack.out .tlock{opacity:0}
+.tblack .halo{position:absolute;left:50%;top:50%;width:min(560px,86vw,66vh);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;overflow:visible}
+.tblack .halo .ring{fill:none;stroke:rgba(127,227,255,.22);stroke-width:1;stroke-dasharray:1100;stroke-dashoffset:1100}
+.tblack .halo .ring2{fill:none;stroke:rgba(127,227,255,.12);stroke-width:.8;stroke-dasharray:2 7;transform-origin:50% 50%}
+.tblack .halo .bloom{fill:url(#tHaloFill);opacity:0}
+.tblack .word{position:relative;display:flex;align-items:center;margin:0;font:400 clamp(30px,6.4vw,88px)/1 var(--display);letter-spacing:.34em;margin-right:-.34em;
+  color:#fff;text-shadow:0 0 18px rgba(127,227,255,.55),0 0 46px rgba(51,198,255,.25);white-space:nowrap}
+.tblack .word .ch{display:inline-block;opacity:0}
+.tblack .word .pillar{position:relative;display:inline-block;width:.1em;height:1.32em;margin:0 .34em 0 .06em;border-radius:999px;opacity:0;
+  background:linear-gradient(180deg,#bff4ff,#fff 18%,#fff 82%,#bff4ff);box-shadow:0 0 10px 2px rgba(191,244,255,.9),0 0 30px 8px rgba(51,198,255,.55),0 0 80px 20px rgba(51,198,255,.25)}
+.tblack .word .pillar::before{content:"";position:absolute;left:50%;top:-.34em;width:.13em;height:.13em;margin-left:-.065em;border-radius:50%;background:#fff;box-shadow:0 0 8px 3px #fff,0 0 22px 8px rgba(51,198,255,.7)}
+.tblack .tsub{display:grid;justify-items:center;gap:10px;opacity:0}
+.tblack .tsub .kr{font:400 clamp(13px,1.4vw,17px) "Gowun Batang",serif;letter-spacing:.9em;margin-right:-.9em;color:rgba(191,244,255,.82)}
+.tblack .tsub .tag{font:500 11px var(--mono);letter-spacing:.5em;margin-right:-.5em;text-transform:uppercase;color:rgba(159,216,255,.6)}
+.tblack .tsub .tag b{font-weight:500;color:var(--ice)}
+.tblack.on .word .pillar{animation:tIgnite 1.1s cubic-bezier(.2,.8,.2,1) 1.25s both}
+.tblack.on .word .pillar::before{animation:tBeacon 2.6s ease-in-out 2.3s infinite}
+.tblack.on .word .ch{animation:tFocus 1.2s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(1.9s + var(--i) * .09s)}
+.tblack.on .halo .ring{animation:tDraw 2s cubic-bezier(.4,0,.2,1) 1.5s forwards}
+.tblack.on .halo .ring2{animation:tSpin 90s linear infinite}
+.tblack.on .halo .bloom{animation:tBloom 2.4s ease-out 1.3s both}
+.tblack.on .tsub{animation:tRise 1s cubic-bezier(.2,.8,.2,1) 2.9s both}
+@keyframes tIgnite{0%{transform:scaleY(0);opacity:0}40%{opacity:1}100%{transform:scaleY(1);opacity:1}}
+@keyframes tBeacon{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes tFocus{0%{opacity:0;filter:blur(14px);transform:translateY(.08em) scale(1.08)}100%{opacity:1;filter:none;transform:none}}
+@keyframes tDraw{to{stroke-dashoffset:0}}
+@keyframes tSpin{to{transform:rotate(-360deg)}}
+@keyframes tBloom{from{opacity:0}to{opacity:1}}
+@keyframes tRise{from{opacity:0;translate:0 12px}to{opacity:1;translate:0 0}}
+@media (prefers-reduced-motion:reduce){.tblack.on .word .ch,.tblack.on .word .pillar,.tblack.on .tsub,.tblack.on .halo .bloom{animation:none;opacity:1}.tblack.on .halo .ring{animation:none;stroke-dashoffset:0}}
+/* while they talk, the room's own HUD steps back; once his portrait is up, his figure in the doorway fades out */
+body.talking .quests,body.talking .hud,body.talking .hot,body.talking .pillq{opacity:0!important;pointer-events:none!important;transition:opacity .5s}
+body.talking.ji-up #who{opacity:0;transition:opacity .6s}
+@media (prefers-reduced-motion:reduce){.talk .tbg.on{animation:none}.talk .bust{transition:opacity .3s}}
+/* Room 02: the research corridor. The painting is the set (1344 x 752); Ji-yoo and the Scientist walk the glossy floor in front of the doors */
+#stage .who{bottom:17.5%;height:47%}
+#stage .who.npc{bottom:19.3%;height:41.5%;z-index:1}   /* about 9/10 of his height: she is shorter than him */      /* a step further back, so they read as two people side by side */
+#stage #who{z-index:2}
+.who.npc.l i.th{transform:translateX(-50%) scaleX(-1)}
+/* on this cool glossy floor: a light, blue-grey contact shadow (the floor dimming a touch, not a dark blot), and a stronger mirror reflection */
+#stage .who::after{background:radial-gradient(closest-side,rgba(58,78,108,.28),rgba(58,78,108,.08) 60%,transparent);height:2.6%}
+#stage .who::before{background:radial-gradient(closest-side,rgba(96,120,152,.13),transparent)}
+#stage .who i{-webkit-box-reflect:below var(--rf,0px) linear-gradient(transparent 86%,rgba(255,255,255,.3))}
+/* coming in from the white of the doorway */
+.whitein{position:fixed;inset:0;z-index:45;background:#fff;pointer-events:none;transition:opacity 1.6s ease}
+.whitein.out{opacity:0}
+/* the elevator wakes when her card is read */
+.elev{position:absolute;left:86.5%;top:28.6%;width:10.3%;height:31.8%;pointer-events:none;opacity:0;transition:opacity .6s;
+  background:linear-gradient(180deg,rgba(191,244,255,.0),rgba(191,244,255,.35));box-shadow:0 0 40px rgba(127,212,255,.6)}
+#stage.elevlit .elev{opacity:1}
+/* looking through the open door: the cinematic, full frame on black */
+.cine{position:fixed;inset:0;z-index:46;background:#000;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .7s ease}
+.cine.on{opacity:1;pointer-events:auto;cursor:var(--cur)}
+.cine video{width:100%;height:100%;object-fit:contain;background:#000}
+.cine .skip{position:absolute;right:24px;bottom:20px;font:500 10px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+/* a soft cool sheen that drifts down the long hallway */
+.atmo{position:absolute;inset:0;pointer-events:none}
+.sheen{background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.12) 45%,transparent 60%);background-size:260% 100%;opacity:.8}
+@media (prefers-reduced-motion:no-preference){.sheen{animation:sheen2 14s ease-in-out infinite}@keyframes sheen2{0%{background-position:120% 0}100%{background-position:-20% 0}}}
+
+</style>
+</head>
+<body>
+<a class="back" href="index.html">← Storyboard</a>
+<div class="whitein" id="whitein"></div>
+<div id="stage" class="open">
+  <img class="set" src="img/02-corridor.png?v=2" alt="The Aevum research corridor: a long white hallway of identical doors, one open onto a medical examination room, an elevator at the far end">
+  <div class="elev" aria-hidden="true"></div>
+  <div class="who npc" id="sci" aria-label="The Scientist"><i class="wk"></i><i class="th"></i></div>
+  <div class="who" id="who"><i class="wk"></i><i class="th"></i></div>
+  <div class="atmo sheen" aria-hidden="true"></div>
+  <div class="atmo dream" aria-hidden="true"></div>
+  <div class="slug" id="slug">Episode 01 · Room 02<b>Aevum research corridor</b></div>
+  <div class="sub" id="sub" aria-live="polite"></div>
+  <div class="quests" id="quests" aria-live="polite"><h6>Quest</h6></div>
+</div>
+<div class="hud"><span><kbd>← →</kbd>Walk</span><span><kbd>E</kbd>Interact</span><span><kbd>T</kbd>Think</span></div>
+<div class="talk" id="talk" aria-live="polite">
+  <div class="tbg" id="tbg"></div><div class="flash" id="tflash"></div>
+  <div class="bust l" id="bustL"></div><div class="bust r" id="bustR"></div>
+  <div class="tbox" id="tbox"><div class="tname" id="tname"><b></b><span></span></div><p class="ttext" id="ttext"></p><i class="tnext" id="tnext">E ▸</i></div>
+  <div class="tblack" id="tblack"><div class="tlock">
+    <svg class="halo" viewBox="0 0 400 400" aria-hidden="true">
+      <defs><radialGradient id="tHaloFill"><stop offset="0" stop-color="#33c6ff" stop-opacity=".16"/><stop offset=".55" stop-color="#33c6ff" stop-opacity=".05"/><stop offset="1" stop-color="#33c6ff" stop-opacity="0"/></radialGradient></defs>
+      <circle class="bloom" cx="200" cy="200" r="200"/><circle class="ring2" cx="200" cy="200" r="150"/><circle class="ring" id="tRing" cx="200" cy="200" r="174"/>
+    </svg>
+    <h2 class="word" aria-label="Luminance"><span class="ch" style="--i:3" aria-hidden="true">L</span><span class="ch" style="--i:2" aria-hidden="true">U</span><span class="ch" style="--i:1" aria-hidden="true">M</span><span class="pillar" aria-hidden="true"></span><span class="ch" style="--i:1" aria-hidden="true">N</span><span class="ch" style="--i:2" aria-hidden="true">A</span><span class="ch" style="--i:3" aria-hidden="true">N</span><span class="ch" style="--i:4" aria-hidden="true">C</span><span class="ch" style="--i:5" aria-hidden="true">E</span></h2>
+    <div class="tsub"><span class="kr" lang="ko">루미넌스</span><span class="tag">Seoul · <b>3062</b></span></div>
+  </div></div>
+</div>
+<div class="cine" id="cine" aria-label="Through the open door"><video id="cineV" src="img/cinematic/exam-room/exam-glance.mp4?v=2" muted playsinline preload="auto"></video><span class="skip">Press E to skip</span></div>
+<div class="end" id="end"><div><small>Episode 01 · Room 02</small><b>To be continued</b><span>Next: the elevator down, and one last full read before he steps into the world.</span><nav><button type="button" id="replay">Play again</button><a href="play-01.html?room">← Back to his room</a><a href="index.html" target="_top">Storyboard</a></nav></div></div>
+<script>
+window.LUM_ROOM=2;
+let begun=false;   // play has started (read by the walk loop and the journal from the first frame)
+/* ---------- set-up ---------- */
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const stage=document.getElementById("stage"), who=document.getElementById("who"), sci=document.getElementById("sci"), sub=document.getElementById("sub");
+const W0=1344, H0=752;
+let cropL=0; const EMBED=new URLSearchParams(location.search).has("embed"); if(EMBED) document.documentElement.classList.add("embed");
+const fit=()=>{const k=EMBED?Math.max(innerWidth/W0,innerHeight/H0):Math.min(innerWidth*.96/W0,(innerHeight-90)/H0), sw=W0*k, sh=H0*k;
+  stage.style.width=sw+"px"; stage.style.height=sh+"px";
+  const vl=EMBED?Math.max(0,(sw-innerWidth)/2):0, vt=EMBED?Math.max(0,(sh-innerHeight)/2):0;   // narrow screens crop both sides evenly here
+  if(EMBED){stage.style.position="absolute"; stage.style.left=-vl+"px"; stage.style.top=-vt+"px";}
+  cropL=vl/sw;};
+fit(); addEventListener("resize",fit);
+
+/* the walkers: Ji-yoo (same strips as his room) and the Scientist (her walk and her waiting loop, from her character file) */
+const J={walk:{strip:"img/walk/jiyoo-walk-strip-12-clean.png",frames:12,fps:12,idle:0,aspect:.4936},
+  think:{strip:"img/think/jiyoo-think-nopendant-strip-90-clean.png",frames:90,fps:25,aspect:.2787}};
+const SCI={walk:{strip:"img/walk/scientist/scientist-walk-strip-18.png",frames:18,fps:16,idle:4,aspect:.5277},
+  wait:{strip:"img/idle/scientist/scientist-idle-strip-38.png",frames:38,fps:12,aspect:.2149}};
+function rig(el,a,b){const wk=el.querySelector(".wk"), th=el.querySelector(".th");
+  el.style.setProperty("--n",a.frames); el.style.setProperty("--ar",a.aspect); wk.style.backgroundImage=`url(${a.strip})`;
+  el.style.setProperty("--n2",b.frames); el.style.setProperty("--ar2",b.aspect); th.style.backgroundImage=`url(${b.strip})`; return [wk,th];}
+const [wk,th]=rig(who,J.walk,J.think), [swk,sth]=rig(sci,SCI.walk,SCI.wait);
+
+/* sounds (the storyboard's set) */
+const SFX=(()=>{let ctx=null; const bufs={}, F={tick:["sfx/ui-tick.mp3",.3],toggle:["sfx/ui-toggle.mp3",.4],open:["sfx/modal-open.mp3",.46],card:["sfx/card-hover.mp3",.46],step:["sfx/jiyoo-slippers.mp3",.36],knock:["sfx/door-knock.mp3",.8],book:["sfx/book-open.mp3",.52],page:["sfx/page-turn.mp3",.36],close:["sfx/book-close.mp3",.5],trace:["sfx/trace.mp3",.23]};   // all a little softer than before, except the knock
+  try{ctx=new (window.AudioContext||window.webkitAudioContext)(); Object.entries(F).forEach(([k,[f]])=>fetch(f).then(r=>r.arrayBuffer()).then(a=>ctx.decodeAudioData(a)).then(b=>bufs[k]=b).catch(()=>{}));}catch(e){}
+  ["pointerdown","keydown"].forEach(ev=>addEventListener(ev,()=>{if(ctx&&ctx.state==="suspended") ctx.resume();},{capture:true}));
+  // options: vol, rate, from (start offset), dur (stop after this many seconds, with a quick fade), lp (muffle: low-pass cutoff in Hz)
+  return (k,o={})=>{if(!ctx||!bufs[k]) return; const s=ctx.createBufferSource(), g=ctx.createGain(), v=F[k][1]*(o.vol||1)*(window.LUM_SFX??1); g.gain.value=v; s.buffer=bufs[k]; if(o.rate) s.playbackRate.value=o.rate;
+    let n=s; if(o.lp){const f=ctx.createBiquadFilter(); f.type="lowpass"; f.frequency.value=o.lp; f.Q.value=.4; s.connect(f); n=f;}
+    n.connect(g).connect(ctx.destination); const t=ctx.currentTime; s.start(t,o.from||0);
+    if(o.dur){g.gain.setValueAtTime(v,t+o.dur*.6); g.gain.linearRampToValueAtTime(0,t+o.dur); s.stop(t+o.dur+.02);}
+    return {s,g,ctx};};})();
+/* the corridor's own sound: no music, just the building's hum and their steps */
+const room=new Audio("sfx/room-hum.mp3"); room.loop=true; room.volume=0;
+let roomFade=null; const ROOM_VOL=.16;
+const roomTo=(v,ms,stop)=>{v*=window.LUM_MUSIC??1; cancelAnimationFrame(roomFade); const a=room.volume,t0=performance.now(); const st=n=>{const k=Math.min(1,(n-t0)/ms); room.volume=Math.max(0,Math.min(1,a+(v-a)*k)); if(k<1) roomFade=requestAnimationFrame(st); else if(stop) room.pause();}; roomFade=requestAnimationFrame(st);};
+const roomStart=()=>{if(!room.paused) return; room.play().then(()=>roomTo(ROOM_VOL,2500)).catch(()=>{});};
+["pointerdown","keydown"].forEach(ev=>addEventListener(ev,()=>{if(begun) roomStart();},{capture:true}));
+// the journal (game-menu.js) looks for these from the first room
+let recOn=false, readBook=false, knocked=true; const recTo=()=>{};
+
+/* subtitle line */
+let subT=null;
+// each word is its own little piece so the line can pop in word by word and then bob gently while it sits there
+function say(text,who2,ms=3600){
+  const words=text.split(/(\s+)/).map((w,i)=>/^\s+$/.test(w)?w:`<span class="w" style="--i:${i/2|0}">${w}</span>`).join("");
+  sub.innerHTML=(who2?`<em>${who2}</em>`:"")+words; sub.classList.add("on"); clearTimeout(subT); subT=setTimeout(()=>sub.classList.remove("on"),ms);}
+
+/* ---------- quests ---------- */
+const questsEl=document.getElementById("quests"), QUESTS={};
+function addQuest(id,title,hint){if(QUESTS[id]) return; const el=document.createElement("div"); el.className="quest new";
+  el.innerHTML=`<i></i><span><b>${title}</b>${hint?`<small>${hint}</small>`:""}</span>`; el.addEventListener("pointerenter",()=>SFX("tick")); questsEl.appendChild(el); QUESTS[id]=el; questsEl.classList.add("on"); SFX("toggle");}
+function doneQuest(id){const el=QUESTS[id]; if(!el||el.classList.contains("done")) return; el.classList.add("done"); SFX("toggle");}
+
+/* ---------- things in the corridor (x, y as fractions of the painting) ---------- */
+// the plate speaks Aevum (output, status, variance; never a feeling); the line under it is his
+const placard=(x,num,plate,line)=>({id:"p"+num,x,y:.395,label:"Read the placard",kr:"명패 읽기",act(){say(line,`SUBJECT ${num} · ${plate}`,4600); SFX("card",{vol:.6});}});
+const HOT=[
+  placard(.115,"759","STATUS NOMINAL · OUTPUT 98.2%","Another door like his. He has never seen it open."),
+  placard(.248,"001","PRE-LUMINANT · ANOMALOUS BASELINE","His own. Written as if it were a room number."),
+  placard(.38,"762","STATUS NOMINAL · VARIANCE 0.03","Another door like his. Quiet behind it."),
+  placard(.52,"008","STATUS NOMINAL · REFINEMENT SCHEDULED","Another door like his. Quiet behind it, too."),
+  {id:"exam",x:.62,y:.33,label:"Look inside",kr:"안을 보기",act(){lookInside();}},
+  {id:"elev",x:.917,y:.27,label:"Take the elevator",kr:"엘리베이터 타기",act(){toElevator();}},
+];
+HOT.forEach(h=>{const el=document.createElement("button"); el.type="button"; el.className="hot"; el.style.left=h.x*100+"%"; el.style.top=h.y*100+"%";
+  el.innerHTML=`<span class="tag"><kbd><b>E</b></kbd><span class="l"></span><span class="k" lang="ko"></span><i class="tk"></i></span><span class="pip"></span>`; el.setAttribute("aria-label",h.label);
+  el.onclick=()=>{goal={x:Math.min(R,h.x),h};}; stage.appendChild(el); h.el=el;});
+
+/* ---------- movement ---------- */
+const steps=new Set();
+const footstep=(o={})=>{const h=SFX("step",{from:.2,rate:(o.rate||1)*(.94+Math.random()*.12),vol:(o.vol||1)*(.8+Math.random()*.25)}); if(h){steps.add(h); h.s.onended=()=>steps.delete(h);}};
+const hushSteps=()=>{steps.forEach(h=>{const t=h.ctx.currentTime; h.g.gain.cancelScheduledValues(t); h.g.gain.setValueAtTime(h.g.gain.value,t); h.g.gain.linearRampToValueAtTime(0,t+.04); try{h.s.stop(t+.05);}catch(e){}}); steps.clear();};
+let x=.196, face=1, f=0, acc=0, idle=0, think=false, tf=0, tacc=0, goal=null, locked=true;
+let talkOn=false;   // a conversation is up (declared here, since the walk loop reads it from its first frame)
+// the Scientist: a little ahead of him, toward the elevator. She walks while he walks, and stops when he stops
+let sx=.294, sface=1, sf=SCI.walk.idle, sacc=0, sw=0, swacc=0, waiting=true, sciLead=null;
+const GAP=.098, SR=.955;
+const keys=new Set();
+const setThink=v=>{think=v; who.classList.toggle("thinking",v); if(v){tf=0;tacc=0;}};
+let L=.05; const R=.865;   // walkable floor: from the first door to the elevator
+const hpx=()=>stage.clientHeight*.47;
+const near=()=>{let best=null,bd=.055; HOT.forEach(h=>{if(h.gone) return; const d=Math.abs(Math.min(R,h.x)-x); if(d<bd){bd=d;best=h;}}); return best;};
+addEventListener("keydown",e=>{
+  if(!begun||locked||talkOn) return;
+  const d={ArrowLeft:-1,a:-1,A:-1,ArrowRight:1,d:1,D:1}[e.key]; if(d){keys.add(d); goal=null; e.preventDefault(); return;}
+  if(e.key==="t"||e.key==="T"){setThink(!think); idle=think?0:-99; return;}
+  if(e.key==="e"||e.key==="E"){const h=near(); if(h) h.act(); e.preventDefault();}
+});
+addEventListener("keyup",e=>{const d={ArrowLeft:-1,a:-1,A:-1,ArrowRight:1,d:1,D:1}[e.key]; if(d) keys.delete(d);});
+addEventListener("blur",()=>keys.clear());
+stage.addEventListener("pointerdown",e=>{if(e.target.closest(".hot")||locked||talkOn) return; const r=stage.getBoundingClientRect(); goal={x:(e.clientX-r.left)/r.width};});
+
+/* what he thinks as he walks: each surfaces once, the first time he reaches that part of the hallway */
+const THOUGHTS=[
+  {at:.29, text:"The room ends at the door. It always has."},
+  {at:.375, text:"Sixty-three steps from my door to the lab. I counted them when I was eight. I still count."},
+  {at:.47, text:"Same hallway. Same white light. The same polite knock, every morning."},
+  {at:.72, text:"Eyes forward. They like it when I keep my eyes forward."},
+  {at:.80, text:"Tomorrow is different. Tomorrow I step into the world."},
+];
+const said=new Set();
+let examDone=false, doorSeen=false;
+function moments(){
+  THOUGHTS.forEach((t,i)=>{if(!said.has(i)&&x>=t.at&&(!t.after||examDone)){said.add(i); say(t.text,"Ji-yoo · thinking",4600);}});
+  // the open door: the first time he reaches it, it's noticed (he can look in, or walk on)
+  if(!doorSeen&&x>=.56){doorSeen=true; say("A door stands open.","",3000);}
+}
+
+let last=performance.now(), lastNear=null;
+(function step(now){
+  const dt=Math.min(.05,(now-last)/1000); last=now;
+  const Wp=stage.clientWidth, speed=hpx()*.62/Wp;
+  L=Math.max(.05,cropL+.035);
+  let dir=(keys.has(1)&&!keys.has(-1))?1:(keys.has(-1)&&!keys.has(1))?-1:0;
+  if(locked||talkOn) dir=0;
+  if(!dir&&goal&&!locked&&!talkOn){const g=Math.max(L,Math.min(R,goal.x)); if(Math.abs(g-x)<.003){x=g; const gg=goal; goal=null; if(gg.h){face=gg.h.x>=x?1:-1; gg.h.act();}}
+    else dir=Math.sign(g-x);}
+  if(dir){idle=0; if(think) setThink(false); face=dir; const nx=Math.max(L,Math.min(R,x+dir*speed*dt)); if(nx!==x){acc+=dt*J.walk.fps; while(acc>=1){acc-=1; f=(f+1)%J.walk.frames; if(f===2||f===8) footstep();} x=nx;} else goal=null;}
+  else {if(acc) hushSteps(); acc=0; f=J.walk.idle; if(!think&&!locked&&(idle+=dt)>.6) setThink(true);}
+  if(think){tacc+=dt*J.think.fps; while(tacc>=1){tacc-=1; tf=(tf+1)%J.think.frames;} th.style.backgroundPosition=`${tf/(J.think.frames-1)*100}% 0`;}
+  wk.style.backgroundPosition=`${f/(J.walk.frames-1)*100}% 0`;
+  const padPx=10*hpx()/470; who.style.setProperty("--rf",(-2*padPx).toFixed(1)+"px"); who.style.setProperty("--pad",(10/470*100).toFixed(2)+"%");
+  who.style.left=x*100+"%"; who.classList.toggle("l",face<0);
+
+  // the Scientist keeps a little ahead; she moves only while he does (or when she's leading him to the elevator)
+  const target=sciLead!=null?sciLead:Math.min(SR,x+GAP), d=target-sx;
+  const go=(dir!==0||sciLead!=null)&&Math.abs(d)>.004;
+  if(go){const sd=Math.sign(d); sface=sd; const sp=speed*(Math.abs(d)>.03?1.08:.92); sx+=sd*Math.min(Math.abs(d),sp*dt);
+    sacc+=dt*SCI.walk.fps; while(sacc>=1){sacc-=1; sf=(sf+1)%SCI.walk.frames; if(sf===4||sf===13) footstep({vol:.55,rate:1.12});} waiting=false;}
+  else {sf=SCI.walk.idle; sacc=0; if(!waiting){waiting=true; sw=0;}}
+  sci.classList.toggle("thinking",waiting);
+  if(waiting){swacc+=dt*SCI.wait.fps; while(swacc>=1){swacc-=1; sw=(sw+1)%SCI.wait.frames;} sth.style.backgroundPosition=`${sw/(SCI.wait.frames-1)*100}% 0`;}
+  swk.style.backgroundPosition=`${sf/(SCI.walk.frames-1)*100}% 0`;
+  sci.style.setProperty("--rf",(-2*padPx).toFixed(1)+"px"); sci.style.setProperty("--pad",(10/470*100).toFixed(2)+"%");
+  sci.style.left=sx*100+"%"; sci.classList.toggle("l",sface<0);
+
+  if(begun&&!locked) moments();
+  const n=locked||talkOn?null:near();
+  HOT.forEach(h=>{h.el.classList.toggle("near",h===n); h.el.querySelector(".l").textContent=h.label; h.el.querySelector(".k").textContent=h.kr||"";});
+  if(n&&n!==lastNear) SFX("card"); lastNear=n;
+  requestAnimationFrame(step);
+})(last);
+
+/* ---------- the talk: portraits slide in from the sides; the one speaking is lit ---------- */
+const P="img/portraits/", FACE={sci:P+"scientist-bust.png", sciFormal:P+"expressions/scientist-formal.png", sciSoft:P+"expressions/scientist-soft.png",
+  ji:P+"jiyoo-bust.png", jiThink:P+"expressions/jiyoo-thinking.png", jiSad:P+"expressions/jiyoo-sad.png", ww:P+"wealthy-woman-bust.png?v=2"};
+Object.values(FACE).forEach(src=>{const i=new Image(); i.src=src;});
+const WHO={sci:{side:"r",name:"The Scientist",kr:"과학자"}, ji:{side:"l",name:"Ji-yoo",kr:"지유"}, ww:{side:"r",name:"The woman",kr:"여자"}};
+const sideOf=face=>face.startsWith("ji")?"l":"r";
+// the open door, from the script: she is perhaps surprised to see him. He cannot read her. She cannot read him
+const EXAM=[
+  {enter:"ji", face:"jiThink", who:"ji", think:true, text:"A woman in a gown, in the raised chair. The doctor never looks up."},
+  {enter:"ww", face:"ww", who:"ji", think:true, text:"She looks surprised to see me. I can’t read her. I don’t think she can read me either."},
+  {exit:"ww", face:"ji", narr:"His gaze moves on. He keeps walking."},
+];
+const talk=document.getElementById("talk"), tbox=document.getElementById("tbox"), tname=document.getElementById("tname"), ttext=document.getElementById("ttext"), tnext=document.getElementById("tnext");
+const bust={l:document.getElementById("bustL"), r:document.getElementById("bustR")};
+let beats=[], ti=-1, typing=null, talkDone=null;
+function setFace(side, src){
+  const b=bust[side], old=b.querySelector("img:last-child");
+  if(old&&old.getAttribute("src")===src) return;
+  const im=new Image(); im.src=src; im.alt=""; im.style.opacity=old?0:1; b.appendChild(im);
+  if(old){requestAnimationFrame(()=>{im.style.opacity=1;}); setTimeout(()=>{[...b.querySelectorAll("img")].slice(0,-1).forEach(x=>x.remove());},400);}
+}
+function typeOut(text){
+  clearInterval(typing); ttext.textContent=""; tnext.classList.remove("on"); let i=0;
+  if(reduce){ttext.textContent=text; tnext.classList.add("on"); return;}
+  typing=setInterval(()=>{i+=1; ttext.textContent=text.slice(0,i); if(i>=text.length){clearInterval(typing); typing=null; tnext.classList.add("on");}},28);
+}
+function runTalk(b,done){beats=b; ti=-1; talkDone=done; talkOn=true; document.body.classList.add("talking"); sub.classList.remove("on");
+  ["l","r"].forEach(s=>{bust[s].classList.remove("in","dim"); bust[s].innerHTML="";});
+  talk.classList.add("on"); setTimeout(nextBeat,450);}
+function nextBeat(){
+  if(typing){clearInterval(typing); typing=null; const c=beats[ti]; ttext.textContent=c.text||c.narr||c.placard||""; tnext.classList.add("on"); return;}
+  ti++; const b=beats[ti];
+  if(!b){closeTalk(); return;}
+  SFX("tick",{vol:.5}); if(b.sfx) SFX(b.sfx);
+  if(b.enter){const s=WHO[b.enter].side; if(b.face) setFace(s,FACE[b.face]); requestAnimationFrame(()=>bust[s].classList.add("in"));}
+  if(b.exit){bust[WHO[b.exit].side].classList.remove("in");}
+  if(b.face&&!b.enter) setFace(sideOf(b.face),FACE[b.face]);
+  ["l","r"].forEach(s=>bust[s].classList.toggle("dim", !!b.who && WHO[b.who].side!==s));
+  if(b.narr||b.placard){["l","r"].forEach(s=>bust[s].classList.remove("dim"));}
+  const speaker=b.who&&!b.narr&&!b.placard;
+  tname.classList.toggle("hide",!speaker);
+  if(speaker){tname.querySelector("b").textContent=WHO[b.who].name+(b.think?" · thinking":""); tname.querySelector("span").textContent=WHO[b.who].kr+(b.think?" · 생각":""); talk.classList.toggle("right",WHO[b.who].side==="r");}
+  ttext.className="ttext"+(b.think?" think":"")+(b.narr?" narr":"")+(b.placard?" placard":"");
+  tbox.classList.add("on");
+  typeOut(b.text||b.narr||b.placard);
+}
+function closeTalk(){
+  tbox.classList.remove("on"); ["l","r"].forEach(s=>bust[s].classList.remove("in"));
+  setTimeout(()=>{talk.classList.remove("on"); document.body.classList.remove("talking"); talkOn=false; const d=talkDone; talkDone=null; d&&d();},450);
+}
+talk.addEventListener("pointerdown",e=>{if(talkOn&&!e.target.closest("a,button")) nextBeat();});
+addEventListener("keydown",e=>{
+  if(!talkOn||window.LUM_PAUSED) return;
+  if(["e","E"," ","Enter"].includes(e.key)){e.preventDefault(); e.stopImmediatePropagation(); nextBeat();}
+},{capture:true});
+
+/* ---------- looking through the open door: her cinematic, then what he makes of it ---------- */
+const cine=document.getElementById("cine"), cineV=document.getElementById("cineV");
+let cineOn=false, cineT0=0;
+function lookInside(){
+  if(cineOn||examDone) return; examDone=true; cineOn=true; locked=true; keys.clear(); goal=null; setThink(false); sub.classList.remove("on");
+  HOT.find(h=>h.id==="exam").gone=true; roomTo(.06,900);
+  cine.classList.add("on"); cineV.currentTime=0; cineT0=performance.now();
+  setTimeout(()=>cineV.play().catch(()=>{}),350);
+}
+function endCine(){
+  if(!cineOn) return; cineOn=false; cineV.pause(); cine.classList.remove("on"); roomTo(ROOM_VOL,1600);
+  setTimeout(()=>runTalk(EXAM,()=>{locked=false;}),500);
+}
+cineV.addEventListener("ended",endCine);
+cine.addEventListener("pointerdown",()=>{if(performance.now()-cineT0>1200) endCine();});
+addEventListener("keydown",e=>{if(!cineOn) return; e.preventDefault(); e.stopImmediatePropagation(); if(["e","E","Escape"," ","Enter"].includes(e.key)&&performance.now()-cineT0>1200) endCine();},{capture:true});
+
+/* ---------- the elevator: she leads him to it, her card is read (a soft click, a faint chime), then black, and the title ---------- */
+let leaving=false;
+function toElevator(){
+  if(leaving) return; leaving=true; locked=true; keys.clear(); goal=null; setThink(false);
+  sciLead=.955;   // she steps to the panel
+  const wait=()=>{if(Math.abs(sx-sciLead)>.006){requestAnimationFrame(wait); return;}
+    sciLead=null; sface=1;
+    setTimeout(()=>{SFX("toggle",{vol:.8}); say("She holds her key card to the reader. A soft click.","LIFT 03 · SUBJECT IN TRANSIT",2600);},300);
+    setTimeout(()=>{SFX("open",{vol:.55}); stage.classList.add("elevlit"); doneQuest("follow");},1300);
+    setTimeout(endScene,3600);};
+  wait();
+}
+// the light that orbits the halo's ring: a bright head with a tapering tail of dots (same as the title screen)
+function tMeteor(svg,path,{speed=150,gap=3.4,nb=36,nf=22,size=2.3,delay=0}={}){
+  if(reduce) return;
+  const u="tm"+Math.random().toString(36).slice(2,7), NS="http://www.w3.org/2000/svg";
+  const col=f=>`rgb(${Math.round(255-(255-51)*f)},${Math.round(255-(255-198)*f)},255)`;
+  const pts=[...Array.from({length:nb},(_,k)=>({d:-k,f:k/nb})),...Array.from({length:nf-1},(_,k)=>({d:k+1,f:(k+1)/nf}))];
+  const defs=document.createElementNS(NS,"defs");
+  defs.innerHTML=`<filter id="${u}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation=".7" result="c"/><feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="c"/></feMerge></filter>`;
+  const g=document.createElementNS(NS,"g"); g.setAttribute("filter",`url(#${u})`);
+  pts.forEach(()=>g.appendChild(document.createElementNS(NS,"circle")));
+  [...g.children].forEach((c,i)=>c.setAttribute("fill",col(pts[i].f)));
+  svg.append(defs,g);
+  const dots=[...g.children], ph=Math.random(); let t0=null;
+  (function spin(now){
+    if(!svg.isConnected) return;
+    if(t0===null) t0=now+delay;
+    const L=path.getTotalLength(), k=Math.max(0,now-t0)/1000;
+    if(L&&now>=t0){
+      const s=((k*speed/L+ph)%1)*L, pulse=1+Math.sin(k*4)*.08, fade=Math.min(1,k/1.2);
+      dots.forEach((c,i)=>{const p=pts[i], q=path.getPointAtLength(((s+p.d*gap)%L+L)%L), f=1-p.f;
+        c.setAttribute("cx",q.x); c.setAttribute("cy",q.y);
+        c.setAttribute("r",(size*(p.d?1:pulse)*Math.pow(f,.55)+.25).toFixed(2));
+        c.setAttribute("opacity",(Math.pow(f,1.5)*fade).toFixed(3));});
+    }
+    requestAnimationFrame(spin);
+  })(performance.now());
+}
+function endScene(){
+  roomTo(0,2400,true); talk.classList.add("on"); document.body.classList.add("talking");
+  const bl=document.getElementById("tblack");
+  setTimeout(()=>{bl.classList.add("on"); tMeteor(bl.querySelector(".halo"),document.getElementById("tRing"),{speed:110,gap:3,size:2,delay:3300});},500);
+  setTimeout(()=>bl.classList.add("out"),8200);
+  setTimeout(()=>{document.getElementById("end").classList.add("on"); talk.classList.remove("on");},9600);
+}
+document.getElementById("replay").onclick=()=>location.reload();
+
+/* ---------- the scene begins: out of the white of his doorway ---------- */
+function beginScene(){if(begun) return; begun=true; roomStart(); setThink(false);
+  setTimeout(()=>document.getElementById("whitein").classList.add("out"),150);
+  setTimeout(()=>document.getElementById("slug").classList.add("on"),900);
+  setTimeout(()=>document.getElementById("slug").classList.remove("on"),5600);
+  // from the script: she holds her key card to a reader. A soft click, a faint chime. She gestures. They walk
+  setTimeout(()=>{SFX("toggle",{vol:.7}); setTimeout(()=>SFX("open",{vol:.4}),700); say("A soft click. A faint chime. She gestures down the hall.","ACCESS GRANTED · ESCORT ON FILE",4200);},1500);
+  setTimeout(()=>{locked=false; addQuest("follow","Follow the Scientist","Down the hall, to the elevator");},3200);
+}
+setTimeout(beginScene,300);
+</script>
+<script src="game-menu.js?v=28"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<style>html { background: #fff; color-scheme: light only; }</style>   <!-- some phone browsers paint a dark page in dark mode unless the site says it is light -->
+<title>The Descent</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="fonts.js"></script>
+<script>try { if (sessionStorage.getItem("wave")) { sessionStorage.removeItem("wave"); document.documentElement.classList.add("wave-in"); setTimeout(() => document.documentElement.classList.remove("wave-in"), 2500); } } catch (e) {}</script>
+<link rel="stylesheet" href="footer.css">
+<style>
+  :root {
+    --sea-blue: #1d6aa3; --sea-light: #4aa3c9;   /* the blues from the water, used for every accent */
+    --m: clamp(16px, 3.6vw, 56px);
+    --ink: #0d0b10;
+    --sans: 'Instrument Sans', system-ui, sans-serif;
+    --display: 'Satoshi', 'Instrument Sans', system-ui, sans-serif;
+    /* the water, taken from the octopus film: rosy pink and a cool, misty blue */
+    --pink: #ecd3d3; --peach: #ecdcd2; --blue: #c4cbdd; --lilac: #d6cfe2; --mist: #dcd5d9;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--mist); }
+  html, body { overscroll-behavior: none; }
+  body { margin: 0; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+
+  /* the white version (index.html?bg=white): plain white water, nothing drifting */
+  html.white, html.white .water, html.white .veil { background: #fff; }
+  html.white .water i { display: none; }
+  html.white .top { background: rgba(255, 255, 255, .78); box-shadow: 0 0 20px rgba(0, 0, 0, .06), inset 0 0 0 1px rgba(0, 0, 0, .04); }
+  /* the water: soft pink and blue clouds drifting slowly past each other */
+  .water { position: fixed; inset: 0; overflow: hidden; background: var(--mist); }
+  .water i { position: absolute; width: 90vmax; height: 90vmax; border-radius: 50%; filter: blur(70px); opacity: .95; will-change: transform; }
+  .water i:nth-child(1) { background: radial-gradient(closest-side, var(--pink), transparent); left: -20vmax; top: -30vmax; animation: drift1 26s ease-in-out infinite alternate; }
+  .water i:nth-child(2) { background: radial-gradient(closest-side, var(--blue), transparent); right: -30vmax; bottom: -35vmax; animation: drift2 31s ease-in-out infinite alternate; }
+  .water i:nth-child(3) { background: radial-gradient(closest-side, var(--peach), transparent); left: 20vmax; top: 10vmax; width: 60vmax; height: 60vmax; animation: drift3 22s ease-in-out infinite alternate; }
+  .water i:nth-child(4) { background: radial-gradient(closest-side, var(--lilac), transparent); left: -15vmax; bottom: -40vmax; width: 70vmax; height: 70vmax; animation: drift4 35s ease-in-out infinite alternate; }
+  @keyframes drift1 { to { transform: translate(18vmax, 12vmax) scale(1.1); } }
+  @keyframes drift2 { to { transform: translate(-22vmax, -10vmax) scale(.92); } }
+  @keyframes drift3 { to { transform: translate(-14vmax, 16vmax) scale(1.15); } }
+  @keyframes drift4 { to { transform: translate(20vmax, -14vmax) scale(1.05); } }
+
+  /* the logo sits in the water, under the octopus; the octopus film is cut out and drawn on top */
+  /* the animated logo: once under the octopus (#loopBig), then small in the top corner (#loopTop) */
+  .word, .tag { z-index: 1; }
+  #loopBig { position: fixed; left: 0; top: 0; pointer-events: none; }
+  .home { position: fixed; z-index: 11; left: 0; top: 23px; width: 62px; height: 62px; display: block; }   /* always there */
+  .home canvas { width: 100%; height: 100%; display: block; }
+
+  .film { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; pointer-events: none; }
+
+  /* the name: huge, stacked, on the left. THE sits a touch further left than DESCENT */
+  .word { position: fixed; left: 0; top: 0; margin: 0; pointer-events: none; color: var(--ink);
+    font: 800 100px/.84 var(--display); text-transform: uppercase; letter-spacing: -.035em; white-space: nowrap; }
+  .word span { display: block; overflow: hidden; padding: .02em 0 .04em; }
+  .word span:nth-child(2) { padding-left: .6em; margin-top: -.07em; }   /* the two lines sit tight together */
+  .word span i { display: inline-block; font-style: normal; will-change: transform; }
+  .tag { position: fixed; left: 0; top: 0; margin: 0; pointer-events: none; font: 300 13px/1.35 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ink); opacity: 0; white-space: nowrap; text-align: left; }
+
+  /* top bar (the logo itself swims up into the top left) */
+  /* the nav: a frosted bar floating over the water. The logo swims into its left end, the ticket block is flush right */
+  .top { position: fixed; z-index: 10; left: 50%; transform: translateX(-50%); top: 22px; height: 64px; display: flex; align-items: stretch; gap: clamp(22px, 3vw, 44px); padding-left: calc(76px + clamp(18px, 3.2vw, 46px)); border-radius: 999px;   /* logo, then the same gap the links use */ overflow: hidden;   /* hugs its content */
+    background: rgba(255, 255, 255, .5); -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, .05), inset 0 0 0 1px rgba(255, 255, 255, .55); }
+  .top nav { display: flex; align-items: center; gap: clamp(18px, 3.2vw, 46px); font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .top a { color: var(--ink); text-decoration: none; position: relative; white-space: nowrap; }
+  .top nav a::after { content: ""; position: absolute; left: 0; right: .16em; bottom: -7px; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.2, .7, .3, 1); }
+  .top nav a:hover::after, .top nav a:focus-visible::after { transform: none; }
+  .top .tix { display: flex; align-items: center; padding: 0 clamp(24px, 2.8vw, 38px) 0 clamp(22px, 2.6vw, 34px); background: var(--ink); color: #ffffff; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; overflow: hidden; }
+  .btn-fill { position: relative; isolation: isolate; overflow: hidden; }
+  .btn-fill::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--sea-blue); transform: translateY(101%); transition: transform .4s cubic-bezier(.2, .7, .3, 1); }
+  .btn-fill:hover::before, .btn-fill:focus-visible::before { transform: none; }
+  @media (max-width: 760px) { .top nav { display: none; } }
+
+  /* the deep: black water rolling along the bottom of the screen, two layers of slow waves */
+  .deep { position: fixed; left: 0; bottom: 0; width: 100vw; height: 1px; z-index: 2; pointer-events: none; overflow: visible; }
+  .deep #deepBack { fill: url(#seaBack); } .deep #deepFront { fill: url(#seaFront); }   /* bright blue at the surface, sinking to near-black, which then melts into the abyss */
+  /* the abyss: once the water has risen over everything, the anglerfish film fills the screen */
+  .abyss { position: fixed; inset: 0; z-index: 8; background: #010206; opacity: 0; pointer-events: none; }
+  /* in the dark: clear glass instead of a pale bar. Blur what's behind, a thin bright edge and a soft sheen; white links and logo */
+  .top { transition: background .2s ease, box-shadow .2s ease; }
+  .top nav a, .home canvas { transition: color .2s ease, filter .2s ease; }
+  body.dark .top { background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .05) 60%, rgba(255, 255, 255, .09));
+    -webkit-backdrop-filter: blur(22px) saturate(1.7) brightness(1.1); backdrop-filter: blur(22px) saturate(1.7) brightness(1.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -1px 0 rgba(255, 255, 255, .12), inset 0 0 0 1px rgba(255, 255, 255, .18), 0 10px 30px rgba(0, 0, 0, .25); }
+  body.dark .top nav a { color: #fff; }
+  body.dark .home canvas { filter: invert(1); }
+  body.dark .top .tix { background: #ffffff; color: var(--ink); } body.dark .top .tix::before { background: var(--sea-light); }   /* in the dark, the ticket button flips */
+  .abyss video { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; transition: opacity 1.6s ease; }
+  .abyss.after video { opacity: 0; }                                                 /* the fish has gone: back to the dark */
+  .abyss #dust { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 2.4s ease .4s; }
+  .abyss.after #dust { opacity: 1; }
+  /* after the fish: EXPLORE OUR EXHIBITS rises huge in the middle, then glides to the right as the exhibits slide in on the left */
+  .explore { position: absolute; left: 50%; top: 50%; margin: 0; color: #ffffff; text-align: center; white-space: nowrap; text-transform: uppercase;
+    font: 900 clamp(40px, 8vw, 150px)/.88 var(--display); letter-spacing: -.03em; opacity: 0; transform: translate(-50%, -40%);
+    transition: opacity 1s ease, transform 1s cubic-bezier(.2, .7, .3, 1); }
+  .explore span { display: block; width: fit-content; margin: 0 auto; }   /* each line is its own box, so each can travel on its own */
+  .abyss.shelf .explore span { margin: 0; }
+  .abyss.say .explore { opacity: 1; transform: translate(-50%, -50%); }
+  .abyss.shelf .explore { transition: opacity .45s ease; left: 52%; transform: translate(0, -50%); text-align: left; font-size: clamp(44px, 6.6vw, 132px); }
+  .abyss.shelf.reading .explore { opacity: 0; }
+  /* the slider: two columns of cards on the left, drifting downward at different speeds */
+  .exhibits { position: absolute; left: clamp(16px, 3.6vw, 56px); top: 0; bottom: 0; width: 44vw; overflow: hidden; display: flex; gap: 18px;
+    opacity: 0; transform: translateY(-40px); transition: opacity 1s ease .5s, transform 1.2s cubic-bezier(.2, .7, .3, 1) .5s; pointer-events: none; cursor: grab; touch-action: none; -webkit-touch-callout: none;
+    -webkit-mask: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent); mask: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent); }
+  .abyss.shelf .exhibits { opacity: 1; transform: none; pointer-events: auto; }
+  .exhibits.drag { cursor: grabbing; }
+  .ex-col { position: relative; flex: 1; }
+  .ex-track { position: absolute; left: 0; right: 0; top: 0; display: flex; flex-direction: column; gap: 18px; will-change: transform; }
+  .abyss.reading .ex:not(.on) { opacity: .35; }
+  .ex { transition: opacity .4s ease; }
+  /* the story, in the right-hand half: a friendly submarine log of what you've spotted. Calm: it just fades in, nothing glitches or types */
+  .story { position: absolute; left: 52%; top: 50%; width: min(40vw, 560px); transform: translateY(-50%); color: #eef6ff; pointer-events: none; }
+  .story > * { opacity: 0; transform: translateY(10px); transition: opacity .45s ease, transform .6s cubic-bezier(.2, .8, .3, 1); }
+  .abyss.reading .story > * { opacity: 1; transform: none; }
+  .abyss.reading .story > :nth-child(2) { transition-delay: .05s; } .abyss.reading .story > :nth-child(3) { transition-delay: .1s; }
+  .abyss.reading .story > :nth-child(4) { transition-delay: .15s; } .abyss.reading .story > :nth-child(5) { transition-delay: .2s; } .abyss.reading .story > :nth-child(6) { transition-delay: .25s; }
+  .hud-top { display: inline-flex; align-items: center; gap: 10px; height: 30px; padding: 0 16px; margin-bottom: 20px; border-radius: 999px; background: var(--sea-light); color: #04203f; font: 600 11.5px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .hud-top i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .5; }
+  .hud-main { display: flex; align-items: center; gap: 24px; margin-bottom: 20px; }
+  .sonar { flex: none; width: 118px; height: 118px; }
+  .hud-main h3 { margin: 0 0 10px; font: 900 clamp(36px, 4vw, 70px)/.92 var(--display); letter-spacing: -.03em; text-transform: uppercase; color: #fff; }
+  .hud-coords { font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: rgba(74, 163, 201, .9); }
+  .hud-log { margin: 0 0 22px; font: 400 clamp(15px, 1.2vw, 18px)/1.6 var(--sans); color: #d4e3f1; }
+  .hud-log b { display: block; margin-bottom: 10px; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: #fff; }   /* same as the nav links */
+  .story ul { list-style: none; margin: 0 0 22px; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .story li { display: flex; flex-direction: column; gap: 6px; padding: 12px 18px 13px; border-radius: 22px; background: rgba(74, 163, 201, .1); }
+  .story li b { font: 600 10.5px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: var(--sea-light); }
+  .story li span { font: 600 15px/1.2 var(--sans); color: #fff; }
+  .gauge { position: relative; height: 28px; margin: 0 0 26px; }
+  .gauge .ticks { position: absolute; left: 0; right: 0; top: 0; height: 9px; background: repeating-linear-gradient(to right, rgba(255, 255, 255, .6) 0 1px, transparent 1px 10%), repeating-linear-gradient(to right, rgba(255, 255, 255, .3) 0 1px, transparent 1px 2%); background-size: 100% 9px, 100% 5px; background-repeat: no-repeat; }
+  .gauge .mk { position: absolute; top: -3px; width: 0; height: 0; border: 6px solid transparent; border-top: 8px solid #ff5a4f; transform: translateX(-6px); transition: left .6s cubic-bezier(.2, .8, .3, 1); }
+  .gauge .lbl { position: absolute; left: 0; right: 0; top: 15px; display: flex; justify-content: space-between; font: 500 10px/1 var(--sans); letter-spacing: .14em; color: rgba(238, 246, 255, .5); }
+  .story .cta { display: inline-flex; align-items: center; height: 50px; padding: 0 26px; border-radius: 999px; border: 1.5px solid #fff; background: transparent; color: #fff; text-decoration: none; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; pointer-events: auto; transition: background .25s, color .25s; }
+  .story .cta:hover { background: #fff; color: #0d0b10; }
+  /* soft rounded brackets around the card you're looking at, and a dotted line out to the log */
+  .lock { position: fixed; z-index: 7; pointer-events: none; opacity: 0; transition: opacity .3s ease; }
+  .lock.on { opacity: 1; }
+  .lock i { position: absolute; width: 26px; height: 26px; border: 3px solid var(--sea-light); }
+  .lock i:nth-child(1) { left: -9px; top: -9px; border-right: 0; border-bottom: 0; border-top-left-radius: 14px; } .lock i:nth-child(2) { right: -9px; top: -9px; border-left: 0; border-bottom: 0; border-top-right-radius: 14px; }
+  .lock i:nth-child(3) { left: -9px; bottom: -9px; border-right: 0; border-top: 0; border-bottom-left-radius: 14px; } .lock i:nth-child(4) { right: -9px; bottom: -9px; border-left: 0; border-top: 0; border-bottom-right-radius: 14px; }
+  .lock b { display: none; }
+  .tether { position: fixed; inset: 0; z-index: 7; pointer-events: none; width: 100%; height: 100%; opacity: 0; transition: opacity .4s ease; }
+  .tether.on { opacity: 1; }
+  .tether path { fill: none; stroke: rgba(74, 163, 201, .55); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 0 8; }
+  .tether circle { fill: var(--sea-light); }
+  @media (max-width: 760px) { .exhibits { width: auto; right: 16px; bottom: 44vh; } .abyss.shelf .explore { left: 16px; top: auto; bottom: 8vh; transform: none; font-size: 13vw; } .story { left: 16px; right: 16px; width: auto; top: auto; bottom: 4vh; transform: none; } }
+  .ex { position: relative; flex: none; width: 100%; aspect-ratio: 3 / 4; background: #14121a; overflow: hidden; color: #ffffff; text-decoration: none; user-select: none; -webkit-user-drag: none; }
+  .ex img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s cubic-bezier(.2, .7, .3, 1); pointer-events: none; }
+  .ex:hover img { transform: scale(1.06); }
+  .ex::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(1, 2, 6, .82), transparent 45%); }
+  .ex b { position: absolute; z-index: 1; left: 18px; right: 18px; bottom: 16px; font: 700 clamp(15px, 1.3vw, 22px)/1.1 var(--display); text-transform: uppercase; letter-spacing: .01em; }
+  .ex small { position: absolute; z-index: 1; left: 18px; top: 16px; font: 500 11px/1 var(--sans); letter-spacing: .24em; text-transform: uppercase; opacity: .7; }
+  .ex:not(.blank) small { color: #0d0b10; opacity: .55; }   /* photos are on white: dark zone label */
+  /* a card whose animals break out of the frame: the picture is wider than the card and floats over its neighbours */
+  /* photo cards: the animal is a cut-out larger than the card. It stays inside its frame until you hover, then swims out over the neighbours */
+  .ex.pop { overflow: hidden; }
+  .ex.pop img.spill { inset: auto; height: auto; object-fit: contain; z-index: 2; transition: transform .7s cubic-bezier(.2, .8, .3, 1), filter .5s; }
+  .ex.pop:hover { overflow: visible; z-index: 5; }
+  .ex.pop:hover img.spill { transform: scale(1.08) translateY(-8px); filter: drop-shadow(0 20px 26px rgba(0, 0, 0, .35)); }
+  .ex.pop::after { z-index: 1; }
+  .ex.pop:hover::after { z-index: 1; }
+  .ex.pop b, .ex.pop small { z-index: 3; }
+  .ex.pop::after { display: none; }                                   /* no dark fade over the photos */
+  .ex.pop b { color: #0d0b10; }
+  .ex.pop small { color: #0d0b10; opacity: .6; }
+  .ex.blank { background: repeating-linear-gradient(135deg, #14121a 0 14px, #18161f 14px 28px); }
+  body.deeped .cue { color: #f1e9ea; z-index: 3; }
+  /* the little boat, riding the front wave */
+  .boat { position: fixed; left: 0; top: 0; z-index: 6; width: 1px; height: 1px; overflow: visible; pointer-events: auto; cursor: pointer; touch-action: manipulation; opacity: 0; transform-origin: 50% 88%; will-change: transform; }
+  .boat path { fill: var(--ink); fill-rule: evenodd; }
+  /* where the boat crosses the black letters (above the water), it shows white: a copy of the name filled with a white boat, clipped to the letters */
+  .overboat { position: fixed; inset: 0; z-index: 7; pointer-events: none; }   /* above the boat, which is clickable underneath */
+  .overboat .word { color: transparent; z-index: auto; }
+  .overboat .word i { color: transparent; -webkit-background-clip: text; background-clip: text; background-repeat: no-repeat; }   /* each letter shows its own slice of the white boat */
+  .seadust { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 3; pointer-events: none; }   /* specks drifting in the water, clipped to it */
+  .underwater { position: fixed; inset: 0; z-index: 4; pointer-events: none; }   /* clipped to the water: the name shows white beneath the surface */
+  .underwater .word { color: #ffffff; z-index: auto; }
+  /* the buttons sit in the water, so they flip: white button, white text */
+  body.deeped .ctas a.primary { background: #ffffff; color: var(--ink); }
+  body.deeped .ctas a.primary::before { background: var(--sea-light); }
+  body.deeped .ctas a.ghost { color: #ffffff; }
+  /* the calls to action, under the name */
+  .ctas { position: fixed; left: 0; top: 0; z-index: 3; display: flex; align-items: stretch; gap: 12px; opacity: 0; pointer-events: none; }   /* a pair of pills, close together like the other button pairs */
+  .ctas.on { pointer-events: auto; }
+  .ctas a { display: flex; align-items: center; height: 60px; color: var(--ink); text-decoration: none; font: 500 15px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; }
+  .ctas a.primary { padding: 0 34px; background: var(--ink); color: #ffffff; border-radius: 999px; }   /* pills, like every other button on the site */
+  .ctas a.ghost { position: relative; padding: 0 30px; border: 1.5px solid currentColor; border-radius: 999px; transition: background .25s, color .25s; }
+  .ctas a.ghost:hover { background: #ffffff; color: var(--ink) !important; }
+  .ctas a.ghost::after { display: none; content: ""; position: absolute; left: 0; right: .2em; bottom: 14px; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.2, .7, .3, 1); }
+  .ctas a.ghost:hover::after, .ctas a.ghost:focus-visible::after { transform: none; }
+  @media (max-width: 760px) { .ctas { gap: 10px; } .ctas a { height: 46px; font-size: 11px; letter-spacing: .16em; } .ctas a.primary { padding: 0 18px; } .ctas a.ghost { padding: 0 16px; } .ctas a.ghost::after { bottom: 11px; } }
+
+  /* scroll cue */
+  /* the scroll prompt: a little mouse with its wheel rolling, the words under it. Big and clear on arrival, small once you've started */
+  .cue { position: fixed; z-index: 9; left: 50%; bottom: clamp(26px, 6vh, 64px); transform: translateX(-50%); margin: 0; display: grid; justify-items: center; gap: 14px;
+    font: 500 13px/1 var(--sans); letter-spacing: .3em; text-transform: uppercase; color: var(--ink); opacity: 0; transition: opacity .6s ease, color .4s; pointer-events: none; }
+  .cue .mouse { width: 26px; height: 42px; border: 1.6px solid currentColor; border-radius: 14px; position: relative; }
+  .cue .mouse::after { content: ""; position: absolute; left: 50%; top: 8px; width: 3px; height: 8px; margin-left: -1.5px; border-radius: 2px; background: currentColor; animation: wheel 1.6s cubic-bezier(.5, 0, .3, 1) infinite; }
+  @keyframes wheel { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 70% { transform: translateY(14px); opacity: 0; } 100% { opacity: 0; } }
+  .cue b { display: block; width: 1px; height: 26px; background: currentColor; transform-origin: top; animation: drip 1.8s ease-in-out infinite; }
+  body.late .cue .mouse { display: none; }   /* the mouse is just for the start */
+  body.idle .cue { animation: nudge 2.6s ease-in-out infinite; }
+  @keyframes nudge { 0%, 60%, 100% { transform: translate(-50%, 0); } 75% { transform: translate(-50%, 6px); } }
+  @keyframes drip { 0% { transform: scaleY(0); } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+  .veil { position: fixed; inset: 0; z-index: 9; display: grid; place-items: center; background: var(--mist); transition: opacity .8s ease; font: 500 11px/1 var(--sans); letter-spacing: .24em; text-transform: uppercase; }
+  .veil.gone { opacity: 0; pointer-events: none; }
+  .track { height: 1780vh; }   /* the dive, the exhibits, our philosophy, events, tickets, then the footer */
+  /* scenes that are fully covered by the one on top aren't drawn at all (the big win for smooth scrolling) */
+  body.buried .water, body.buried #loopBig, body.buried .film, body.buried .word, body.buried .tag, body.buried .deep, body.buried .boat, body.buried .overboat,
+  body.buried .seadust, body.buried .underwater, body.buried .ctas, body.buried .cue { visibility: hidden; }
+  .foot-scene { position: fixed; inset: 0; z-index: 9; transform: translateY(100%); pointer-events: none; will-change: transform; }
+  .foot-scene.on { pointer-events: auto; }
+  .foot-scene .foot { height: 100%; min-height: 0; }
+  /* our philosophy: deep blue water, the manta gliding slowly across behind a big promise and three principles */
+  .philo { position: fixed; inset: 0; z-index: 9; color: var(--ink); background: #fff; transform: translateY(100%); pointer-events: none; will-change: transform; overflow: hidden; }
+  .philo.on { pointer-events: auto; }
+  .ph-in { position: absolute; z-index: 2; left: clamp(16px, 6vw, 96px); right: clamp(16px, 6vw, 96px); bottom: 12vh; }
+  .ph-in small { display: block; margin-bottom: 18px; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .ph-in h2 { margin: 0 0 56px; max-width: 48vw; font: 900 clamp(40px, 5.2vw, 100px)/.88 var(--display); letter-spacing: -.03em; text-transform: uppercase; }
+  .ph-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 3vw, 48px); margin: 0; padding: 0; list-style: none; }
+  .ph-cols li { padding-top: 18px; border-top: 1px solid rgba(13, 11, 16, .2); }
+  .ph-cols b { display: block; margin-bottom: 10px; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--ink); }
+  .ph-cols strong { display: block; margin-bottom: 8px; font: 700 clamp(18px, 1.5vw, 22px)/1.15 var(--display); text-transform: uppercase; }
+  .ph-cols span { font: 400 15px/1.55 var(--sans); color: #4a4750; }
+  /* the commercial, as a box on the right that overlaps the headline's row */
+  .ph-film { position: absolute; z-index: 3; right: clamp(16px, 6vw, 96px); top: clamp(120px, 17vh, 170px); width: min(40vw, 680px); margin: 0; }
+  .ph-film video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #0d0b10; box-shadow: 0 30px 60px rgba(13, 11, 16, .18); }
+  .ph-film figcaption { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 16px; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .ph-film a { display: inline-flex; align-items: center; height: 50px; padding: 0 26px; border-radius: 999px; background: var(--ink); color: #fff; border: 1.5px solid var(--ink); text-decoration: none; transition: background .25s, color .25s; }
+  .ph-film a:hover { background: transparent; color: var(--ink); }
+  /* phones: the story is a bottom sheet over the gallery, just the essentials */
+  @media (max-width: 760px) {
+    .story { left: 0; right: 0; bottom: 0; top: auto; width: auto; transform: translateY(105%); padding: 22px 20px calc(24px + env(safe-area-inset-bottom)); border-radius: 26px 26px 0 0;
+      background: rgba(2, 11, 29, .9); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: 0 -20px 40px rgba(0, 0, 0, .35); transition: transform .45s cubic-bezier(.2, .8, .3, 1); pointer-events: auto; }
+    .abyss.reading .story { transform: none; }
+    .story > * { transform: none !important; }
+    .hud-top { margin-bottom: 14px; font-size: 10px; height: 26px; padding: 0 12px; gap: 7px; }
+    .hud-main { margin-bottom: 12px; } .sonar, .hud-coords, .gauge { display: none; }
+    .hud-main h3 { font-size: 34px; margin: 0; }
+    .hud-log { margin-bottom: 14px; font-size: 15px; } .hud-log b { margin-bottom: 6px; }
+    .story ul { gap: 6px; margin-bottom: 16px; } .story li { padding: 8px 14px 9px; border-radius: 16px; } .story li span { font-size: 13px; }
+    .story .cta { height: 44px; padding: 0 20px; }
+    .tether { display: none; }
+    .sheet-x { display: block; }
+  }
+  .sheet-x { display: none; position: absolute; right: 16px; top: 16px; width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid rgba(255, 255, 255, .35); background: none; color: #fff; font: 300 22px/1 var(--sans); cursor: pointer; }
+  @media (max-width: 760px) {
+    .philo { display: flex; flex-direction: column; justify-content: center; gap: 18px; padding: 96px 16px 28px; }
+    .ph-in { display: contents; }
+    .ph-in small { order: 1; margin: 0; }
+    .ph-in h2 { order: 2; margin: 0; max-width: none; font-size: clamp(34px, 10vw, 46px); }
+    .ph-film { order: 3; position: static; width: auto; }
+    .ph-film figcaption { margin-top: 12px; }
+    .ph-film figcaption span { display: none; }
+    .ph-film a { height: 44px; padding: 0 22px; }
+    .ph-cols { order: 4; grid-template-columns: 1fr; gap: 0; }
+    .ph-cols li { display: flex; align-items: baseline; gap: 14px; padding: 12px 0; }
+    .ph-cols b { margin: 0; }
+    .ph-cols strong { margin: 0; font-size: 18px; }
+    .ph-cols span { display: none; }   /* just the three titles on a phone */
+  }
+  /* tickets: white water floods up over the jellyfish with a wavy surface (back to the white from the very start); words in the middle, the octopus resting at the bottom */
+  .tickets, .tk-ribbon { position: fixed; inset: 0; z-index: 9; clip-path: inset(100% 0 0 0); pointer-events: none; }
+  .tk-ribbon { background: linear-gradient(90deg, #6bbad8, #1d6aa3 50%, #6bbad8); }
+  .tickets { background: #fff; color: var(--ink); overflow: hidden; }
+  .tickets.on { pointer-events: auto; }
+  .tickets canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+  .tk-octo { position: absolute; z-index: 2; left: 50%; bottom: 0; width: min(40vw, 560px); transform: translate(-50%, 42%); animation: tkfloat 7s ease-in-out infinite; pointer-events: none; }
+  @keyframes tkfloat { 50% { transform: translate(-50%, 39%) rotate(-1.5deg); } }
+  .tk-in { position: absolute; z-index: 3; left: 50%; top: 40%; width: min(92vw, 860px); transform: translate(-50%, -50%); text-align: center; }
+  .tk-in small { display: block; margin-bottom: 18px; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .tk-in h2 { margin: 0 0 20px; font: 900 clamp(48px, 7vw, 128px)/.86 var(--display); letter-spacing: -.035em; text-transform: uppercase; }
+  .tk-in p { margin: 0 auto 28px; max-width: 600px; font: 400 clamp(15px, 1.2vw, 18px)/1.6 var(--sans); color: #4a4750; }
+  .tk-prices { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 0 0 28px; padding: 0; list-style: none; }
+  .tk-prices li { display: flex; flex-direction: column; gap: 6px; padding: 12px 20px 13px; border-radius: 22px; background: #f1f3f6; }
+  .tk-prices b { font: 500 10.5px/1 var(--sans); letter-spacing: .2em; text-transform: uppercase; color: #6b6874; }
+  .tk-prices span { font: 700 22px/1 var(--display); }
+  .tk-btns { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+  .tk-btns .ev-all { border-color: var(--ink); color: var(--ink); }
+  .tk-btns .ev-all:hover { background: var(--ink); color: #fff; }
+  .tk-btns .ev-tix { background: var(--ink); color: #fff; }
+  .tk-btns .ev-tix:hover { background: transparent; color: var(--ink); }
+  /* events: the jellyfish tank rises up over the exhibits; the list sits in the open water on the left */
+  .events { position: fixed; inset: 0; z-index: 9; background: #03122b; color: #fff; transform: translateY(100%); pointer-events: none; will-change: transform; }
+  .events.on { pointer-events: auto; }
+  .events video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; }
+  .events::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to right, rgba(2, 10, 28, .78) 0%, rgba(2, 10, 28, .45) 38%, transparent 62%); }
+  .ev-in { position: absolute; z-index: 2; left: clamp(16px, 6vw, 96px); top: 50%; width: min(46vw, 620px); transform: translateY(-46%); }
+  .ev-in small { display: block; margin-bottom: 18px; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .ev-in h2 { margin: 0 0 34px; font: 900 clamp(48px, 6.4vw, 120px)/.88 var(--display); letter-spacing: -.03em; text-transform: uppercase; }
+  .ev-list { list-style: none; margin: 0 0 34px; padding: 0; border-top: 1px solid rgba(255, 255, 255, .22); }
+  .ev-list a { display: grid; grid-template-columns: 74px 1fr auto; align-items: center; gap: 22px; padding: 18px 0; border-bottom: 1px solid rgba(255, 255, 255, .22); color: #fff; text-decoration: none; transition: padding .35s cubic-bezier(.2, .8, .3, 1), background .35s; }
+  .ev-list a:hover { padding-left: 12px; }
+  .ev-date { font: 900 30px/.9 var(--display); letter-spacing: -.02em; }
+  .ev-date span { display: block; margin-bottom: 6px; font: 500 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: rgba(255, 255, 255, .7); }
+  .ev-list b { display: block; margin-bottom: 5px; font: 700 clamp(18px, 1.5vw, 22px)/1.15 var(--display); text-transform: uppercase; letter-spacing: .005em; }
+  .ev-list em { font: 400 14px/1.45 var(--sans); font-style: normal; color: rgba(255, 255, 255, .78); }
+  .ev-list i { font: 500 12px/1 var(--sans); font-style: normal; letter-spacing: .16em; text-transform: uppercase; white-space: nowrap; color: rgba(255, 255, 255, .85); }
+  .ev-all { display: inline-flex; align-items: center; height: 50px; padding: 0 26px; border-radius: 999px; border: 1.5px solid #fff; color: #fff; text-decoration: none; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; transition: background .25s, color .25s; }
+  .ev-all:hover { background: #fff; color: #0d0b10; }
+  .ev-btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .ev-tix { background: #fff; color: #0d0b10; }
+  .ev-tix:hover { background: transparent; color: #fff; }
+  @media (max-width: 760px) { .ev-in { width: auto; right: 16px; } .events::before { background: linear-gradient(to right, rgba(2, 10, 28, .82), rgba(2, 10, 28, .55)); } .ev-list a { grid-template-columns: 60px 1fr; } .ev-list i { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .cue b, .water i, .cue .mouse::after, body.idle .cue { animation: none; } }
+</style>
+</head>
+<body>
+<div class="water" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+<canvas class="loop" id="loopBig" aria-hidden="true"></canvas>
+<canvas class="film" id="film" aria-label="An octopus swims through the water"></canvas>
+
+<h1 class="word" id="word" aria-label="The Descent"><span>The</span><span>Descent</span></h1>
+<p class="tag" id="tag">Aquarium of<br>the deep</p>
+<div class="ctas" id="ctas"><a href="tickets.html" class="primary btn-fill">Get tickets</a><a href="visit.html" class="ghost">Plan visit</a></div>
+
+<a class="home" href="#" aria-label="The Descent, back to the top"><canvas class="loop" id="loopTop"></canvas></a>
+<header class="top">
+  <nav aria-label="Main">
+    <a href="#exhibits">Exhibits</a>
+    <a href="visit.html">Plan visit</a>
+    <a href="#philosophy">Our philosophy</a>
+    <a href="#events">Events</a>
+  </nav>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-controls="mm"><i></i>Menu</button>
+  <a href="tickets.html" class="tix btn-fill">Get tickets</a>
+</header>
+<div class="mm" id="mm" aria-hidden="true">
+  <div class="mm-head"><img src="logo.svg" alt=""><button class="mm-close" id="mmClose" aria-label="Close menu">×</button></div>
+  <nav aria-label="Menu"><a href="#exhibits">Exhibits</a><a href="visit.html">Plan visit</a><a href="#philosophy">Our philosophy</a><a href="#events">Events</a></nav>
+  <div class="mm-foot"><span>Open every day<br>9 am to 6 pm</span><a href="tickets.html">Get tickets</a></div>
+</div>
+<svg class="boat" id="boat" viewBox="0 0 621 646" aria-hidden="true"><path id="boatPath"/></svg>
+<div class="overboat" id="overboat" aria-hidden="true"></div>
+<canvas class="seadust" id="seadust" aria-hidden="true"></canvas>
+<div class="underwater" id="underwater" aria-hidden="true"></div>
+<svg class="deep" id="deep" aria-hidden="true" preserveAspectRatio="none"><defs>
+  <linearGradient id="seaFront" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f5287"/><stop offset=".18" stop-color="#0a3a6b"/><stop offset=".5" stop-color="#06264a"/><stop offset="1" stop-color="#010206"/></linearGradient>
+  <linearGradient id="seaBack" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4aa3c9"/><stop offset=".5" stop-color="#1d6aa3"/><stop offset="1" stop-color="#6bbad8"/></linearGradient>
+</defs><path id="deepBack"/><path id="deepFront"/></svg>
+<section class="philo" id="philosophy" aria-label="Our philosophy">
+  <figure class="ph-film"><video id="phVid" src="visit/commercial.mp4" muted loop playsinline preload="metadata"></video><figcaption><span>A day at The Descent</span><a href="visit.html">Plan your visit</a></figcaption></figure>
+  <div class="ph-in"><small>Our philosophy</small><h2>Every animal here is a guest, not a show</h2>
+    <ul class="ph-cols">
+      <li><b>01</b><strong>Rescue first</strong><span>Most of our residents came to us injured, stranded or born in care. We never take healthy animals from the wild.</span></li>
+      <li><b>02</b><strong>Room to roam</strong><span>Every tank is built around how the animal really lives: the depth, the light, the current and places to hide.</span></li>
+      <li><b>03</b><strong>Back to the sea</strong><span>Whenever an animal is strong enough, it goes home. Your ticket helps pay for every release.</span></li>
+    </ul></div></section>
+<section class="events" id="events" aria-label="Events"><video id="evVid" src="jelly-events.mp4?v=2" muted loop playsinline preload="metadata"></video>
+  <div class="ev-in"><small>Events</small><h2>What’s on<br>this month</h2>
+    <ul class="ev-list">
+      <li><a href="#events"><div class="ev-date"><span>Fri</span>24</div><div><b>Jelly Nights</b><em>The jellies glow, the lights go down, and there’s a DJ. 18+ with drinks.</em></div><i>7 – 10 pm</i></a></li>
+      <li><a href="#events"><div class="ev-date"><span>Sat</span>25</div><div><b>Sleep with the Sharks</b><em>Sleeping bags under the shark tunnel, a torch tour and breakfast.</em></div><i>Families</i></a></li>
+      <li><a href="#events"><div class="ev-date"><span>Sun</span>26</div><div><b>Feeding Time Live</b><em>Watch the octopuses solve their breakfast, with a keeper talk.</em></div><i>11 am</i></a></li>
+      <li><a href="#events"><div class="ev-date"><span>Sat</span>01</div><div><b>Little Divers Story Hour</b><em>Ocean stories by the touch pool for our smallest explorers.</em></div><i>Ages 3 – 7</i></a></li>
+    </ul>
+    <div class="ev-btns"><a class="ev-all" href="#events">See all events</a><a class="ev-all ev-tix" href="tickets.html">Get tickets</a></div></div></section>
+<div class="tk-ribbon" id="tkRib"></div><section class="tickets" id="tickets" aria-label="Tickets"><canvas id="tkSnow"></canvas><img class="tk-octo" src="exhibits/octo-hero-cut.webp" alt="">
+  <div class="tk-in"><small>Tickets</small><h2>Come dive<br>with us</h2>
+    <p>Open every day, 9 am to 6 pm. Little ones under 3 always swim free.</p>
+    <ul class="tk-prices"><li><b>Adult</b><span>$32</span></li><li><b>Child</b><span>$22</span></li><li><b>Family of 4</b><span>$96</span></li></ul>
+    <div class="tk-btns"><a class="ev-all ev-tix" href="tickets.html">Get tickets</a><a class="ev-all" href="tickets.html">Become a member</a></div></div></section>
+<div class="foot-scene" id="footScene">
+<!-- footer -->
+<footer class="foot" id="foot">
+  <div class="ft-top">
+    <div class="ft-cta"><h2>Come say hi to the octopus.</h2>
+      <p>Get the tide report: new arrivals, baby seahorses and Jelly Nights, once a month. No spam, just sea.</p>
+      <form class="ft-news" onsubmit="event.preventDefault(); this.classList.add('done'); this.textContent = 'You’re on the list. See you underwater.';"><input type="email" placeholder="Your email" aria-label="Your email" required><button>Sign me up</button></form></div>
+    <div class="ft-col"><h3>Visit</h3><p>Open every day<br>9 am to 6 pm</p><p>1 Harbour Way<br>On the waterfront</p></div>
+    <div class="ft-col"><h3>Explore</h3><a href="index.html#exhibits">Exhibits</a><a href="visit.html">Plan visit</a><a href="index.html#philosophy">Our philosophy</a><a href="index.html#events">Events</a><a href="tickets.html">Get tickets</a></div>
+    <div class="ft-col"><h3>Follow along</h3><div class="ft-social">
+      <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6"/></svg></a>
+      <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.4 2.6 2.2 4.4 5 4.6"/></svg></a>
+      <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.5 9.5v5l4-2.5z"/></svg></a>
+    </div></div>
+  </div>
+  <a class="ft-word" href="index.html#home" aria-label="The Descent, back to the top"><span class="ft-ship"><img src="boat.svg" alt=""></span><span class="ft-text">The Descent</span></a>
+  <div class="ft-base"><span>© 2026 The Descent · Aquarium of the deep</span><span>Made with salt water</span></div>
+  <script>
+    // the phone menu
+    (() => { const mm = document.getElementById('mm'), btn = document.getElementById('menuBtn'); if (!mm || !btn) return;
+      const set = on => { mm.classList.toggle('open', on); mm.setAttribute('aria-hidden', !on); document.documentElement.style.overflow = on ? 'hidden' : ''; };
+      btn.addEventListener('click', () => set(true)); document.getElementById('mmClose').addEventListener('click', () => set(false));
+      mm.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+      addEventListener('keydown', e => { if (e.key === 'Escape') set(false); }); })();
+    // the cursor: the dot follows exactly, the ring drifts after it and opens up over anything you can click
+    (() => {
+      if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      const root = document.documentElement, dot = document.createElement('div'), ring = document.createElement('div');
+      dot.className = 'cur-dot'; ring.className = 'cur-ring'; document.body.append(dot, ring); root.classList.add('cur', 'cur-out');
+      let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y, on = false;
+      addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; if (!on) { on = true; rx = x; ry = y; root.classList.remove('cur-out'); } }, { passive: true });
+      document.addEventListener('pointerleave', () => { on = false; root.classList.add('cur-out'); });
+      addEventListener('pointerdown', () => root.classList.add('cur-down')); addEventListener('pointerup', () => root.classList.remove('cur-down'));
+      document.addEventListener('pointerover', e => root.classList.toggle('cur-hover', !!e.target.closest('a, button, label, [role=button], .ex, .pick, .sb, .win-cover')));
+      (function f() { rx += (x - rx) * .18; ry += (y - ry) * .18;
+        dot.style.transform = `translate3d(${x}px, ${y}px, 0)`; ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`; requestAnimationFrame(f); })();
+    })();
+    // the scroller: drag the pill, click the line, and it shows how deep you are
+    (() => {
+      const sb = document.createElement('div'); sb.className = 'sb'; sb.setAttribute('aria-hidden', 'true');
+      sb.innerHTML = '<div class="sb-thumb"></div><div class="sb-depth"></div>'; document.body.appendChild(sb);
+      const th = sb.firstChild, dp = sb.lastChild; let idle = 0, drag = null;
+      const max = () => Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      function place() {
+        const k = Math.min(1, Math.max(0, scrollY / max())), room = sb.clientHeight - th.offsetHeight, y = k * room;
+        th.style.transform = `translateY(${y}px)`; dp.style.transform = ''; dp.style.top = (y + th.offsetHeight / 2 - 5) + 'px';
+        dp.textContent = `${Math.round(k * 1000).toLocaleString('en-US')} m`;
+      }
+      const wake = () => { sb.classList.add('on'); clearTimeout(idle); idle = setTimeout(() => sb.classList.remove('on'), 1100); };
+      addEventListener('scroll', () => { place(); wake(); }, { passive: true }); addEventListener('resize', place);
+      const go = clientY => { const r = sb.getBoundingClientRect(), room = r.height - th.offsetHeight; scrollTo(0, Math.min(1, Math.max(0, (clientY - r.top - (drag ? drag.off : th.offsetHeight / 2)) / room)) * max()); };
+      sb.addEventListener('pointerdown', e => { const tr = th.getBoundingClientRect(); drag = { off: e.target === th ? e.clientY - tr.top : th.offsetHeight / 2 };
+        sb.setPointerCapture(e.pointerId); sb.classList.add('drag'); go(e.clientY); e.preventDefault(); });
+      sb.addEventListener('pointermove', e => { if (drag) { go(e.clientY); wake(); } });
+      const up = () => { drag = null; sb.classList.remove('drag'); }; sb.addEventListener('pointerup', up); sb.addEventListener('pointercancel', up);
+      place(); requestAnimationFrame(place);
+    })();
+    // the moving logo on the other pages (the home page draws its own): the same 240-frame loop
+    (() => { const img = document.querySelector('.top .logo img'); if (!img) return;
+      const cv = document.createElement('canvas'), d = Math.min(2, devicePixelRatio || 1); cv.width = cv.height = 62 * d; img.replaceWith(cv);
+      const g = cv.getContext('2d'), sheet = new Image(); sheet.src = 'logoloop/sheet.webp';
+      (function f(now) { if (sheet.complete && sheet.naturalWidth) { const i = Math.floor(now / (1000 / 24)) % 240; g.clearRect(0, 0, cv.width, cv.height); g.drawImage(sheet, (i % 12) * 360, Math.floor(i / 12) * 360, 360, 360, 0, 0, cv.width, cv.height); } requestAnimationFrame(f); })(0); })();
+    // the page change: water rises over the page, you land on the next one, and the water carries on up and off it
+    (() => {
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const wrap = document.createElement('div'); wrap.className = 'wv'; wrap.setAttribute('aria-hidden', 'true');
+      wrap.innerHTML = `<svg width="100%" height="100%"><defs><linearGradient id="wvSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16141c"/><stop offset=".5" stop-color="#0b0a0f"/><stop offset="1" stop-color="#030305"/></linearGradient><clipPath id="wvClip"><path id="wvClipP"/></clipPath></defs><path id="wvRib" fill="#2b2933"/><path id="wvSeaP" fill="url(#wvSea)"/><g id="wvDots" clip-path="url(#wvClip)" fill="#e9e6ef"></g></svg><img src="logo.svg" alt="">`;
+      document.body.appendChild(wrap);
+      const rib = wrap.querySelector('#wvRib'), sea = wrap.querySelector('#wvSeaP'), clipP = wrap.querySelector('#wvClipP'), dotsG = wrap.querySelector('#wvDots'), logo = wrap.querySelector('img');
+      // little specks drifting up through the black water
+      const DOTS = Array.from({ length: 140 }, () => ({ x: Math.random(), y: Math.random(), r: .6 + Math.random() * 1.8, sp: .02 + Math.random() * .05, a: .25 + Math.random() * .55 }));
+      dotsG.innerHTML = DOTS.map(d => `<circle r="${d.r.toFixed(1)}" opacity="${d.a.toFixed(2)}"/>`).join('');
+      const dotEls = [...dotsG.children];
+      const drift = t => { const W = innerWidth, H = innerHeight; DOTS.forEach((d, i) => { const yy = ((d.y - t * d.sp) % 1 + 1) % 1; dotEls[i].setAttribute('cx', (d.x * W + Math.sin(t + i) * 6).toFixed(1)); dotEls[i].setAttribute('cy', (yy * H).toFixed(1)); }); };
+      const ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      // edge: the wavy line at height e; fromTop: true = water above the line (leaving upward), false = water below it (rising)
+      function shape(e, fromTop, t) {
+        const W = innerWidth, H = innerHeight, y = (x, ph) => e + Math.sin(x / 170 + t * 5 + ph) * 18 + Math.sin(x / 73 - t * 4 + ph) * 7;
+        const path = (ph, off) => { let d = `M-20 ${fromTop ? -20 : H + 20} L-20 ${y(-20, ph) + off}`; for (let x = 0; x <= W + 20; x += 20) d += ` L${x} ${(y(x, ph) + off).toFixed(1)}`; return d + ` L${W + 20} ${fromTop ? -20 : H + 20} Z`; };
+        rib.setAttribute('d', path(1.3, fromTop ? 12 : -12)); const s = path(0, 0); sea.setAttribute('d', s); clipP.setAttribute('d', s); drift(t);
+      }
+      function run(ms, step, done) { const t0 = performance.now(); (function f(now) { const k = Math.min(1, (now - t0) / ms); step(ease(k), now / 1000); if (k < 1) requestAnimationFrame(f); else done && done(); })(t0); }
+      // arriving: the water is already over the page; it rises up and away
+      const arrived = document.documentElement.classList.contains('wave-in');
+      try { sessionStorage.removeItem('wave'); } catch (e) {}
+      if (arrived) {
+        shape(innerHeight + 60, true, 0); logo.style.opacity = 1; document.documentElement.classList.remove('wave-in'); wrap.classList.add('busy');
+        setTimeout(() => run(still ? 1 : 850, (k, t) => { shape((1 - k) * (innerHeight + 80) - 40, true, t); logo.style.opacity = 1 - Math.min(1, k * 2.5); logo.style.transform = `translateY(${-k * 60}px)`; },
+                             () => { wrap.classList.remove('busy'); rib.setAttribute('d', ''); sea.setAttribute('d', ''); clipP.setAttribute('d', ''); }), 120);
+      }
+      // leaving: any link to another page of the site
+      document.addEventListener('click', e => {
+        const a = e.target.closest('a[href]'); if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
+        const to = new URL(a.href, location.href); if (to.origin !== location.origin || (to.pathname === location.pathname && to.search === location.search)) return;
+        if (!/\.html$|\/$/.test(to.pathname)) return;
+        e.preventDefault(); wrap.classList.add('busy');
+        run(still ? 1 : 700, (k, t) => { shape((1 - k) * (innerHeight + 80) - 40 + 0, false, t); logo.style.opacity = Math.max(0, k * 2 - 1); logo.style.transform = `translateY(${(1 - k) * 40}px)`; },
+            () => { try { sessionStorage.setItem('wave', '1'); } catch (err) {} location.href = to.href; });
+      });
+      // coming back with the browser's back button: never leave the water up
+      addEventListener('pageshow', e => { if (e.persisted) { wrap.classList.remove('busy'); rib.setAttribute('d', ''); sea.setAttribute('d', ''); clipP.setAttribute('d', ''); logo.style.opacity = 0; } });
+    })();
+    // size the wordmark so it runs exactly edge to edge
+    (() => { const w = document.querySelector('.ft-word'), t = w.querySelector('.ft-text');
+      const fit = () => { w.style.fontSize = '100px'; const avail = w.clientWidth, k = avail / t.getBoundingClientRect().width; w.style.fontSize = (100 * k * .995) + 'px'; };
+      fit(); addEventListener('resize', fit); document.fonts && document.fonts.ready.then(fit); })();
+  </script>
+</footer>
+<!-- /footer -->
+</div>
+<div class="abyss" id="abyss"><video id="angler" data-src="angler.mp4" muted playsinline preload="none"></video><canvas id="dust"></canvas>
+  <h2 class="explore" id="explore" aria-label="Explore our exhibits"><span>Explore</span> <span>our exhibits</span></h2>
+  <div class="exhibits" id="exhibits"><div class="ex-col"><div class="ex-track" id="exTrackA"></div></div><div class="ex-col"><div class="ex-track" id="exTrackB"></div></div></div>
+  <div class="story" id="story" aria-live="polite"><button class="sheet-x" id="sheetX" aria-label="Close">×</button>
+    <div class="hud-top"><span>Exhibit</span><i></i><span id="spZone"></span><i></i><span id="spId"></span></div>
+    <div class="hud-main"><canvas class="sonar" id="sonar" width="236" height="236"></canvas><div><h3 id="spName"></h3><div class="hud-coords" id="spCoords"></div></div></div>
+    <p class="hud-log"><b>Captain’s log</b><span id="spBlurb"></span></p>
+    <ul id="spFacts"></ul>
+    <div class="gauge"><div class="ticks"></div><div class="mk" id="spMk"></div><div class="lbl"><span>0 M</span><span>250</span><span>500</span><span>750</span><span>1000 M</span></div></div>
+    <a class="cta" href="visit.html">Plan your visit</a></div>
+  <div class="lock" id="lock"><i></i><i></i><i></i><i></i><b id="lockLbl">LOCK</b></div>
+  <svg class="tether" id="tether"><path id="tetherP"/><circle id="tetherC" r="3"/></svg>
+</div>
+<p class="cue" id="cue"><i class="mouse"></i>Scroll to dive<b></b></p>
+<div class="veil" id="veil">Filling the tank…</div>
+<div class="track"></div>
+
+<script>
+  if (new URLSearchParams(location.search).get('bg') !== 'gradient') document.documentElement.classList.add('white');   // white is the look; ?bg=gradient brings back the drifting water
+  // every visit starts at the top, with the octopus (the browser would otherwise put you back where you were)
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  scrollTo(0, 0); addEventListener('pageshow', () => scrollTo(0, 0)); addEventListener('beforeunload', () => scrollTo(0, 0));
+
+  // ---------- the display typeface: Bricolage Grotesque unless index.html?font=<key> (the options live on fonts.html) ----------
+  const FONT = DESCENT_FONTS.find(f => f[0] === (new URLSearchParams(location.search).get('font') || DESCENT_DEFAULT)) || DESCENT_FONTS[0];
+  fontLink(FONT);
+  { const s = document.createElement('style'); s.textContent = `.word { font-family: ${FONT[3]}, system-ui, sans-serif; font-weight: ${FONT[4]}; ${FONT[7]} }`; document.head.appendChild(s); }
+
+  // ---------- the name, split into letters so they can rise one by one ----------
+  const word = document.getElementById('word');
+  word.querySelectorAll('span').forEach(s => s.innerHTML = [...s.textContent].map(c => `<i>${c}</i>`).join(''));
+  const letters = [...word.querySelectorAll('i')];
+  const uw = document.getElementById('underwater'), wordW = word.cloneNode(true); wordW.removeAttribute('id'); wordW.removeAttribute('aria-label'); uw.appendChild(wordW);
+  const lettersW = [...wordW.querySelectorAll('i')];
+  const ob = document.getElementById('overboat'), wordB = word.cloneNode(true); wordB.removeAttribute('id'); wordB.removeAttribute('aria-label'); ob.appendChild(wordB);
+  const lettersB = [...wordB.querySelectorAll('i')];
+  let boatD = '';
+
+  // ---------- the animated logo: a 240-frame loop on one sprite sheet (12 across, 360px each) ----------
+  const sheet = new Image(); sheet.src = 'logoloop/sheet.webp';
+  // the small logo in the nav: cut the giant sheet into 240 little ready-made frames once, so it never has to be decoded again while you scroll
+  let small = null;
+  sheet.decode().then(() => new Promise(r => (window.requestIdleCallback || setTimeout)(r, 1500))).then(() => Promise.all(Array.from({ length: 240 }, (_, i) => createImageBitmap(sheet, (i % 12) * 360, Math.floor(i / 12) * 360, 360, 360, { resizeWidth: 128, resizeHeight: 128, resizeQuality: 'high' }))))
+    .then(f => { small = f; }).catch(() => {});
+  const LF = 240, LC = 12, LS = 360, bigC = document.getElementById('loopBig'), topC = document.getElementById('loopTop');
+  const bg = bigC.getContext('2d'), tg = topC.getContext('2d');
+  // pad: the canvas is this many logo-widths wide, with the logo in the middle, so its bubbles have open water to rise into
+  function loopFrame(ctx, c, size, alpha, now, pad = 1, dy = 0) {
+    const d = Math.min(2, devicePixelRatio || 1), px = Math.round(size * d), cw = Math.round(px * pad);
+    if (c.width !== cw) { c.width = c.height = cw; c._key = ''; }
+    const f = Math.floor(now / (1000 / 24)) % LF, o = (cw - px) / 2, key = `${f} ${alpha.toFixed(3)} ${dy.toFixed(4)}`;
+    if (c._key === key && !c._dirty) return px;                   // nothing changed since the last draw: leave it
+    c._key = key; c._dirty = false;
+    ctx.clearRect(0, 0, cw, cw); if (!sheet.complete || alpha <= 0) return px;
+    ctx.globalAlpha = alpha;
+    if (small && px <= 128) ctx.drawImage(small[f], o, o + dy * px, px, px);
+    else ctx.drawImage(sheet, (f % LC) * LS, Math.floor(f / LC) * LS, LS, LS, o, o + dy * px, px, px);
+    ctx.globalAlpha = 1;
+    return px;
+  }
+  // the dive: two thin ink lines of water wave across under the logo, it sinks through them, and the water plops up after it.
+  // k: 0 = resting on the white, 1 = gone under. Drawn into the logo's own canvas, so it moves with it.
+  function dive(ctx, px, k, now) {
+    if (k <= 0) return;
+    const cw = ctx.canvas.width, cx = cw / 2, line = cw / 2 + px * .3, half = px * .8, t = now / 1000;
+    const show = ss(0, .14, k) * (1 - ss(.86, 1, k));                    // the lines draw in, then fade once it's gone
+    const pl = ss(.66, .92, k), plop = Math.sin(pl * Math.PI);            // the plop, just as the head goes under
+    const amp = .018 + plop * .03;
+    const y = (x, ph) => line + (Math.sin((x - cx) / px * 7 + t * 2.4 + ph) * amp + Math.sin((x - cx) / px * 3 - t * 1.6 + ph) * amp * .6) * px
+                              - plop * .07 * px * Math.exp(-(((x - cx) / (px * .22)) ** 2));   // the middle bumps up where it went in
+    const trace = (x0, x1, ph, dy) => { ctx.beginPath(); for (let x = x0; x <= x1; x += 3) ctx[x === x0 ? 'moveTo' : 'lineTo'](x, y(x, ph) + dy); };
+    // under the front line: the logo is hidden
+    ctx.save(); ctx.globalCompositeOperation = 'destination-out';
+    trace(-2, cw + 2, 0, 0); ctx.lineTo(cw + 2, cw + 2); ctx.lineTo(-2, cw + 2); ctx.closePath(); ctx.fill(); ctx.restore();
+    // the ink: two lines that fade off at their ends
+    const ink = (x0, x1, a) => { const gr = ctx.createLinearGradient(x0, 0, x1, 0); gr.addColorStop(0, 'rgba(13,11,16,0)'); gr.addColorStop(.25, `rgba(13,11,16,${a})`); gr.addColorStop(.75, `rgba(13,11,16,${a})`); gr.addColorStop(1, 'rgba(13,11,16,0)'); return gr; };
+    ctx.save(); ctx.globalAlpha = show; ctx.lineCap = 'round';
+    trace(cx - half, cx + half, 0, 0); ctx.strokeStyle = ink(cx - half, cx + half, 1); ctx.lineWidth = Math.max(2, px * .014); ctx.stroke();
+    trace(cx - half * .7, cx + half * .75, 1.9, px * .065); ctx.strokeStyle = ink(cx - half * .7, cx + half * .75, .55); ctx.lineWidth = Math.max(1.5, px * .009); ctx.stroke();
+    // the plop: three little drops jump up from where it went in, and fall back
+    if (pl > 0 && pl < 1) { ctx.fillStyle = '#0d0b10';
+      [[-1, .9, .016], [.15, 1.25, .021], [1, .8, .014]].forEach(([dir, hgt, r]) => {
+        const s = ss(0, 1, pl), dx = cx + dir * s * px * .16, dyy = y(cx, 0) - Math.sin(s * Math.PI) * px * .2 * hgt;
+        ctx.beginPath(); ctx.arc(dx, dyy, px * r * (1 - s * .4), 0, 6.283); ctx.fill(); }); }
+    ctx.restore();
+  }
+  // ---------- the octopus, cut out of the film, scrubbed by scroll ----------
+  // the boat: its drift has its own wandering speed, so it never quite repeats
+  const boat = document.getElementById('boat'); let bx = -200, lastT = performance.now();
+  // poke it: it gets shoved away from where you tapped, hops up off the water and rocks, then settles back
+  let pvx = 0, lift = 0, liftV = 0, rock = 0, rockV = 0;
+  boat.addEventListener('pointerdown', e => {
+    const r = boat.getBoundingClientRect(), dir = e.clientX < r.left + r.width / 2 ? 1 : -1;
+    pvx += dir * innerWidth * (.09 + Math.random() * .05); liftV -= r.height * (3.2 + Math.random() * 1.6); rockV += dir * (160 + Math.random() * 90);
+  });
+  const bph = [Math.random() * 6, Math.random() * 6, Math.random() * 6];
+  fetch('boat.svg').then(r => r.text()).then(t => { const d = (t.match(/ d="([^"]+)"/) || [])[1]; if (d) { document.getElementById('boatPath').setAttribute('d', d); boatD = d; } });
+  // the anglerfish film: plays on its own the moment it fills the screen, and rewinds when you leave
+  const aVid = document.getElementById('angler'), abyss = document.getElementById('abyss');
+  let aPlaying = false;
+  // once the fish has swum off, the film fades to black and dust drifts in the dark
+  // scrolling while the fish plays fast-forwards it; let go and it eases back to normal speed
+  let aBoost = 0;
+  // while the anglerfish swims (and a moment after the gallery appears), the page holds at the exhibits: scrolling down only speeds the fish up
+  let gateY = null, shelfAt = 0, navUntil = 0, lastWheel = 0, gateOpen = false;   // navUntil: a nav link is gliding somewhere, so don't hold it
+  addEventListener('wheel', e => {
+    lastWheel = performance.now();
+    if (aPlaying && !aVid.paused && e.deltaY > 0) aBoost = Math.min(3, aBoost + e.deltaY * .012);
+    if (gateY != null && e.deltaY > 0 && scrollY >= gateY - 2) e.preventDefault();
+  }, { passive: false });
+  let touchY = null;
+  addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+  addEventListener('touchmove', e => {
+    const y = e.touches[0].clientY, dy = touchY == null ? 0 : touchY - y; touchY = y;   // finger moving up = scrolling down
+    if (aPlaying && !aVid.paused && dy > 0) aBoost = Math.min(3, aBoost + dy * .03);
+    if (gateY != null && scrollY >= gateY - 2) e.preventDefault();
+  }, { passive: false });
+  (function boost() { aBoost *= .94; const r = 1 + aBoost; if (Math.abs(aVid.playbackRate - r) > .02) aVid.playbackRate = r; requestAnimationFrame(boost); })();
+  let sayT = [];
+  const afterFish = () => {
+    if (!abyss.classList.contains('after')) {
+      abyss.classList.add('after');
+      sayT.push(setTimeout(() => { abyss.classList.add('say'); }, 350));
+      sayT.push(setTimeout(() => {
+        // slide it to the side: note where each line is, jump them to the new layout, then animate each line from its old spot
+        // (lines move one at a time, centred to left-aligned and a little smaller, so the words visibly travel instead of swapping)
+        const spans = [...document.querySelectorAll('#explore span')], A = spans.map(s => s.getBoundingClientRect());
+        abyss.classList.add('shelf'); const B = spans.map(s => s.getBoundingClientRect());
+        spans.forEach((s, i) => { const a = A[i], b = B[i];
+          s.animate([{ transform: `translate(${a.left - b.left}px, ${a.top - b.top}px) scale(${a.width / b.width})`, transformOrigin: '0 0' },
+                     { transform: 'none', transformOrigin: '0 0' }], { duration: 1100, delay: i * 90, easing: 'cubic-bezier(.65, 0, .25, 1)', fill: 'backwards' }); });
+      }, 1250));
+    }
+  };
+  // it runs on its own once the fish leaves: no scrolling needed
+  aVid.addEventListener('timeupdate', () => { if (aVid.duration && aVid.currentTime > aVid.duration - 1.3) afterFish(); });
+  aVid.addEventListener('ended', afterFish);
+  // the letters shuffle through symbols as they arrive and as they move
+  function scramble(el, ms) {
+    const spans = [...el.querySelectorAll('span')], words = spans.map(s => s.dataset.w || (s.dataset.w = s.textContent)), SYM = '#$%&?*@!+=<>/0123456789';
+    const t0 = performance.now();
+    (function tick(now) { const k = Math.min(1, (now - t0) / ms);
+      spans.forEach((s, j) => { const w = words[j], keep = Math.floor(k * w.length); s.textContent = [...w].map((c, i) => i < keep || c === ' ' ? c : SYM[Math.floor(Math.random() * SYM.length)]).join(''); });
+      if (k < 1) requestAnimationFrame(tick); })(t0);
+  }
+  // the exhibits: a slow drifting row you can grab and fling (names and pictures are placeholders for now)
+  // the exhibits. Animals are cut out of their photos, so on hover they can swim out past the edge of their card.
+  // [cut-out picture, name, zone, card colour, picture width / left / top as % of the card]
+  const EX = [
+    ['octo-1-cut', 'The Octopus Garden', 'Zone 01', '#eae6e3', 140, -20, 4],
+    ['jelly-cut', 'The Jelly Hall', 'Zone 02', '#f7f9fc', 65, 17, 10],
+    ['hammerhead-cut', 'Shark Tunnel', 'Zone 05', '#f9faf9', 86, 7, 23],
+    ['angler-cut', 'Deep Sea Creatures', 'Zone 04', '#f6f6f6', 128, -16, 22],
+    ['turtle-cut', 'Turtle Lagoon', 'Zone 02', '#ffffff', 82, 9, 10],
+    ['octo-2-cut', 'Eight Arms, One Mind', 'Zone 01', '#dfdede', 140, -20, 6],
+    ['seadragon-cut', 'The Kelp Forest', 'Zone 02', '#f9fafb', 86, 7, 10],
+    ['mandarin-cut', 'Coral Reef', 'Zone 01', '#f9faf9', 86, 7, 24],
+    ['stingray-pop', 'The Touch Pool', 'Zone 02', '#f0f2f3', 160, -30, 4],
+    ['vampsquid-cut', 'The Midnight Zone', 'Zone 03', '#f9faf9', 86, 7, 12],
+    ['nautilus-cut', 'Living Fossils', 'Zone 04', '#f5f7f5', 81, 9, 10],
+    ['octo-3-cut', 'Masters of Disguise', 'Zone 01', '#e8e5e3', 140, -20, 5],
+    ['lionfish-cut', 'Danger & Beauty', 'Zone 01', '#f9f9f9', 86, 7, 12],
+    ['seahorse-cut', 'Seahorse Nursery', 'Zone 02', '#fdfefd', 53, 23, 10],
+    ['manta-cut', 'Open Ocean', 'Zone 05', '#fdfefd', 86, 7, 13],
+    ['octo-4-cut', 'Night Shift', 'Zone 03', '#e1e1e2', 140, -20, 6],
+    ['kingcrab-cut', 'The Cold Water Gallery', 'Zone 04', '#f6f7f8', 86, 7, 14],
+    ['dumbo-cut', 'The Abyss', 'Zone 03', '#f4f8f9', 84, 8, 10]];
+  const STORY = {
+    'The Octopus Garden': ['A living reef where octopuses build their own homes from shells and stones, then redecorate when they get bored.', [['Residents', '6 day octopuses'], ['Brains', '9 (one in each arm, plus one)'], ['Best time', 'Feeding, 11 am']]],
+    'Deep Sea Creatures': ['A pitch-black gallery 1,000 metres down. The only light comes from the animals themselves, glowing to hunt, hide and find each other.', [['Depth', '1,000 m and below'], ['Light', 'Bioluminescent only'], ['Look for', 'The anglerfish lure']]],
+    'Eight Arms, One Mind': ['How do you think with your arms? Two-thirds of an octopus\'s neurons live in its arms. Watch them solve puzzles in real time.', [['Show', 'Puzzle feeders'], ['Neurons', '500 million'], ['Times', 'Every hour']]],
+    'Masters of Disguise': ['Skin that changes colour and texture in a fifth of a second. Blink and they\'re a rock, a coral, or gone.', [['Colour change', '0.2 seconds'], ['Cells', 'Millions of chromatophores'], ['Challenge', 'Spot all five']]],
+    'The Touch Pool': ['Two kinds of rays glide through a shallow, open pool. Roll up your sleeves: two fingers, gentle touch, and they\'ll come to you.', [['Residents', 'Cownose and southern rays'], ['Depth', 'Knee height'], ['Good for', 'All ages']]],
+    'Night Shift': ['After dark, the reef changes hands. A red-light gallery shows who comes out when the lights go down.', [['Open', 'Fridays, 7 to 10 pm'], ['Lighting', 'Red only'], ['Ages', '18+ evenings']]],
+    'The Jelly Hall': ["No brain, no heart, no bones, and they've been drifting through the ocean for 500 million years. A slow, glowing room to just breathe in.", [["Residents", "Moon jellies"], ["Made of", "95% water"], ["Vibe", "Very calm"]]],
+    'Shark Tunnel': ["Walk through a glass tunnel while hammerheads glide over your head. That wide head works like a metal detector for prey hiding in the sand.", [["Residents", "Great hammerheads"], ["Length", "Up to 6 m"], ["Feeding", "Tues & Sat, 2 pm"]]],
+    'Turtle Lagoon': ["Rescued green sea turtles getting strong enough to go home. Some of them have been swimming for longer than you've been alive.", [["Residents", "Green sea turtles"], ["Lifespan", "80+ years"], ["Mission", "Rescue & release"]]],
+    'The Kelp Forest': ["Can you find the dragon? Leafy sea dragons hide in plain sight, drifting like loose seaweed through a forest of swaying kelp.", [["Residents", "Leafy sea dragons"], ["Found in", "Southern Australia"], ["Challenge", "Spot all three"]]],
+    'The Midnight Zone': ["The vampire squid doesn't drink blood. It turns itself inside out, hides in its own cloak, and glows in the dark. Spooky, but chill.", [["Depth", "600 to 900 m"], ["Light", "Bioluminescent"], ["Fun fact", "Lives 300 million years"]]],
+    'Coral Reef': ["One of the only animals on Earth with true blue pigment. Mandarin fish come out at dusk to dance, so come late for the show.", [["Residents", "Mandarin dragonets"], ["Colour", "Real blue pigment"], ["Best time", "Sunset"]]],
+    'Living Fossils': ["The nautilus has barely changed in 500 million years. It moves by filling its shell with gas, like a tiny submarine.", [["Residents", "Chambered nautilus"], ["Age of species", "500 million years"], ["Eyes", "Pinhole, no lens"]]],
+    'Danger & Beauty': ["Gorgeous, and absolutely don't touch. Every one of those frilly spines carries venom. Meet the reef's most beautiful troublemaker.", [["Residents", "Red lionfish"], ["Spines", "18 venomous"], ["Look, don't", "Touch"]]],
+    'Seahorse Nursery': ["Here the dads carry the babies. Watch pairs hold tails and dance every morning to say hi to each other.", [["Residents", "Pink seahorses"], ["Babies", "Up to 2,000"], ["Best time", "Morning dance"]]],
+    'Open Ocean': ["Our biggest tank, and our gentlest giant. Manta rays have the largest brains of any fish and they recognise themselves in a mirror.", [["Residents", "Giant manta ray"], ["Wingspan", "Up to 7 m"], ["Tank", "4 million litres"]]],
+    'The Cold Water Gallery': ["From the freezing Bering Sea. King crabs walk the ocean floor in huge marching groups, sometimes thousands at once.", [["Residents", "Red king crabs"], ["Leg span", "1.8 m"], ["Water temp", "4\u00b0C"]]],
+    'The Abyss': ["The deepest-living octopus on Earth, flapping those ear fins 7,000 metres down. Yes, it's named after the elephant.", [["Depth", "Up to 7,000 m"], ["Size", "About 20 cm"], ["Swims with", "Its ears"]]],
+  };
+  const exWrap = document.getElementById('exhibits'), tA = document.getElementById('exTrackA'), tB = document.getElementById('exTrackB');
+  const card = ([img, name, zone, bg, w, l, t]) => img
+    ? `<a class="ex pop" href="#exhibits" draggable="false" style="background:${bg}"><small>${zone}</small><img class="spill" src="exhibits/${img}.webp" alt="${name}" style="width:${w}%;left:${l}%;top:${t}%"><b>${name}</b></a>`
+    : `<a class="ex blank" href="#exhibits" draggable="false"><small>${zone}</small><b>${name}</b></a>`;
+  const colA = EX.filter((_, i) => i % 2 === 0), colB = EX.filter((_, i) => i % 2 === 1);   // alternate, so the mix spreads across both columns
+  tA.innerHTML = [...colA, ...colA, ...colA].map(card).join(''); tB.innerHTML = [...colB, ...colB, ...colB].map(card).join('');   // repeated, so each column loops seamlessly
+  // the story replaces the big title while you hover an animal
+  let reading = null, readT = 0, offT = 0;
+  // the submarine log: fill it in and let it fade up. No glitching, typing or flicker: this site stays calm
+  const DEPTH = { '01': 15, '02': 30, '03': 820, '04': 450, '05': 120 };
+  const hash = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  // the sonar: white rings and a sweep going round; the animal is a blip that brightens as the sweep passes
+  const sonarCv = document.getElementById('sonar'), sg = sonarCv.getContext('2d'); let sonarRAF = 0;
+  function sonar(blipA, blipR) {
+    const S = 236, c = S / 2, t0 = performance.now();
+    (function f(now) {
+      const a = ((now - t0) / 1000) * 2.2; sg.clearRect(0, 0, S, S); sg.save(); sg.translate(c, c);
+      sg.strokeStyle = 'rgba(255,255,255,.4)'; sg.lineWidth = 1.5;
+      [.33, .66, 1].forEach(r => { sg.beginPath(); sg.arc(0, 0, r * (c - 4), 0, 7); sg.stroke(); });
+      sg.beginPath(); sg.moveTo(-c, 0); sg.lineTo(c, 0); sg.moveTo(0, -c); sg.lineTo(0, c); sg.strokeStyle = 'rgba(255,255,255,.2)'; sg.stroke();
+      const g = sg.createConicGradient(a - 1.2, 0, 0); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.19, 'rgba(255,255,255,.45)'); g.addColorStop(.191, 'rgba(255,255,255,0)');
+      sg.fillStyle = g; sg.beginPath(); sg.arc(0, 0, c - 4, 0, 7); sg.fill();
+      const since = ((a - blipA) % 6.283 + 6.283) % 6.283, glow = Math.max(0, 1 - since / 4);
+      sg.fillStyle = `rgba(255,255,255,${.4 + glow * .6})`; sg.shadowColor = '#fff'; sg.shadowBlur = 14 * glow;
+      sg.beginPath(); sg.arc(Math.cos(blipA) * blipR * (c - 4), Math.sin(blipA) * blipR * (c - 4), 5 + glow * 3, 0, 7); sg.fill(); sg.restore();
+      sonarRAF = requestAnimationFrame(f); })(t0);
+  }
+  const lock = document.getElementById('lock'), tether = document.getElementById('tether'), tP = document.getElementById('tetherP'), tC = document.getElementById('tetherC');
+  function lockOn(c) {
+    const r = c.getBoundingClientRect(), s = document.getElementById('spName').getBoundingClientRect();
+    Object.assign(lock.style, { left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px' }); lock.classList.add('on');
+    const x0 = r.right + 14, y0 = r.top + r.height / 2, x1 = document.getElementById('sonar').getBoundingClientRect().left - 12, y1 = s.top + s.height / 2, mx = (x0 + x1) / 2;
+    tP.setAttribute('d', `M${x0} ${y0} C${mx} ${y0}, ${mx} ${y1}, ${x1} ${y1}`); tC.setAttribute('cx', x1); tC.setAttribute('cy', y1); tether.classList.add('on');
+  }
+  const showStory = c => {
+    const name = c.querySelector('b').textContent, st = STORY[name]; if (!st) return;
+    clearTimeout(offT); document.querySelectorAll('.ex.on').forEach(e => e.classList.remove('on')); c.classList.add('on'); reading = c;
+    const hs = hash(name), zone = c.querySelector('small').textContent, d = DEPTH[zone.replace(/\D/g, '')] || 100;
+    document.getElementById('spZone').textContent = zone; document.getElementById('spId').textContent = 'Sighting no. ' + String(hs % 90 + 10);
+    document.getElementById('spName').textContent = name; document.getElementById('spBlurb').textContent = st[0];
+    document.getElementById('spFacts').innerHTML = st[1].map(([k, v]) => `<li><b>${k}</b><span>${v}</span></li>`).join('');
+    document.getElementById('spCoords').textContent = `${d} m deep`;
+    document.getElementById('spMk').style.left = Math.min(100, d / 10) + '%';
+    cancelAnimationFrame(sonarRAF); sonar((hs % 360) / 180 * Math.PI, .35 + (hs % 50) / 100);
+    abyss.classList.add('reading'); requestAnimationFrame(() => lockOn(c));
+  };
+  const hideStory = () => { reading = null; cancelAnimationFrame(sonarRAF); lock.classList.remove('on'); tether.classList.remove('on');
+    document.querySelectorAll('.ex.on').forEach(e => e.classList.remove('on')); abyss.classList.remove('reading'); };
+  exWrap.addEventListener('pointerover', e => {
+    const c = e.target.closest('.ex.pop'); if (!c || exDrag || e.pointerType === 'touch') return; clearTimeout(readT); clearTimeout(offT);
+    if (reading) showStory(c); else readT = setTimeout(() => { if (c.matches(':hover') && !exDrag) showStory(c); }, 220);   // a short beat the first time, instant between cards
+  });
+  exWrap.addEventListener('pointerleave', e => { if (e.pointerType === 'touch') return; clearTimeout(readT); offT = setTimeout(hideStory, 250); });   // on a phone the story stays until you tap away
+  // movement: a slow drift downward; drag up or down (or scroll over the slider) to move through it
+  let exY = 0, exV = 0, exDrag = null, exLast = performance.now();
+  // phones: press and hold a card to read its story; swiping moves the cards (and closes the story)
+  let holdT = 0;
+  exWrap.addEventListener('pointerdown', e => {
+    exDrag = { y: e.clientY, moved: 0 }; exWrap.classList.add('drag'); exWrap.setPointerCapture(e.pointerId); exV = 0;
+    if (e.pointerType === 'touch') { const c = e.target.closest('.ex.pop'); clearTimeout(holdT);
+      if (c) holdT = setTimeout(() => { if (exDrag && exDrag.moved < 10) { showStory(c); exDrag.held = true; if (navigator.vibrate) navigator.vibrate(8); } }, 420); }
+  });
+  exWrap.addEventListener('pointermove', e => { if (!exDrag || exDrag.held) return; const dy = e.clientY - exDrag.y; exDrag.y = e.clientY; exDrag.moved += Math.abs(dy);
+    if (exDrag.moved > 10) { clearTimeout(holdT); if (reading && e.pointerType === 'touch') hideStory(); }
+    exY += dy; exV = dy * 60; });
+  exWrap.addEventListener('contextmenu', e => e.preventDefault());
+  addEventListener('pointerdown', e => { if (e.pointerType === 'touch' && reading && !e.target.closest('.exhibits, .story')) hideStory(); });
+  document.getElementById('sheetX').addEventListener('click', hideStory);
+  exWrap.addEventListener('pointerup', e => { if (e.pointerType === 'touch' && reading && exDrag && !exDrag.held && exDrag.moved < 10) hideStory(); });   // a quick tap on the cards closes it too   // tap anywhere else to close it
+  const exUp = () => { clearTimeout(holdT); exDrag = null; exWrap.classList.remove('drag'); };
+  exWrap.addEventListener('pointerup', exUp); exWrap.addEventListener('pointercancel', exUp);
+  exWrap.addEventListener('click', e => { if (e.target.closest('.ex')) e.preventDefault(); }, true);   // cards aren't links yet, so a tap never jumps the page
+  let exScroll = null, exLastScroll = null;   // set by the main loop while you're scrolling through the exhibits
+  // the wheel over the cards moves the cards, never the page (scroll anywhere else to carry on down)
+  // like its own scroll area: it takes the wheel until you've been through every card, then the page carries on; scrolling up over it only ever moves the cards
+  let exTravel = 0;
+  exWrap.addEventListener('wheel', e => {
+    if (!abyss.classList.contains('shelf')) return;
+    const end = Math.max(tA.scrollHeight, tB.scrollHeight) / 3 - exWrap.clientHeight * .6;   // one full set of cards
+    if (e.deltaY > 0 && exTravel >= end) return;                                         // through every card: the page carries on down
+    e.preventDefault(); const d = e.deltaY > 0 ? Math.min(end - exTravel, e.deltaY) : e.deltaY;   // going up always stays in the cards
+    exTravel = Math.max(0, exTravel + d); exY -= d; exV = 0;
+  }, { passive: false });
+  addEventListener('keydown', e => { if (!abyss.classList.contains('shelf')) return; const k = { ArrowDown: -1, ArrowUp: 1 }[e.key]; if (k && !e.target.closest('input, textarea')) { e.preventDefault(); exV += k * 900; } });
+  (function exFrame(now) {
+    const dt = Math.min(.05, (now - exLast) / 1000); exLast = now;
+    if (exScroll != null && exLastScroll != null) exY -= (exScroll - exLastScroll) * .9; exLastScroll = exScroll;
+    if (abyss.classList.contains('shelf') && !exDrag && !reading) { exV *= Math.exp(-dt * 2.2); exY += (exV + 34) * dt; }   // a slow drift down, plus any fling
+    [[tA, 1, 0], [tB, .78, .5]].forEach(([t, sp, ph]) => {                   // the right column runs a little slower, and offset
+      const third = t.scrollHeight / 3; if (!third) return;
+      let y = (exY * sp + ph * third) % third; if (y > 0) y -= third;
+      t.style.transform = `translateY(${y}px)`;
+    });
+    requestAnimationFrame(exFrame);
+  })(performance.now());
+  const dCv = document.getElementById('dust'), dG = dCv.getContext('2d');
+  const SPECK = Array.from({ length: 130 }, () => ({ x: Math.random(), y: Math.random(), r: .4 + Math.random() * 1.5, vx: (Math.random() - .5) * .006, vy: -.002 - Math.random() * .007, a: .15 + Math.random() * .55, tw: Math.random() * 6.3, ts: .6 + Math.random() * 1.6 }));
+  let dLast = performance.now();
+  (function dust(now) {
+    if (abyss.classList.contains('after')) {
+      const d = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight, dt = Math.min(.05, (now - dLast) / 1000);
+      if (dCv.width !== W * d) { dCv.width = W * d; dCv.height = H * d; }
+      dG.setTransform(d, 0, 0, d, 0, 0); dG.clearRect(0, 0, W, H);
+      SPECK.forEach(s => {
+        s.x += (s.vx + Math.sin(now / 4000 + s.tw) * .002) * dt; s.y += s.vy * dt;           // slow drift, rising like marine snow in reverse
+        if (s.y < -.02) { s.y = 1.02; s.x = Math.random(); } if (s.x < -.02) s.x = 1.02; if (s.x > 1.02) s.x = -.02;
+        const tw = .55 + .45 * Math.sin(now / 1000 * s.ts + s.tw);
+        dG.globalAlpha = s.a * tw; dG.fillStyle = '#cfd8ec'; dG.beginPath(); dG.arc(s.x * W, s.y * H, s.r, 0, 6.283); dG.fill();
+      });
+    }
+    dLast = now; requestAnimationFrame(dust);
+  })(performance.now());
+  let ready = false; setTimeout(() => ready = true, 900);
+  const reduceM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const N = 361, cv = document.getElementById('film'), g = cv.getContext('2d'), frames = new Array(N);
+  let loaded = 0;
+  const src = i => `cut/f${String(i + 1).padStart(3, '0')}.webp`;
+  // loading the film: a quick pass of every 8th frame first (enough to scrub smoothly straight away), then the rest fills in
+  // behind it, six at a time, so the page never asks for all 361 at once
+  const order = [...new Set([0, ...Array.from({ length: N }, (_, i) => i).filter(i => i % 8 === 0), ...Array.from({ length: N }, (_, i) => i)])];
+  const firstPass = order.indexOf(1);                                 // where the coarse pass ends
+  let next = 0, inFlight = 0;
+  const veilGone = () => document.getElementById('veil').classList.add('gone');
+  function pump() {
+    while (inFlight < 6 && next < order.length) {
+      const i = order[next++]; inFlight++;
+      const im = new Image(); im.decoding = 'async'; im.src = src(i);
+      im.onload = im.onerror = () => { inFlight--; if (im.naturalWidth) { frames[i] = im; loaded++; if (i === 0) draw(true); }
+        if (loaded >= firstPass) veilGone(); pump(); };
+    }
+  }
+  pump();
+  setTimeout(veilGone, 1400);                                         // never wait longer than this
+  function size() { const d = Math.min(2, devicePixelRatio || 1); cv.width = innerWidth * d; cv.height = innerHeight * d; draw(true); }
+  addEventListener('resize', size);
+  let cur = 0, target = 0, drawn = -1;
+  function nearest(i) { for (let k = 0; k < N; k++) { if (frames[i - k]) return frames[i - k]; if (frames[i + k]) return frames[i + k]; } return null; }
+  function draw(force) {
+    const i = Math.max(0, Math.min(N - 1, Math.round(cur))); if (i === drawn && !force) return;
+    const im = frames[i] || nearest(i); if (!im) return; drawn = i;
+    const W = cv.width, H = cv.height, s = Math.max(W / im.width, H / im.height);   // cover the screen
+    g.clearRect(0, 0, W, H); g.drawImage(im, (W - im.width * s) / 2, (H - im.height * s) / 2, im.width * s, im.height * s);
+  }
+
+  // ---------- the story, in screen heights of scrolling ----------
+  //  0 to FILM: the octopus swims through; the logo comes up in the water underneath, showing between the arms
+  //  FILM to FILM+UP: the logo swims up into the top left corner
+  //  then: THE / DESCENT rises in, huge, on the left
+  const FILM = 3.4, UP = .9, NAME = 1.3;
+  const ss = (a, b, x) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const deep = document.getElementById('deep'), deepBack = document.getElementById('deepBack'), deepFront = document.getElementById('deepFront');
+
+  const ctas = document.getElementById('ctas'), tag = document.getElementById('tag'), cue = document.getElementById('cue');
+  // specks in the water: tiny pale motes that drift up and sway, brighter near the surface
+  const sdC = document.getElementById('seadust'), sdG = sdC.getContext('2d');
+  const MOTES = Array.from({ length: 190 }, () => ({ x: Math.random(), y: Math.random(), r: .8 + Math.random() * 2.2, sp: .006 + Math.random() * .02, sw: Math.random() * 6.3, a: .4 + Math.random() * .55 }));
+  let sdLast = performance.now();
+  function seaDust(W, H, top, now) {
+    const d = Math.min(2, devicePixelRatio || 1); if (sdC.width !== W * d) { sdC.width = W * d; sdC.height = H * d; }
+    const dt = Math.min(.05, (now - sdLast) / 1000); sdLast = now;
+    sdG.setTransform(d, 0, 0, d, 0, 0); sdG.clearRect(0, 0, W, H);
+    MOTES.forEach(m => {
+      m.y -= m.sp * dt; if (m.y < 0) { m.y = 1; m.x = Math.random(); }
+      const x = (m.x + Math.sin(now / 3000 + m.sw) * .006) * W, y = top + m.y * (H - top + 60) - 20;
+      const depth = Math.max(0, Math.min(1, (y - top) / Math.max(1, H - top)));          // brighter up near the light
+      sdG.globalAlpha = m.a * (1 - depth * .6) * (.6 + .4 * Math.sin(now / 900 + m.sw * 3));
+      sdG.fillStyle = '#cfe6ff'; sdG.beginPath(); sdG.arc(x, y, m.r, 0, 6.283); sdG.fill();
+    });
+  }
+  let sy = 0, lines = [4.2, 7.2];   // each line's width at font-size 1, measured once the font is in
+  const measure = () => { const f = word.style.fontSize; word.style.fontSize = '100px'; lines = [...word.querySelectorAll('span')].map(s => { const l = s.querySelectorAll('i'), a = l[0].offsetLeft, z = l[l.length - 1]; return (z.offsetLeft + z.offsetWidth) / 100; }); word.style.fontSize = f; };
+  document.fonts.ready.then(measure); setTimeout(measure, 1500); addEventListener('resize', measure);
+  function frame() {
+    sy += (scrollY - sy) * .16; if (Math.abs(scrollY - sy) < .3) sy = scrollY;
+    const v = sy / innerHeight, W = innerWidth, H = innerHeight, M = Math.max(18, Math.min(W * .03, 40));
+    target = Math.min(1, v / FILM) * (N - 1);
+    if (ready && v < .02 && !reduceM) target = 22 + Math.sin(performance.now() / 1100) * 16;                // a teaser: the arm peeks in and out until you scroll
+    cur += (target - cur) * .22; draw();
+    cv.style.opacity = 1 - ss(FILM - .3, FILM + .1, v);                                   // the last arm tips fade off
+    // the logo: small and centred under the octopus, it shows between the arms, then sinks through a couple of ink lines of water with a little plop; the small one appears up top
+    const now = performance.now(), Lc = Math.min(W * .17, H * .24), fz = ss(FILM + .05, FILM + UP, v);
+    const PAD = 3, Cs = Lc * PAD;                                                     // a canvas three logos wide, logo in the middle: no box for the bubbles to hit
+    Object.assign(bigC.style, { width: Cs + 'px', height: Cs + 'px', transform: `translate(${(W - Cs) / 2}px, ${(H - Cs) / 2}px)` });
+    if ((fz > 0 && fz < 1) || bigC._fz !== fz) bigC._dirty = true; bigC._fz = fz;   // mid-dive (or just finished): redraw every frame
+    const sink = ss(.12, .82, fz), lpx = loopFrame(bg, bigC, Lc, ss(FILM * .35, FILM * .7, v), now, PAD, sink * sink * 1.25); dive(bg, lpx, fz, now);
+    loopFrame(tg, topC, 62, 1, now);
+    // the name: as big as the screen allows, low on the left
+    const M2 = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--m')) || 40;
+    const wide = Math.max(lines[0], lines[1]), waterH = 40, fs = Math.min((W - M2 * 2) * .96 / wide, (H - 86 - 60 - 70 - waterH) / 1.95);   // as big as the screen allows: nearly full width, with room for the buttons
+    word.style.fontSize = fs + 'px';
+    const blockH = fs * .84 * 2 + fs * .12 - fs * .07, ctaH = 60, gapC = Math.max(26, fs * .22);
+    const left = (W - wide * fs) / 2 - fs * .03, top = 86 + (H - 86 - waterH - (blockH + gapC + ctaH)) / 2;   // the block, centred under the bar
+    word.style.transform = `translate(${left}px, ${top}px)`; const wordBottom = top + blockH + fs * .1;
+    const t0 = FILM + UP * .6;
+    // each letter swipes up into place, one after the next
+    letters.forEach((el, i) => { const k = ss(0, 1, (v - (t0 + i * .06)) / .5); el.style.transform = `translateY(${(1 - k) * 105}%)`; });
+    const tk = ss(t0 + .7, t0 + NAME, v);
+    tag.style.fontSize = Math.max(12, Math.min(24, fs * .085)) + 'px'; tag.style.opacity = tk;   // a quiet label beside THE, not a second headline
+    tag.style.transform = `translate(${left + lines[0] * fs + fs * .18}px, ${top + fs * .3 + (1 - tk) * 10}px)`;   // beside THE, level with its middle
+    const ck = ss(t0 + .9, t0 + NAME + .2, v);
+    // the deep: the water rises until its surface rolls across the lower part of DESCENT
+    const RISE0 = t0 + NAME + .9, rise = ss(RISE0, RISE0 + 1.5, v);                // keep scrolling: the water rises over everything
+    const dk = ss(t0 + .6, t0 + NAME, v), surf = top + blockH - fs * .36, dh = (H - surf) * dk + (surf + 120) * rise, tt = now / 1000;
+    const S0 = H - dh;                                                                   // where the surface sits on screen
+    const wave = (amp, base, sp, ph, y0) => { let d = `M-24 ${H + 40} L-24 ${y0 + base}`; for (let x = -24; x <= W + 24; x += 24) d += ` L${x} ${(y0 + base + Math.sin(x * .004 + tt * sp + ph) * amp + Math.sin(x * .011 - tt * sp * 1.4 + ph) * amp * .45).toFixed(1)}`; return d + ` L${W + 24} ${H + 40} Z`; };
+    deep.style.height = H + 'px'; deep.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    if (dh > .5) {
+      const WA = Math.max(.35, Math.min(1, W / 1000));   // waves scale with the screen: on a phone they stay gentle and the name stays readable
+      const back = wave(18 * dk * WA, -10 * WA, .9, 1.7, S0), front = wave(14 * dk * WA, 8 * WA, 1.25, 0, S0);
+      deepBack.setAttribute('d', back); deepFront.setAttribute('d', front);
+      uw.style.clipPath = `path('${front}')`; sdC.style.clipPath = `path('${front}')`; seaDust(W, H, S0, now);
+      // the boat: its keel sits on the front wave; it leans with the slope of the water beneath it
+      const surfY = x => S0 + 8 * WA + Math.sin(x * .004 + tt * 1.25) * 14 * dk * WA + Math.sin(x * .011 - tt * 1.75) * 14 * dk * WA * .45;
+      const bw = Math.max(54, Math.min(130, fs * .42)), bh = bw * 646 / 621, dt = Math.min(.05, (now - lastT) / 1000);
+      const speed = W * (.018 + .012 * Math.sin(tt * .23 + bph[0]) + .008 * Math.sin(tt * .61 + bph[1]));   // px per second, wandering
+      pvx *= Math.exp(-dt * 1.6); bx += (speed + pvx) * dt; if (bx > W + bw) bx = -bw * 1.5; if (bx < -bw * 2) bx = W + bw * .5;
+      liftV += (-lift * 46 - liftV * 5.5) * dt; lift = Math.min(0, lift + liftV * dt);        // a hop that splashes back down
+      rockV += (-rock * 60 - rockV * 4.2) * dt; rock += rockV * dt;                             // a rock that wobbles out
+      const cxb = bx + bw / 2, y = surfY(cxb) + lift, slope = (surfY(cxb + 12) - surfY(cxb - 12)) / 24;
+      const tilt = Math.atan(slope) * 57.3 + Math.sin(tt * 1.7 + bph[2]) * 2.5 + rock;
+      Object.assign(boat.style, { width: bw + 'px', height: bh + 'px', opacity: Math.min(1, dk * 1.4) * (1 - ss(.55, .8, rise)),
+        transform: `translate(${bx}px, ${y - bh * .82}px) rotate(${tilt}deg)` });
+      // the white boat inside the letters: drawn into the copy's background, at the same spot, same lean
+      if (boatD) {
+        wordB.style.fontSize = word.style.fontSize; wordB.style.transform = word.style.transform;
+        lettersB.forEach((el, i) => { el.style.transform = letters[i].style.transform; });
+        const wr = word.getBoundingClientRect(), ox = bx - wr.left, oy = y - bh * .82 - wr.top, k = bw / 621;
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${wr.width}' height='${wr.height}'><g transform='translate(${ox.toFixed(1)} ${oy.toFixed(1)}) rotate(${tilt.toFixed(2)} ${bw / 2} ${bh * .88}) scale(${k.toFixed(4)})'><path fill='%23ffffff' fill-rule='evenodd' d='${boatD}'/></g></svg>`;
+        const bgImg = `url("data:image/svg+xml,${svg.replace(/"/g, "'").replace(/#/g, '%23')}")`, bgSize = `${wr.width}px ${wr.height}px`;
+        lettersB.forEach(el => { const lr = el.getBoundingClientRect();
+          el.style.backgroundImage = bgImg; el.style.backgroundSize = bgSize; el.style.backgroundPosition = `${wr.left - lr.left}px ${wr.top - lr.top}px`; });
+        // only above the water: below the surface the letters are already white, and the black boat shows on them
+        let above = `M-24 -10`; for (let x = -24; x <= W + 24; x += 24) above += ` L${x} ${surfY(x).toFixed(1)}`; above += ` L${W + 24} -10 Z`;
+        ob.style.clipPath = `path('${above}')`; ob.style.opacity = boat.style.opacity;
+      }                                             // white only under the front wave: the light-blue back wave leaves a thin ribbon across the letters
+    } else { deepBack.setAttribute('d', ''); deepFront.setAttribute('d', ''); uw.style.clipPath = 'inset(100% 0 0 0)'; sdC.style.clipPath = 'inset(100% 0 0 0)'; boat.style.opacity = 0; ob.style.opacity = 0; }
+    lastT = now;
+    // the white copy follows the real name exactly
+    wordW.style.fontSize = word.style.fontSize; wordW.style.transform = word.style.transform;
+    lettersW.forEach((el, i) => { el.style.transform = letters[i].style.transform; });
+    document.body.classList.toggle('deeped', dk > .5);
+    ctas.style.opacity = ck * (1 - ss(0, .35, rise)); ctas.classList.toggle('on', ck > .5 && rise < .2);
+    // the abyss: the anglerfish fades up out of the black and swims at you as you scroll
+    // events: after a stretch of scrolling through the exhibits, the jellyfish tank rises up over them
+    // our philosophy rises over the exhibits, then events rises over it
+    const PH0 = RISE0 + 3.9, ph = ss(PH0, PH0 + 1.1, v); phEl.style.transform = ph ? `translateY(${(1 - ph) * 100}%)` : 'translateY(100%)';
+    phEl.classList.toggle('on', ph > .6); abyss.style.transform = ph ? `translateY(${-ph * 22}vh)` : '';
+    const EV0 = PH0 + 1.75, ev = ss(EV0, EV0 + 1.1, v); evEl.style.transform = ev ? `translateY(${(1 - ev) * 100}%)` : 'translateY(100%)';
+    evEl.classList.toggle('on', ev > .6); if (ev) phEl.style.transform = `translateY(${-ev * 22}vh)`;
+    // only ever one video playing at a time, whichever scene is in front (two at once halves the frame rate)
+    const phShow = ph > .3 && ev < .3;
+    if (phShow && phVid.paused) phVid.play().catch(() => {}); else if (!phShow && !phVid.paused) phVid.pause();
+    const evShow = ev >= .3 && ss(EV0 + 1.75, EV0 + 2.85, v) < .7;
+    if (evShow && evVid.paused) evVid.play().catch(() => {}); else if (!evShow && !evVid.paused) evVid.pause();
+    if (ph > 0 && aPlaying && !aVid.paused) aVid.pause(); else if (ph <= 0 && aPlaying && aVid.paused && !aVid.ended && !abyss.classList.contains('after')) aVid.play().catch(() => {});
+    if (ph > .2 && reading) hideStory();
+    // tickets: rises over events the same way; the octopus swims in along the bottom as you scroll, then idles there
+    const TK0 = EV0 + 1.75, tkk = ss(TK0, TK0 + 1.1, v); H_ = H;
+    if (tkk >= 1) { if (tkEl.style.clipPath !== 'none') { tkEl.style.clipPath = 'none'; tkRib.style.clipPath = 'inset(100% 0 0 0)'; } drawTkSnow(now, W, H); }
+    else if (tkk > 0) { const surf = (1 - tkk) * (H + 60) - 30, t = now / 1000; tkEl.style.clipPath = waveClip(surf, W, t, 0); tkRib.style.clipPath = waveClip(surf - 9, W, t, .5); drawTkSnow(now, W, H); }
+    else { tkEl.style.clipPath = tkRib.style.clipPath = 'inset(100% 0 0 0)'; }
+    tkEl.classList.toggle("on", tkk > .6);
+    // the footer rises over tickets last
+    const FT0 = TK0 + 1.6, ft = ss(FT0, FT0 + 1, v); ftEl.style.transform = ft ? `translateY(${(1 - ft) * 100}%)` : 'translateY(100%)';
+    ftEl.classList.toggle('on', ft > .6); tkEl.style.translate = ft ? `0 ${-ft * 22}vh` : '';
+    const shelf = abyss.classList.contains('shelf'); if (shelf && !shelfAt) shelfAt = now; else if (!shelf) shelfAt = 0;
+    if (!shelf) exTravel = 0;
+    if (!aPlaying) gateOpen = false;                                               // back above the abyss: hold again next time
+    else if (shelf && now - shelfAt > 1200 && now - lastWheel > 450) gateOpen = true;  // the gallery is up and you've paused: a fresh scroll moves on
+    gateY = aPlaying && !gateOpen && now > navUntil && scrollY < (RISE0 + 3.9) * H ? (RISE0 + 2.3) * H : null;   // only when you're actually around the exhibits, not jumping past them
+    if (gateY != null && scrollY > gateY + 2) { scrollTo(0, gateY); sy = Math.min(sy, gateY); }   // catches the scrollbar, keys and trackpad momentum too
+    exScroll = shelf && v > RISE0 + 1.9 && v < PH0 ? sy : null;   // scrolling here moves through the cards
+    const ab = ss(RISE0 + 1.35, RISE0 + 1.9, v); abyss.style.opacity = ab;
+    // stop drawing whatever is completely hidden under the scene in front of it
+    document.body.classList.toggle('buried', ab >= 1);
+    abyss.style.visibility = ph >= 1 ? 'hidden' : ''; phEl.style.visibility = ev >= 1 ? 'hidden' : '';
+    evEl.style.visibility = tkk >= 1 ? 'hidden' : ''; tkEl.style.visibility = tkRib.style.visibility = (ft >= 1 || tkk <= 0) ? 'hidden' : '';   // only drawn while it's actually on screen
+    ftEl.style.visibility = ft > 0 ? '' : 'hidden'; if (!ph) phEl.style.visibility = 'hidden'; else if (ev < 1) phEl.style.visibility = ''; if (!ev) evEl.style.visibility = 'hidden'; document.body.classList.toggle('dark', v > RISE0 + .98 && (1 - tkk) * (H + 60) - 30 > 110 && !((1 - ph) * H < 40 && (1 - ev) * H > 90) || (1 - ft) * H < 40);   // glass again once the dark footer reaches the bar   // light whenever a white scene (philosophy, tickets) is under the bar   // light again as soon as the white water's surface (wave included) passes the bar   // the moment the rising water reaches the nav
+    if (v > FILM * .5 && !aVid.src) { aVid.src = aVid.dataset.src; aVid.preload = 'auto'; aVid.load(); }   // start fetching the deep once you're diving
+    if (ab > .85 && !aPlaying) { aPlaying = true; aVid.currentTime = 0; aVid.play().catch(() => {}); }
+    if (wantShelf && aPlaying && v > RISE0 + 2) { wantShelf = false; afterFish(); }   // came from the Exhibits link: let the fish go and show the gallery
+    else if (ab < .5 && aPlaying) { aPlaying = false; aVid.pause(); aVid.currentTime = 0; abyss.classList.remove('after', 'say', 'shelf', 'reading'); sayT.forEach(clearTimeout); sayT = []; }
+    const cx0 = (W - ctas.offsetWidth) / 2;   // centred
+    ctas.style.transform = `translate(${cx0}px, ${top + blockH + gapC + (1 - ck) * 16}px)`;    // lined up under DESCENT
+    cue.style.opacity = !ready ? 0 : v < .12 ? 1 : v > t0 + NAME && v < t0 + NAME + .9 ? .7 : 0;
+    document.body.classList.toggle('idle', ready && v < .02); document.body.classList.toggle('late', v > 1);
+    requestAnimationFrame(frame);
+  }
+  const phEl = document.getElementById('philosophy'), phVid = document.getElementById('phVid'), evEl = document.getElementById('events'), evVid = document.getElementById('evVid');
+  const ftEl = document.getElementById('footScene'), tkEl = document.getElementById('tickets'), tkRib = document.getElementById('tkRib'), tkCv = document.getElementById('tkSnow'), tkG = tkCv.getContext('2d');
+  // flakes drifting down, pale blue on the white
+  const TKSNOW = Array.from({ length: 70 }, () => ({ x: Math.random(), y: Math.random(), r: .6 + Math.random() * 1.8, sp: .008 + Math.random() * .02, sw: Math.random() * 6.3 }));
+  function drawTkSnow(now, W, H) {
+    const dpr = Math.min(2, devicePixelRatio || 1); if (tkCv.width !== W * dpr) { tkCv.width = W * dpr; tkCv.height = H * dpr; }
+    const t = now / 1000; tkG.setTransform(dpr, 0, 0, dpr, 0, 0); tkG.clearRect(0, 0, W, H);
+    tkG.fillStyle = 'rgba(29, 106, 163, .28)';
+    TKSNOW.forEach(s => { const y = ((s.y + t * s.sp) % 1) * H, x = s.x * W + Math.sin(t * .6 + s.sw) * 14; tkG.beginPath(); tkG.arc(x, y, s.r, 0, 7); tkG.fill(); });
+    tkG.strokeStyle = 'rgba(29, 106, 163, .4)'; tkG.lineWidth = 1.2;
+  }
+  // the wavy surface: two waves, the light-blue one slightly ahead so a thin ribbon shows along the edge
+  const waveClip = (surf, W, t, ph) => { let d = `M-20 ${H_ + 40} L-20 ${surf}`; for (let x = -20; x <= W + 20; x += 20) d += ` L${x} ${(surf + Math.sin(x / 140 + t * 1.3 + ph) * 12 + Math.sin(x / 61 - t * .9 + ph) * 5).toFixed(1)}`; return `path('${d} L${W + 20} ${H_ + 40} Z')`; };
+  let H_ = innerHeight;
+  // every nav link glides to its own section (in screen-heights down the page, matching the timeline above)
+  const R0 = FILM + UP * .6 + NAME + .9, SECTION = { home: R0 - .3, exhibits: R0 + 2.3, philosophy: R0 + 3.9 + 1.15, events: R0 + 5.65 + 1.15, tickets: R0 + 7.4 + 1.6, visit: R0 + 7.4 + 1.6 };
+  let wantShelf = false;   // going to Exhibits skips the rest of the anglerfish so the gallery is there when you land
+  // jump straight there: no scrolling through the scenes in between (sy is set too, so the eased scroll doesn't glide through them either)
+  const jump = y => { navUntil = performance.now() + 600; scrollTo(0, y); sy = y; };
+  const goTo = (key, e) => { e.preventDefault(); if (key === 'exhibits') wantShelf = true; jump(SECTION[key] * innerHeight); };
+  document.querySelectorAll('.top nav a, .mm nav a, .ctas a, a.cta, .ev-all, .tk-btns a, .foot a').forEach(l => { const key = (l.getAttribute('href') || '').replace(/^index\.html/, '').slice(1); if (SECTION[key]) l.addEventListener('click', e => goTo(key, e)); });
+  document.querySelector('.ft-word').addEventListener('click', e => { e.preventDefault(); jump(SECTION.home * innerHeight); });
+  // arriving from another page with a section in the link (index.html#events): go straight there
+  { const k = location.hash.slice(1); if (SECTION[k]) { if (k === 'exhibits') wantShelf = true; history.scrollRestoration = 'manual'; history.replaceState(null, '', location.pathname); addEventListener('pageshow', () => setTimeout(() => jump(SECTION[k] * innerHeight), 30), { once: true }); } }
+  const homeEl = document.querySelector('.home'), barEl = document.querySelector('.top');
+  const placeHome = () => { homeEl.style.left = barEl.getBoundingClientRect().left + 14 + 'px'; };
+  addEventListener('resize', placeHome); document.fonts.ready.then(placeHome); setTimeout(placeHome, 800); placeHome();
+  document.querySelector('.home').addEventListener('click', e => { e.preventDefault(); jump(SECTION.home * innerHeight); });   // the logo lands on the name with the water across it, not the very start
+  size(); frame();
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rime</title>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <script>if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('intro');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    /* page grey, taken from the sky in the climber shot */
+    :root { --page: #f5f5f5; }
+    html, body { background: var(--page); }
+    body { overflow-x: clip; }
+
+    /* the mountain sits on the bottom edge, full width; the word stands behind it */
+    /* --w: how wide the mountain is drawn (a bit wider than the screen), --f: the word's size. Phones crop the mountain's sides so it stays big */
+    :root { --w: 115vw; --f: 15vw; --drop: 7vw; }
+    @media (max-aspect-ratio: 1/1) {
+      :root { --w: 360vw; --f: 24vw; --drop: 22vw; }          /* phones: a much bigger mountain fills the tall screen; the word stays the same size */
+      .hero .word { letter-spacing: .05em; text-indent: .05em; }    /* phones: letters set close together */
+      .clouds { opacity: .55; }                                /* the mist covers more of a tall screen, so it's lighter here */
+    }
+    /* --drop pushes the scene below the bottom edge; only the white ground mist goes off-screen */
+    .hero { position: sticky; top: 0; z-index: 0; height: 100vh; height: 100svh; overflow: hidden; }   /* stays put while the climb slides up over it */
+    .clouds { position: absolute; inset: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; }   /* drifting mist over the word and the summit */
+    .scene { position: absolute; bottom: calc(-1 * var(--drop)); left: 50%; width: var(--w); transform: translateX(-50%); }
+    .mountain { position: relative; z-index: 1; display: block; width: 100%; height: auto; user-select: none; }
+    .word {
+      position: absolute; z-index: 0; left: 0; right: 0;
+      top: calc(var(--w) * 0.034 + var(--f) * 0.08);    /* the summit rises into the letters, their tops peek above */
+      transform: translateY(-58%);          /* the summit cuts across the letters, the tops peek above */
+      text-align: center; color: #0d0d0d;
+      font: 500 var(--f)/0.8 "Montserrat", system-ui, sans-serif;
+      letter-spacing: 0.28em; text-indent: 0.28em;   /* indent balances the trailing space so the word stays centred */
+    }
+
+    /* opening: the mountain rises from below, then the letters climb up behind it, then the mist and the header arrive */
+    .word .ch { display: inline-block; }
+    html.intro .mountain { transform: translateY(42%) scale(1.04); filter: blur(10px); opacity: 0; }
+    html.intro .word .ch { transform: translateY(70%); filter: blur(8px); opacity: 0; }
+    html.intro .clouds, html.intro .top { opacity: 0; }
+    html.intro .top { transform: translateY(-10px); }
+    html.go .mountain { transform: none; filter: none; opacity: 1;
+      transition: transform 1.9s cubic-bezier(.16, .84, .22, 1), filter 1.4s ease-out, opacity .9s ease-out; }
+    html.go .word .ch { transform: none; filter: none; opacity: 1;
+      transition: transform 1.3s cubic-bezier(.16, .84, .22, 1), filter 1s ease-out, opacity .8s ease-out;
+      transition-delay: calc(1s + var(--i) * 110ms); }
+    html.go .clouds { opacity: 1; transition: opacity 2.4s ease 1.6s; }
+    html.go .top { opacity: 1; transform: none; transition: opacity 1s ease 1.9s, transform 1s cubic-bezier(.16, .84, .22, 1) 1.9s; }
+
+    /* header: the mark top-left, the shop menu in the middle, account + bag on the right */
+    .top {
+      position: fixed; z-index: 5; top: 0; left: 0; right: 0;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      padding: 28px clamp(20px, 3.4vw, 52px);
+      font: 500 11px/1 "Montserrat", system-ui, sans-serif; letter-spacing: .22em; text-transform: uppercase;
+    }
+    .top a { color: #0d0d0d; text-decoration: none; white-space: nowrap; }
+    .mark { justify-self: start; display: block; width: 44px; }
+    .mark svg { display: block; width: 100%; overflow: visible; }
+    .mark path { fill: none; stroke: #0d0d0d; stroke-width: 1.5px; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+    .menu, .util { display: flex; gap: clamp(22px, 2.6vw, 40px); list-style: none; padding: 0; }
+    .util { justify-self: end; }
+    /* hairline that draws in under a link on hover */
+    .menu a, .util a { position: relative; padding: 6px 0; }
+    .menu a::after, .util a::after {
+      content: ""; position: absolute; left: 0; right: .22em; bottom: 0; height: 1px; background: currentColor;
+      transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.2,.7,.2,1);
+    }
+    .menu a:hover::after, .util a:hover::after, .menu a:focus-visible::after { transform: scaleX(1); }
+    .menu-btn { display: none; }
+
+    /* phones: links fold into a full-screen menu behind a two-line button */
+    @media (max-width: 860px) {
+      .top { grid-template-columns: 1fr auto; padding: 22px 20px; }
+      .top nav, .util .hide-sm { display: none; }
+      .util { gap: 22px; align-items: center; }
+      .menu-btn {
+        display: grid; gap: 6px; width: 26px; padding: 8px 0; background: none; border: 0; cursor: pointer;
+      }
+      .menu-btn i { display: block; height: 1.5px; background: #0d0d0d; transition: transform .35s ease; }
+      .menu-open .menu-btn i:first-child { transform: translateY(3.75px) rotate(45deg); }
+      .menu-open .menu-btn i:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+    }
+    .sheet {
+      position: fixed; z-index: 4; inset: 0; background: rgba(245,245,245,.94);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      display: grid; align-content: center; padding: 0 28px;
+      opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s .35s;
+    }
+    .menu-open .sheet { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+    .sheet ul { list-style: none; padding: 0; display: grid; gap: 22px; }
+    .sheet a {
+      color: #0d0d0d; text-decoration: none; text-transform: uppercase;
+      font: 400 26px/1 "Montserrat", system-ui, sans-serif; letter-spacing: .24em;
+      display: inline-block; opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease;
+    }
+    .menu-open .sheet a { opacity: 1; transform: none; }
+    .menu-open .sheet li:nth-child(2) a { transition-delay: .05s; } .menu-open .sheet li:nth-child(3) a { transition-delay: .1s; }
+    .menu-open .sheet li:nth-child(4) a { transition-delay: .15s; } .menu-open .sheet li:nth-child(5) a { transition-delay: .2s; }
+    .sheet .small { margin-top: 44px; gap: 16px; }
+    .sheet .small a { font-size: 12px; letter-spacing: .22em; color: #555; }
+
+    /* the climb: slides up over the hero, holds on the empty wall, and plays once it reaches the top */
+    .climb { position: relative; z-index: 1; height: 220vh; background: var(--page); }
+    .climb-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+    .climb video {
+      /* full height, 16:9, slid so the climber (centre of the frame) lands at --at across the screen; the sky on the left is free for text */
+      --at: 70vw;
+      position: absolute; top: 0; height: 100%; width: auto; aspect-ratio: 16 / 9; max-width: none; display: block;
+      left: calc(var(--at) - 50vh * 16 / 9);
+      pointer-events: none;
+      /* the video's sky is graded to the page grey; soft edges hide what's left of its frame */
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 14%), linear-gradient(to bottom, transparent, #000 12%, #000 90%, transparent);
+      -webkit-mask-composite: source-in; mask-composite: intersect;
+      mask-image: linear-gradient(to right, transparent, #000 14%), linear-gradient(to bottom, transparent, #000 12%, #000 90%, transparent);
+    }
+    @media (max-aspect-ratio: 1/1) { .climb video { --at: 42vw; } }   /* phones: centre him */
+
+    /* summit: his gear lifts off him onto glass cards, one by one, as you scroll */
+    .summit { position: relative; z-index: 2; height: 560vh; background: var(--page); }
+    .summit-pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+    .summit-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%;
+      transform: scale(calc(1.06 - .06 * var(--p, 0))); transform-origin: 66% 40%; }
+    .summit-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .summit-lines line { stroke: #0d0d0d; stroke-width: 1; vector-effect: non-scaling-stroke; opacity: .55; }
+    .summit-lines circle { fill: #f5f5f5; stroke: #0d0d0d; stroke-width: 1; }
+    .summit-lines .ring { fill: none; stroke: #f5f5f5; stroke-width: 1.5; }
+    /* the line that opens the gear section; it drifts off before the first piece leaves him */
+    .summit-copy {
+      position: absolute; z-index: 2; left: 6vw; top: 50%; width: fit-content; max-width: 48vw;
+      transform: translateY(calc(-50% - 24px * var(--c, 0))); opacity: calc(1 - var(--c, 0)); filter: blur(calc(6px * var(--c, 0)));
+      color: #0d0d0d; pointer-events: none;
+    }
+    .summit-copy h2 {
+      margin: 0; font: 400 clamp(40px, 5.6vw, 96px)/1.05 "Montserrat", system-ui, sans-serif;
+      letter-spacing: .02em; text-transform: uppercase;
+    }
+    /* letter-by-letter entrance: each letter rises out of a mask in quick succession */
+    .summit-copy h2 .w { display: inline-block; white-space: nowrap; overflow: hidden; vertical-align: top; padding: .1em .15em .08em 0; margin: -.1em -.15em -.08em 0; }
+    .summit-copy h2 .l {
+      display: inline-block; transform-origin: 0 100%;
+      /* each letter rises in tilted and out of focus, then straightens and sharpens */
+      transform: translate3d(.12em, 105%, 0) rotate(9deg) skewX(-8deg); filter: blur(7px); opacity: 0;
+      transition: transform .6s cubic-bezier(.2, .85, .25, 1), filter .5s ease-out, opacity .3s ease-out;
+      transition-delay: calc(var(--i) * 22ms);
+    }
+    .summit-copy.in h2 .l { transform: none; filter: blur(0); opacity: 1; }
+    /* once in, the headline keeps a slow drift and lean of its own */
+    .summit-copy h2 {
+      transform-origin: 0 50%; pointer-events: auto; cursor: default;
+      transform: perspective(1200px) translate3d(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px), 0)
+        rotate(calc(var(--rot, 0) * 1deg)) rotateX(calc(var(--tx, 0) * 1deg)) rotateY(calc(var(--ty, 0) * 1deg));
+    }
+    .summit-copy p { opacity: 0; transform: translateY(10px); transition: opacity .6s ease .75s, transform .6s cubic-bezier(.2, .85, .25, 1) .75s; }
+    .summit-copy.in p { opacity: 1; transform: none; }
+    /* two small corner brackets box the sub-line in, top-left and bottom-right; they draw in after the text */
+    .summit-copy p { position: relative; }
+    .summit-copy p::before, .summit-copy p::after { content: ""; position: absolute; width: 18px; height: 18px; border: 0 solid #0d0d0d;
+      transition: clip-path .6s cubic-bezier(.2, .85, .25, 1) 1.15s; }
+    .summit-copy p::before { left: -16px; top: -14px; border-left-width: 1.5px; border-top-width: 1.5px; clip-path: inset(0 100% 0 0); }
+    .summit-copy p::after { right: -16px; bottom: -14px; border-right-width: 1.5px; border-bottom-width: 1.5px; clip-path: inset(0 0 0 100%); }
+    .summit-copy.in p::before, .summit-copy.in p::after { clip-path: inset(0); }
+    @media (prefers-reduced-motion: reduce) { .summit-copy h2 .l, .summit-copy p { transition: none; transform: none; opacity: 1; filter: none; } }
+    /* the sub-line sits under the headline's right edge, a step lower, right-aligned */
+    .summit-copy p {
+      width: 22ch; margin: 100px 0 0 auto; text-align: right; padding: 0; box-sizing: content-box;
+      font: 400 15px/1.7 "Montserrat", system-ui, sans-serif; color: #0d0d0d; letter-spacing: .02em;
+    }
+    /* phones: he fills the screen, so the line sits at the bottom on a soft fade of page grey */
+    @media (max-aspect-ratio: 1/1) {
+      .summit-copy { left: 0; right: 0; width: auto; max-width: none; top: auto; bottom: 0; padding: 120px 20px 96px;
+        background: linear-gradient(to top, rgba(245,245,245,.97) 62%, rgba(245,245,245,0));
+        transform: translateY(calc(24px * var(--c, 0))); }
+      .summit-copy { text-align: center; }
+      .summit-copy h2 { font-size: 28px; transform-origin: 50% 50%; }
+      .summit-copy p { width: auto; max-width: 32ch; margin: 22px auto 0; text-align: center; transform: none; font-size: 14px; }
+      .summit-copy p::before, .summit-copy p::after { display: none; } }   /* phones: everything centred, no corner brackets */
+    .gear {
+      position: absolute; left: 0; top: 0; width: var(--cw); height: var(--ch);
+      display: grid; grid-template-rows: 1fr auto; padding: 12px 14px 14px; border-radius: 16px;
+      color: #0d0d0d; font: 500 10.5px/1.35 "Montserrat", system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase;
+      --g: 0; --m: 0;                                  /* glass and label progress, set from scroll */
+      text-decoration: none; cursor: pointer; transform-style: preserve-3d;
+      isolation: isolate;                              /* keeps the glass layer just behind its own card */
+    }
+    /* the glass lives on its own layer so it can form around the product after it lands */
+    .gear::before {
+      content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: -1;
+      background:
+        linear-gradient(115deg, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 38%),          /* a sheen across the top-left */
+        linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.12));
+      -webkit-backdrop-filter: blur(16px) saturate(115%) brightness(1.03); backdrop-filter: blur(16px) saturate(115%) brightness(1.03);
+      border: 1px solid rgba(255,255,255,.7);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(0,0,0,.04),        /* bevelled glass edge */
+        0 30px 60px -30px rgba(0,0,0,.30), 0 1px 2px rgba(0,0,0,.06);
+      opacity: var(--g); transform: scale(calc(.92 + .08 * var(--g)));
+    }
+    /* hover: the glass brightens and the shadow deepens as the card lifts */
+    .gear::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: calc(var(--lift, 0) / 10);
+      background: radial-gradient(120% 80% at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.55), rgba(255,255,255,0) 60%); }
+    .gear::before { box-shadow: inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(0,0,0,.04),
+        0 calc(30px + var(--lift, 0) * 2px) calc(60px + var(--lift, 0) * 3px) -30px rgba(0,0,0,calc(.30 + var(--lift, 0) * .012)), 0 1px 2px rgba(0,0,0,.06); }
+    .gear:focus-visible { outline: 1px solid #0d0d0d; outline-offset: 4px; }
+    .gear .meta { opacity: var(--m); transform: translateY(calc(8px * (1 - var(--m)))); }
+    .gear img { width: 100%; height: 100%; object-fit: contain; min-height: 0; filter: drop-shadow(0 14px 14px rgba(0,0,0,.18)); will-change: transform; transform-origin: 50% 50%; }
+    .gear .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 10px; }
+    .gear .name, .gear .what, .gear .price { white-space: nowrap; }
+    .gear .meta > div { min-width: 0; }
+    .gear .price { color: #555; letter-spacing: .1em; }
+    .gear .what { display: block; color: #777; font-size: 8.5px; letter-spacing: .14em; margin-top: 3px; }
+    @media (max-aspect-ratio: 1/1) { .gear { padding: 8px 8px 10px; border-radius: 12px; font-size: 8.5px; letter-spacing: .08em;
+      }
+      .gear::before { background: linear-gradient(115deg, rgba(255,255,255,.6), rgba(255,255,255,0) 40%), rgba(245,245,245,.72); }   /* phones: cards sit over him, so a little more frost */
+      .gear .meta { display: block; margin-top: 6px; } .gear .price { display: block; margin-top: 2px; } .gear .what { display: none; } }
+    @media (max-aspect-ratio: 1/1) { .summit-photo { object-position: 66% 40%; } }
+
+    /* shop: the wider range on glass cards, filtered by what you're doing */
+    .shop { position: relative; z-index: 3; background: var(--page); padding: clamp(110px, 14vh, 170px) clamp(20px, 5vw, 80px) clamp(90px, 12vh, 150px); }
+    .shop-head { display: flex; justify-content: space-between; align-items: end; gap: 32px; flex-wrap: wrap; margin-bottom: clamp(36px, 5vw, 64px); }
+    .shop-head h2 { margin: 0; font: 400 clamp(40px, 5.6vw, 96px)/1.02 "Montserrat", system-ui, sans-serif; letter-spacing: .02em; text-transform: uppercase; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chips button { padding: 12px 20px; border-radius: 999px; border: 1px solid rgba(13,13,13,.18); background: transparent; cursor: pointer;
+      font: 500 10.5px/1 "Montserrat", sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #0d0d0d; transition: background .25s, color .25s, border-color .25s; }
+    .chips button:hover { border-color: #0d0d0d; }
+    .chips button[aria-pressed="true"] { background: #0d0d0d; color: #fff; border-color: #0d0d0d; }
+    .shop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(12px, 1.4vw, 22px); }
+    .card {
+      position: relative; display: grid; grid-template-rows: 1fr auto; aspect-ratio: 4 / 5; padding: clamp(14px, 1.6vw, 22px);
+      border-radius: 20px; color: #0d0d0d; text-decoration: none; isolation: isolate;
+      font: 500 11px/1.35 "Montserrat", system-ui, sans-serif; letter-spacing: .1em; text-transform: uppercase;
+      background: linear-gradient(115deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 40%), linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.18));
+      border: 1px solid rgba(255,255,255,.85);
+      box-shadow: inset 0 1px 0 #fff, 0 calc(30px + var(--lift, 0) * 2px) calc(60px + var(--lift, 0) * 3px) -34px rgba(0,0,0,calc(.26 + var(--lift, 0) * .012)), 0 1px 2px rgba(0,0,0,.05);
+      transform: perspective(800px) translateY(calc(var(--lift, 0) * -1px + var(--rise, 0) * 40px)) rotateX(calc(var(--tx, 0) * 1deg)) rotateY(calc(var(--ty, 0) * 1deg)) rotate(calc(var(--tr, 0) * 1deg));
+      opacity: calc(1 - var(--rise, 0)); filter: blur(calc(var(--rise, 0) * 8px));
+    }
+    .card::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: calc(var(--lift, 0) / 10);
+      background: radial-gradient(120% 80% at var(--gx, 50%) var(--gy, 0%), rgba(255,255,255,.6), rgba(255,255,255,0) 60%); }
+    .card img { width: 100%; height: 100%; min-height: 0; object-fit: contain; padding: 8% 6%;
+      filter: drop-shadow(0 18px 18px rgba(0,0,0,.16)); transform: translate(calc(var(--px, 0) * 1px), calc(var(--py, 0) * 1px)) scale(calc(1 + var(--lift, 0) * .008)); }
+    .card .meta { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; margin-top: 12px; }
+    .card .meta > div { min-width: 0; }
+    .card .what { display: block; color: #777; font-size: 9px; letter-spacing: .14em; margin-top: 3px; }
+    .card .price { color: #333; white-space: nowrap; }
+    .card.gone { display: none; }
+    .shop-more { display: flex; justify-content: center; margin-top: clamp(40px, 5vw, 64px); }
+    .shop-more a { padding: 18px 34px; border-radius: 999px; border: 1px solid #0d0d0d; color: #0d0d0d; text-decoration: none;
+      font: 500 11px/1 "Montserrat", sans-serif; letter-spacing: .22em; text-transform: uppercase; transition: background .25s, color .25s; }
+    .shop-more a:hover { background: #0d0d0d; color: #fff; }
+    @media (max-width: 1000px) { .shop-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 860px) { html.has-rs .shop, html.has-rs .more { padding-right: 54px; } }   /* narrow windows with the custom scrollbar: keep the cards clear of it */
+    @media (max-width: 700px) { .shop-grid { grid-template-columns: repeat(2, 1fr); } .card { font-size: 9.5px; border-radius: 16px; } .card .what { display: none; } }
+
+    /* footer: the camp video, full screen, with the brand set over it */
+    .camp { position: relative; z-index: 3; height: 100vh; height: 100svh; min-height: 620px; overflow: hidden; background: var(--page); color: #0d0d0d; }
+    .camp video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 72% 50%; display: block; }
+    @media (max-aspect-ratio: 1/1) { .camp video { object-position: 53% 50%; } }   /* phones: him, the stove and the tent door */
+    /* a soft darkening at the bottom so the white wordmark and small print read over the ground */
+    .camp::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(to top, rgba(0,0,0,.62), rgba(0,0,0,.18) 30%, rgba(0,0,0,0) 46%); }
+    .foot-top { position: absolute; z-index: 1; left: 0; right: 0; top: 0; padding: clamp(96px, 13vh, 130px) clamp(20px, 5vw, 80px) 0;
+      display: grid; grid-template-columns: 1.2fr repeat(3, auto); gap: clamp(28px, 5vw, 90px); align-items: start; }
+    .foot-top h3 { margin: 0 0 18px; font: 500 10.5px/1 "Montserrat", sans-serif; letter-spacing: .22em; text-transform: uppercase; color: #6b6b6b; }
+    .foot-top ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 11px; }
+    .foot-top li a { color: #0d0d0d; text-decoration: none; font: 400 13px/1.3 "Montserrat", sans-serif; letter-spacing: .04em; }
+    .foot-top li a:hover { text-decoration: underline; text-underline-offset: 4px; }
+    .join p { margin: 0 0 18px; max-width: 26ch; font: 400 clamp(20px, 1.8vw, 28px)/1.25 "Montserrat", sans-serif; letter-spacing: .01em; }
+    .join form { display: flex; align-items: center; max-width: 420px; height: 54px; padding: 0 6px 0 22px; border-radius: 999px;
+      background: linear-gradient(115deg, rgba(255,255,255,.75), rgba(255,255,255,0) 50%), rgba(255,255,255,.5);
+      -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.9);
+      box-shadow: inset 0 1px 0 #fff, 0 24px 50px -30px rgba(0,0,0,.35); }
+    .join input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: 500 11px/1 "Montserrat", sans-serif; letter-spacing: .16em; text-transform: uppercase; color: #0d0d0d; }
+    .join input::placeholder { color: #808080; }
+    .join button { height: 42px; padding: 0 20px; border: 0; border-radius: 999px; background: #0d0d0d; color: #fff; cursor: pointer;
+      font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .2em; text-transform: uppercase; }
+    .foot-mark { position: absolute; z-index: 1; left: 0; right: 0; bottom: clamp(44px, 6vh, 60px); text-align: center; color: #fff; pointer-events: none;
+      font: 400 16.5vw/.72 "Montserrat", system-ui, sans-serif; letter-spacing: .28em; text-indent: .28em;   /* the same spaced RIME as the top of the page */
+      text-shadow: 0 10px 60px rgba(0,0,0,.25); }
+    .foot-base { position: absolute; z-index: 1; left: 0; right: 0; bottom: 0; padding: 0 clamp(20px, 5vw, 80px) 18px;
+      display: flex; justify-content: space-between; gap: 16px; color: rgba(255,255,255,.85);
+      font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .2em; text-transform: uppercase; }
+    .foot-base a { color: inherit; text-decoration: none; margin-left: 22px; }
+    .foot-base a:hover { color: #fff; }
+    @media (max-width: 860px) {
+      .foot-top { grid-template-columns: 1fr 1fr; padding-top: 92px; row-gap: 30px; }
+      .join { grid-column: 1 / -1; }
+      .foot-top > div:last-child { display: none; }
+      .foot-base { flex-direction: column; gap: 10px; } .foot-base a { margin: 0 16px 0 0; }
+      /* phones: the photo is busy behind the links, so they sit on a fade of page grey */
+      .foot-top { padding-bottom: 40px; background: linear-gradient(to bottom, rgba(245,245,245,.96) 70%, rgba(245,245,245,0)); }
+      .foot-mark { bottom: 86px; font-size: 18vw; }
+    }
+
+    /* climb copy: on the open sky to his left; lines rise out of a mask once he starts climbing */
+    /* the copy is split: a bracketed line + buttons up top near his head, the headline anchored bottom-left */
+    .climb-copy { position: absolute; z-index: 2; inset: 0; pointer-events: none; color: #0d0d0d; }
+    .climb-copy > * { pointer-events: auto; }
+    /* the note sits up near his head, right-aligned toward him; the headline and buttons anchor bottom-left */
+    .climb-copy .climb-note { position: absolute; right: calc(100vw - var(--at, 70vw) + 22vh + 7vw); top: clamp(140px, 22vh, 220px); text-align: right;
+      width: max-content; max-width: none; white-space: nowrap; }   /* set line breaks: the box is exactly the longest line, so the brackets sit right on the text */
+    .climb-bottom { position: absolute; left: 6vw; bottom: clamp(44px, 7vh, 80px); width: min(42vw, 720px); }
+    .climb-copy h2 {
+      transform-origin: 0 50%; cursor: default;
+      transform: perspective(1200px) translate3d(calc(var(--dx, 0) * 1px), calc(var(--dy, 0) * 1px), 0)
+        rotate(calc(var(--rot, 0) * 1deg)) rotateX(calc(var(--tx, 0) * 1deg)) rotateY(calc(var(--ty, 0) * 1deg));
+      margin: 0; font: 400 clamp(34px, 3.9vw, 70px)/1.04 "Montserrat", system-ui, sans-serif; letter-spacing: .02em; text-transform: uppercase; }
+    .climb-copy .ln { display: block; overflow: hidden; padding-bottom: .04em; }
+    .climb-copy .ln > span { display: inline-block; transform: translateY(105%) rotate(4deg); transform-origin: 0 100%; filter: blur(6px);
+      transition: transform .9s cubic-bezier(.2, .85, .25, 1), filter .7s ease-out; }
+    .climb-copy .ln:nth-child(2) > span { transition-delay: .09s; } .climb-copy .ln:nth-child(3) > span { transition-delay: .18s; }
+    .climb-copy p { position: relative; margin: 0; width: fit-content; max-width: 26ch; font: 400 15px/1.7 "Montserrat", system-ui, sans-serif; letter-spacing: .02em; }
+    /* the same corner brackets as the gear section's line, top-left and bottom-right */
+    .climb-copy p::before, .climb-copy p::after { content: ""; position: absolute; width: 18px; height: 18px; border: 0 solid #0d0d0d;
+      transition: clip-path .6s cubic-bezier(.2, .85, .25, 1) .9s; }
+    .climb-copy p::before { left: -16px; top: -14px; border-left-width: 1.5px; border-top-width: 1.5px; clip-path: inset(0 100% 0 0); }
+    .climb-copy p::after { right: -16px; bottom: -14px; border-right-width: 1.5px; border-bottom-width: 1.5px; clip-path: inset(0 0 0 100%); }
+    .climb-copy.in p::before, .climb-copy.in p::after { clip-path: inset(0); }
+    .climb-cta { display: flex; align-items: center; gap: 28px; margin-top: 32px; flex-wrap: wrap; }
+    .btn-pill { padding: 18px 30px; border-radius: 999px; background: #0d0d0d; color: #fff; text-decoration: none;
+      font: 500 11px/1 "Montserrat", sans-serif; letter-spacing: .22em; text-transform: uppercase; transition: background .25s, transform .4s cubic-bezier(.2,.8,.2,1); }
+    .btn-pill:hover { background: #333; transform: translateY(-2px); }
+    .btn-link { color: #0d0d0d; text-decoration: none; font: 500 11px/1 "Montserrat", sans-serif; letter-spacing: .22em; text-transform: uppercase;
+      padding: 8px 0; border-bottom: 1px solid rgba(13,13,13,.35); transition: border-color .25s; }
+    .btn-link:hover { border-color: #0d0d0d; }
+    .btn-link span { display: inline-block; margin-left: 6px; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+    .btn-link:hover span { transform: translateY(3px); }
+    .climb-copy p, .climb-cta { opacity: 0; transform: translateY(12px); transition: opacity .7s ease, transform .8s cubic-bezier(.2, .85, .25, 1); }
+    .climb-copy p { transition-delay: .35s; } .climb-cta { transition-delay: .55s; }
+    .climb-copy.in .ln > span { transform: none; filter: none; }
+    .climb-copy.in p, .climb-copy.in .climb-cta { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .climb-copy .ln > span, .climb-copy p, .climb-cta { transition: none; transform: none; filter: none; opacity: 1; } }
+    /* phones: everything stacks at the bottom, centred, on a soft fade of page grey: headline, then the note, then the buttons */
+    @media (max-aspect-ratio: 1/1) {
+      .climb-copy { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; text-align: center; padding: 0 20px 40px;
+        background: linear-gradient(to top, rgba(245,245,245,.97) 42%, rgba(245,245,245,0) 66%); }
+      .climb-bottom { display: contents; }
+      .climb-copy h2 { order: 1; font-size: 30px; transform-origin: 50% 50%; }
+      .climb-copy .climb-note { order: 2; position: relative; right: auto; top: auto; width: auto; max-width: 32ch; white-space: normal;
+        margin: 18px auto 0; text-align: center; font-size: 14px; }
+      .climb-copy .climb-note::before, .climb-copy .climb-note::after { display: none; }
+      .climb-note br { display: none; }
+      .climb-cta { order: 3; margin-top: 28px; gap: 18px; flex-direction: column; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="mark" href="index.html" aria-label="Rime home">
+      <svg viewBox="0 0 48 24" aria-hidden="true"><path d="M2 22 L20 6 Q24 2.6 28 6 L46 22 M13.81 11.5 L24 16.2 L34.19 11.5"/></svg>
+    </a>
+    <nav aria-label="Shop">
+      <ul class="menu">
+        <li><a href="#outerwear">Outerwear</a></li>
+        <li><a href="#technical">Technical</a></li>
+        <li><a href="#equipment">Equipment</a></li>
+        <li><a href="expeditions.html">Expeditions</a></li>
+        <li><a href="journal.html">Journal</a></li>
+      </ul>
+    </nav>
+    <ul class="util">
+      <li class="hide-sm"><a href="#search">Search</a></li>
+      <li class="hide-sm"><a href="#account">Account</a></li>
+      <li><a href="#bag">Bag (0)</a></li>
+      <li><button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sheet"><i></i><i></i></button></li>
+    </ul>
+  </header>
+
+  <div class="sheet" id="sheet">
+    <ul>
+      <li><a href="#outerwear">Outerwear</a></li>
+      <li><a href="#technical">Technical</a></li>
+      <li><a href="#equipment">Equipment</a></li>
+      <li><a href="expeditions.html">Expeditions</a></li>
+      <li><a href="journal.html">Journal</a></li>
+    </ul>
+    <ul class="small">
+      <li><a href="#search">Search</a></li>
+      <li><a href="#account">Account</a></li>
+    </ul>
+  </div>
+
+  <section class="hero" data-chapter="Rime">
+  <div class="scene">
+    <h1 class="word" aria-label="Rime"><span class="ch" style="--i:0" aria-hidden="true">R</span><span class="ch" style="--i:1" aria-hidden="true">I</span><span class="ch" style="--i:2" aria-hidden="true">M</span><span class="ch" style="--i:3" aria-hidden="true">E</span></h1>
+    <img class="mountain" src="mountain.webp?v=2" alt="A frost-dusted mountain rising out of white mist, in black and white">
+  </div>
+  </section>
+
+  <section class="climb" id="climb" data-chapter="The climb">
+    <div class="climb-pin">
+      <video id="climbVideo" src="climb/climb.mp4?v=3" muted playsinline preload="auto" aria-label="A climber hauls himself up a frosted rock wall with an ice axe"></video>
+      <div class="climb-copy" id="climbCopy">
+        <p class="climb-note">Technical outerwear and<br> equipment, tested on the<br> coldest faces on earth.</p>
+        <div class="climb-bottom">
+          <h2><span class="ln"><span>High-end gear</span></span> <span class="ln"><span>for your</span></span> <span class="ln"><span>highest climbs</span></span></h2>
+          <div class="climb-cta">
+            <a class="btn-pill" href="#shop">Shop the climb</a>
+            <a class="btn-link" href="#summit">See what he carries <span aria-hidden="true">&darr;</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="summit" id="summit" data-chapter="The kit">
+    <div class="summit-pin">
+      <img class="summit-photo" id="summitPhoto" src="pack/summit.jpg?v=2" alt="A climber seen from behind on a frosted summit, his helmet, pack, ice axe and rope against a grey sky">
+      <svg class="summit-lines" id="summitLines" aria-hidden="true"></svg>
+      <div class="summit-copy">
+        <h2>Gear made for your biggest adventures</h2>
+        <p>Everything he carries to the top, built to go further than you planned.</p>
+      </div>
+      <!-- x,y: where the piece sits on him in the photo (fractions of the image) -->
+      <a class="gear" href="product.html?p=helmet" data-x=".655" data-y=".12"><img src="products/helmet.webp" alt=""><div class="meta"><div><span class="name">Summit Helmet</span><span class="what">Alpine helmet</span></div><span class="price">$420</span></div></a>
+      <a class="gear" href="product.html?p=axe" data-x=".60" data-y=".22"><img src="products/axe.webp" alt=""><div class="meta"><div><span class="name">Arête Axe</span><span class="what">Technical ice axe</span></div><span class="price">$640</span></div></a>
+      <a class="gear" href="product.html?p=pack" data-x=".63" data-y=".31"><img src="products/pack.webp" alt=""><div class="meta"><div><span class="name">Couloir 45</span><span class="what">Alpine pack</span></div><span class="price">$890</span></div></a>
+      <a class="gear" href="product.html?p=jacket" data-x=".70" data-y=".33"><img src="products/jacket.webp" alt=""><div class="meta"><div><span class="name">Névé Shell</span><span class="what">Hardshell jacket</span></div><span class="price">$1,450</span></div></a>
+      <a class="gear" href="product.html?p=rope" data-x=".735" data-y=".49"><img src="products/rope.webp" alt=""><div class="meta"><div><span class="name">Rime Dry 60</span><span class="what">Dynamic rope</span></div><span class="price">$480</span></div></a>
+      <a class="gear" href="product.html?p=boot" data-x=".73" data-y=".84"><img src="products/boot.webp" alt=""><div class="meta"><div><span class="name">Serac Boot</span><span class="what">Boot + crampon</span></div><span class="price">$1,280</span></div></a>
+    </div>
+  </section>
+
+  <section class="shop" id="shop" data-chapter="Shop">
+    <div class="shop-head">
+      <h2>Shop the kit</h2>
+      <div class="chips" role="group" aria-label="Filter gear">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="climb" aria-pressed="false">Climb</button>
+        <button type="button" data-f="wear" aria-pressed="false">Wear</button>
+        <button type="button" data-f="camp" aria-pressed="false">Camp</button>
+      </div>
+    </div>
+    <div class="shop-grid" id="shopGrid"></div>
+    <div class="shop-more"><a href="#shop">View all gear</a></div>
+  </section>
+
+  <footer class="camp" id="camp" data-chapter="Camp">
+    <video id="campVideo" src="camp/camp.mp4" muted loop playsinline preload="metadata" aria-label="A climber cooking outside his dome tent beside a mountain lake"></video>
+    <div class="foot-top">
+      <div class="join">
+        <p>Notes from the long way up. Expeditions, new gear, first in line.</p>
+        <form id="joinForm"><input type="email" placeholder="Your email" aria-label="Your email" required><button>Join</button></form>
+      </div>
+      <div><h3>Shop</h3><ul><li><a href="#shop">Climb</a></li><li><a href="#shop">Wear</a></li><li><a href="#shop">Camp</a></li><li><a href="#shop">New in</a></li></ul></div>
+      <div><h3>Rime</h3><ul><li><a href="expeditions.html">Expeditions</a></li><li><a href="journal.html">Journal</a></li><li><a href="#repairs">Lifetime repairs</a></li><li><a href="expeditions.html?f=store">Stores</a></li></ul></div>
+      <div><h3>Help</h3><ul><li><a href="#shipping">Shipping</a></li><li><a href="#returns">Returns</a></li><li><a href="#sizing">Sizing</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    </div>
+    <div class="foot-mark" aria-hidden="true">RIME</div>
+    <div class="foot-base"><span>&copy; 2026 Rime Mountain Co.</span><span><a href="#privacy">Privacy</a><a href="#terms">Terms</a><a href="#instagram">Instagram</a></span></div>
+  </footer>
+
+  <script src="catalog.js"></script>
+  <script>
+    /* phone menu: the button toggles the sheet; a link, Esc or widening the window closes it */
+    (() => {
+      const root = document.documentElement, btn = document.getElementById('menuBtn'), sheet = document.getElementById('sheet');
+      const set = open => {
+        root.classList.toggle('menu-open', open);
+        btn.setAttribute('aria-expanded', open);
+        btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      };
+      btn.addEventListener('click', () => set(!root.classList.contains('menu-open')));
+      sheet.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+      addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+      matchMedia('(min-width: 861px)').addEventListener('change', e => { if (e.matches) set(false); });
+    })();
+
+    /* living headlines: a slow drift and lean that follows the cursor a little; on hover the headline
+       turns gently toward the cursor in 3D and leans, easing in and out. Used by the climb and gear headlines. */
+    function sway(h) {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      let mx = 0, my = 0, sx = 0, sy = 0, over = false, hx = 0, hy = 0, hv = 0, ex = 0, ey = 0;
+      addEventListener('pointermove', e => {
+        mx = e.clientX / innerWidth - .5; my = e.clientY / innerHeight - .5;
+        if (over) { const r = h.getBoundingClientRect(); hx = (e.clientX - r.left) / r.width - .5; hy = (e.clientY - r.top) / r.height - .5; }
+      });
+      h.addEventListener('pointerenter', () => { over = true; });
+      h.addEventListener('pointerleave', () => { over = false; hx = hy = 0; });
+      const tick = t => {
+        t /= 1000; sx += (mx - sx) * .05; sy += (my - sy) * .05;
+        hv += ((over ? 1 : 0) - hv) * .06; ex += (hx - ex) * .07; ey += (hy - ey) * .07;
+        h.style.setProperty('--dx', (Math.sin(t * .6) * 4 + sx * 14 + hv * 6).toFixed(2));
+        h.style.setProperty('--dy', (Math.sin(t * .45 + 1) * 3 + sy * 10 - hv * 4).toFixed(2));
+        h.style.setProperty('--rot', (Math.sin(t * .35) * .6 - sx * 1.2 - hv * 2.2).toFixed(3));
+        h.style.setProperty('--ty', (ex * 10 * hv).toFixed(3));
+        h.style.setProperty('--tx', (-ey * 8 * hv).toFixed(3));
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+    sway(document.querySelector('.climb-copy h2'));
+
+    /* the climb waits on its first frame (the empty wall) while it rises; it plays once the section reaches the top */
+    (() => {
+      const sec = document.getElementById('climb'), v = document.getElementById('climbVideo'), copy = document.getElementById('climbCopy');
+      let played = false, copyT = 0;
+      const check = () => {
+        const top = sec.getBoundingClientRect().top;
+        if (top <= 1 && !played) { played = true; v.currentTime = 0; v.play().catch(() => {}); copyT = setTimeout(() => copy.classList.add('in'), 900); }   // the copy follows once he's on his way
+        else if (top > innerHeight * 0.5 && played) { played = false; v.pause(); v.currentTime = 0; clearTimeout(copyT); copy.classList.remove('in'); }   // scrolled back up: reset for next time
+      };
+      addEventListener('scroll', check, { passive: true });
+      v.addEventListener('loadeddata', check);
+    })();
+    /* summit: for each piece, in turn: a ring pulses on him, the product lifts off and arcs to its slot,
+       the glass forms around it, then the label and a hairline back to him */
+    (() => {
+      const sec = document.getElementById('summit'), photo = document.getElementById('summitPhoto');
+      const svg = document.getElementById('summitLines'), cards = [...sec.querySelectorAll('.gear')];
+      const imgs = cards.map(c => c.querySelector('img')), copyH = sec.querySelector('.summit-copy h2');
+      const IW = 16, IH = 9;                                   // the photo's shape
+      const clamp = v => Math.min(1, Math.max(0, v));
+      const seg = (t, a, b) => clamp((t - a) / (b - a));
+      const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const out = t => 1 - Math.pow(1 - t, 3);
+      cards.forEach(() => svg.insertAdjacentHTML('beforeend', '<line/><circle class="ring"/><circle r="3.5"/>'));
+      const lines = svg.querySelectorAll('line'), rings = svg.querySelectorAll('.ring'), dots = svg.querySelectorAll('circle:not(.ring)');
+      const START = .12, STEP = .115, SPAN = .28;             // piece i runs over [START + i*STEP, + SPAN] of the section
+
+      // where a fraction of the photo lands on screen, with object-fit: cover, its object-position and its zoom
+      const onScreen = (fx, fy, W, H, zoom) => {
+        const s = Math.max(W / IW, H / IH), w = IW * s, h = IH * s;
+        const px = parseFloat(getComputedStyle(photo).objectPosition) / 100 || .5;
+        const x = (W - w) * px + fx * w, y = (H - h) * .4 + fy * h;
+        return [W * .66 + (x - W * .66) * zoom, H * .4 + (y - H * .4) * zoom];   // transform-origin 66% 40%
+      };
+
+      let target = 0, p = 0, raf = 0;
+      const draw = () => {
+        const W = innerWidth, H = innerHeight, phone = W / H < 1;
+        sec.style.setProperty('--p', p);
+        const cOut = ease(seg(p, .02, .11));
+        sec.style.setProperty('--c', cOut);   // the headline leaves first
+        copyH.style.pointerEvents = cOut < .5 ? '' : 'none';
+        const zoom = 1.06 - .06 * p;
+        // card slots: 3 across × 2 down in the open sky on the left (phones: across the top)
+        // phones: 2 across × 3 down, as big as fits between the header and the bottom of the screen
+        const cols = phone ? 2 : 3, gap = phone ? 10 : Math.round(W * .012);
+        const pr = 1.12;                                                        // phone card shape (a little squarer, so three rows fit)
+        const rgt = document.documentElement.classList.contains('has-rs') ? 54 : 16;   // room for the custom scrollbar when it's showing
+        const cw = phone ? Math.min((W - 16 - rgt - gap) / 2, (H - 84 - 24 - 2 * gap) / 3 / pr) : Math.min(200, W * .125, (H - 220) / 2 / 1.25);
+        const ch = cw * (phone ? pr : 1.25);
+        const gx = phone ? 16 : W * .06, gy = phone ? 84 : (H - 2 * ch - gap) / 2 + 24;
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        cards.forEach((c, i) => {
+          c.style.setProperty('--cw', cw + 'px'); c.style.setProperty('--ch', ch + 'px');
+          const ex = gx + (i % cols) * (cw + gap), ey = gy + ((i / cols) | 0) * (ch + gap);
+          c.style.transform = `translate(${ex}px, ${ey}px) perspective(700px) translateY(calc(var(--lift, 0) * -1px)) rotateX(calc(var(--tx, 0) * 1deg)) rotateY(calc(var(--ty, 0) * 1deg)) rotate(calc(var(--tr, 0) * 1deg))`;
+          const t = seg(p, START + i * STEP, START + i * STEP + SPAN);
+          const pulse = seg(t, 0, .22), fly = ease(seg(t, .12, .7)), glass = out(seg(t, .5, .82)), label = out(seg(t, .72, 1));
+          const [sx, sy] = onScreen(+c.dataset.x, +c.dataset.y, W, H, zoom);
+
+          // the product: from the gear on him (small) along a soft arc to the middle of its card
+          const im = imgs[i], cx = ex + im.offsetLeft + im.offsetWidth / 2, cy = ey + im.offsetTop + im.offsetHeight / 2;
+          const k = 1 - fly, lift = Math.sin(fly * Math.PI) * Math.min(90, H * .1);   // rises a little mid-flight
+          const dx = (sx - cx) * k, dy = (sy - cy) * k - lift;
+          const sc = .22 + .78 * fly, rot = (i % 2 ? 6 : -6) * k;
+          im.style.transform = `translate(calc(${dx}px + var(--px, 0) * 1px), calc(${dy}px + var(--py, 0) * 1px)) rotate(${rot}deg) scale(calc(${sc} * (1 + var(--lift, 0) * .006)))`;
+          im.style.opacity = clamp(fly * 4);
+          c.style.setProperty('--g', glass); c.style.setProperty('--m', label);
+          c.style.pointerEvents = label > .9 ? 'auto' : 'none';   // only clickable once it has landed
+
+          // the spot on him: a dot that appears, with a ring that pulses out once as the piece leaves
+          dots[i].setAttribute('cx', sx); dots[i].setAttribute('cy', sy); dots[i].style.opacity = pulse;
+          rings[i].setAttribute('cx', sx); rings[i].setAttribute('cy', sy);
+          rings[i].setAttribute('r', 4 + 22 * seg(t, .04, .4)); rings[i].style.opacity = (1 - seg(t, .1, .4)) * pulse;
+
+          // hairline: draws from him to the card once the label is in
+          const lx = ex + cw, ly = ey + ch / 2, len = Math.hypot(lx - sx, ly - sy);
+          const ln = lines[i];
+          ln.setAttribute('x1', sx); ln.setAttribute('y1', sy); ln.setAttribute('x2', lx); ln.setAttribute('y2', ly);
+          ln.style.strokeDasharray = len; ln.style.strokeDashoffset = len * (1 - label);
+          ln.style.opacity = phone ? 0 : .5;
+        });
+      };
+      // scroll sets a target; the animation glides to it, so wheel steps never look jumpy
+      const tick = () => {
+        p += (target - p) * .14;
+        if (Math.abs(target - p) < .0005) p = target;
+        draw();
+        raf = p === target ? 0 : requestAnimationFrame(tick);
+      };
+      const onScroll = () => {
+        target = clamp(-sec.getBoundingClientRect().top / (sec.offsetHeight - innerHeight));
+        if (!raf) raf = requestAnimationFrame(tick);
+      };
+      addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', () => { draw(); onScroll(); });
+      const go = () => { onScroll(); p = target; draw(); };
+      photo.complete ? go() : photo.addEventListener('load', go);
+    })();
+
+    /* camp: only plays while it's on screen */
+    (() => {
+      const v = document.getElementById('campVideo');
+      new IntersectionObserver(([e]) => e.isIntersecting ? v.play().catch(() => {}) : v.pause(), { threshold: .15 }).observe(v);
+    })();
+
+    /* gear headline: split into letters, play the entrance once the section is halfway up the screen, reset when it's gone below */
+    (() => {
+      const copy = document.querySelector('.summit-copy'), h = copy.querySelector('h2'), sec = document.getElementById('summit');
+      let i = 0;
+      h.setAttribute('aria-label', h.textContent);
+      h.innerHTML = h.textContent.split(' ').map(word =>
+        `<span class="w" aria-hidden="true">${[...word].map(ch => `<span class="l" style="--i:${i++}">${ch}</span>`).join('')}</span>`
+      ).join(' ');
+      const check = () => {
+        const top = sec.getBoundingClientRect().top;
+        if (top < innerHeight * .5) copy.classList.add('in');
+        else if (top > innerHeight) copy.classList.remove('in');
+      };
+      addEventListener('scroll', check, { passive: true }); check();
+
+      sway(h);
+    })();
+
+    /* pause on the gear headline: scrolling into the section stops right where it pins, for HOLD ms, then lets go */
+    (() => {
+      const sec = document.getElementById('summit'), HOLD = 700;
+      let last = scrollY, armed = true, holding = false, stopY = 0, timer = 0;
+      const block = e => { if (holding) e.preventDefault(); };
+      const keys = e => { if (holding && [' ', 'PageDown', 'PageUp', 'ArrowDown', 'ArrowUp', 'End', 'Home'].includes(e.key)) e.preventDefault(); };
+      addEventListener('wheel', block, { passive: false });
+      addEventListener('touchmove', block, { passive: false });
+      addEventListener('keydown', keys);
+      document.addEventListener('click', e => { if (e.target.closest('a[href^="#"], a[href*="index.html#"]')) window.rimeJump = Date.now() + 2500; });
+      addEventListener('scroll', () => {
+        const y = scrollY, stop = sec.offsetTop;
+        if (holding) { if (Math.abs(y - stopY) > 1) scrollTo(0, stopY); return; }
+        if (Date.now() < (window.rimeJump || 0)) { last = y; return; }      // a jump from a link or the scrollbar passes straight through
+        if (y < stop - innerHeight * .25) armed = true;                 // back above it: the pause can happen again
+        if (armed && last < stop && y >= stop && y - stop < innerHeight * 1.5) {   // crossing in by normal scrolling, not a big jump
+          armed = false; holding = true; stopY = stop; scrollTo(0, stop);
+          clearTimeout(timer); timer = setTimeout(() => { holding = false; }, HOLD);
+        }
+        last = y;
+      }, { passive: true });
+    })();
+
+
+    /* shop: render the cards from the catalogue (newest pieces first), filter by chip, reveal as they come into view */
+    (() => {
+      const grid = document.getElementById('shopGrid'), G = window.RIME_GEAR;
+      const order = Object.keys(G).filter(k => !G[k].onHim).concat(Object.keys(G).filter(k => G[k].onHim));
+      grid.innerHTML = order.map(k => `<a class="card" data-cat="${G[k].cat}" href="product.html?p=${k}">
+        <img src="products/${k}.webp" alt="" loading="lazy">
+        <div class="meta"><div><span>${G[k].name}</span><span class="what">${G[k].what}</span></div><span class="price">${G[k].price}</span></div></a>`).join('');
+      const cards = [...grid.children];
+      // reveal: each card rises out of a blur, in reading order, as the grid scrolls in
+      const show = () => {
+        const vis = cards.filter(c => !c.classList.contains('gone'));
+        vis.forEach((c, i) => {
+          const r = c.getBoundingClientRect(), t = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight * .35) - (i % 4) * .12));
+          c.style.setProperty('--rise', (1 - (1 - Math.pow(1 - t, 3))).toFixed(3));
+        });
+      };
+      addEventListener('scroll', show, { passive: true }); addEventListener('resize', show); show();
+      document.querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => {
+        document.querySelectorAll('.chips button').forEach(x => x.setAttribute('aria-pressed', x === b));
+        cards.forEach(c => c.classList.toggle('gone', b.dataset.f !== 'all' && c.dataset.cat !== b.dataset.f));
+        cards.forEach(c => c.animate([{ opacity: 0, transform: 'translateY(14px)' }, { opacity: 1, transform: 'none' }], { duration: 450, easing: 'cubic-bezier(.2,.85,.25,1)' }));
+        show();
+      }));
+      // footer links into the shop pick their filter
+      document.querySelectorAll('.foot-top a[href="#shop"]').forEach(a => a.addEventListener('click', () => {
+        const f = a.textContent.toLowerCase(), b = document.querySelector(`.chips button[data-f="${f}"]`); if (b) b.click();
+      }));
+      document.getElementById('joinForm').addEventListener('submit', e => { e.preventDefault(); e.target.querySelector('button').textContent = 'Joined'; e.target.querySelector('input').value = ''; });
+    })();
+    /* product cards (summit and shop): on hover a card lifts, tilts toward the cursor and its product drifts slightly, all eased */
+    (() => {
+      if (matchMedia('(hover: none)').matches) return;
+      const cards = [...document.querySelectorAll('.gear, .card')];
+      const st = cards.map(() => ({ over: 0, x: 0, y: 0, v: 0, ex: 0, ey: 0 }));
+      let raf = 0;
+      const tick = () => {
+        let moving = false;
+        cards.forEach((c, i) => {
+          const s = st[i];
+          s.v += (s.over - s.v) * .09; s.ex += (s.x - s.ex) * .1; s.ey += (s.y - s.ey) * .1;
+          if (Math.abs(s.over - s.v) > .002 || Math.abs(s.x - s.ex) > .002 || Math.abs(s.y - s.ey) > .002) moving = true;
+          c.style.setProperty('--lift', (s.v * 10).toFixed(2));
+          c.style.setProperty('--ty', (s.ex * 14 * s.v).toFixed(2));
+          c.style.setProperty('--tx', (-s.ey * 12 * s.v).toFixed(2));
+          c.style.setProperty('--tr', (-1.2 * s.v).toFixed(2));
+          c.style.setProperty('--px', (s.ex * 10 * s.v).toFixed(2));
+          c.style.setProperty('--py', (s.ey * 8 * s.v).toFixed(2));
+          c.style.setProperty('--gx', (50 + s.ex * 100) + '%'); c.style.setProperty('--gy', (s.ey * 100 + 20) + '%');
+        });
+        raf = moving ? requestAnimationFrame(tick) : 0;
+      };
+      const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+      cards.forEach((c, i) => {
+        c.addEventListener('pointerenter', () => { st[i].over = 1; kick(); });
+        c.addEventListener('pointerleave', () => { Object.assign(st[i], { over: 0, x: 0, y: 0 }); kick(); });
+        c.addEventListener('pointermove', e => {
+          const r = c.getBoundingClientRect();
+          st[i].x = (e.clientX - r.left) / r.width - .5; st[i].y = (e.clientY - r.top) / r.height - .5; kick();
+        });
+      });
+    })();
+
+    /* opening: play once the mountain and the font are ready (or after a second at most, so a slow network never leaves a blank page) */
+    (() => {
+      const root = document.documentElement;
+      if (!root.classList.contains('intro')) return;
+      const img = document.querySelector('.mountain');
+      const ready = Promise.all([
+        img.complete ? Promise.resolve() : new Promise(r => { img.onload = img.onerror = r; }),
+        document.fonts ? document.fonts.ready : Promise.resolve()
+      ]);
+      let done = false;
+      const go = () => { if (done) return; done = true; requestAnimationFrame(() => requestAnimationFrame(() => {
+        root.classList.add('go');
+        setTimeout(() => root.classList.remove('intro', 'go'), 4200);    // hand the elements back to their normal styles
+      })); };
+      ready.then(go); setTimeout(go, 1000);
+    })();
+  </script>
+  <script src="clouds.js"></script>
+  <script src="bag.js"></script>
+  <script src="header.js"></script>
+  <script src="search.js"></script>
+  <script src="scroller.js"></script>
+  <script src="cursor.js"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

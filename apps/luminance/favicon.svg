@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Luminance: the glowing luminance dot on deep Aevum navy, with a small glint -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0" stop-color="#123a6b"/>
+      <stop offset=".6" stop-color="#0a1f3d"/>
+      <stop offset="1" stop-color="#050f20"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#33c6ff" stop-opacity=".75"/>
+      <stop offset=".45" stop-color="#33c6ff" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#33c6ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="core" cx="45%" cy="40%" r="60%">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".6" stop-color="#e6fbff"/>
+      <stop offset="1" stop-color="#9fe8ff"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#bg)"/>
+  <rect x="1" y="1" width="62" height="62" rx="14" fill="none" stroke="#7fdcff" stroke-opacity=".35" stroke-width="1.5"/>
+  <circle cx="32" cy="33" r="25" fill="url(#halo)"/>
+  <circle cx="32" cy="33" r="14.5" fill="none" stroke="#33c6ff" stroke-width="3"/>
+  <circle cx="32" cy="33" r="14.5" fill="none" stroke="#bff4ff" stroke-width="1" stroke-opacity=".8"/>
+  <circle cx="32" cy="33" r="8.5" fill="url(#core)"/>
+  <path d="M49 9.5 L50.4 14.1 L55 15.5 L50.4 16.9 L49 21.5 L47.6 16.9 L43 15.5 L47.6 14.1 Z" fill="#ffffff"/>
+</svg>

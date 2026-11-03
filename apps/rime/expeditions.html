@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expeditions · Rime</title>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    :root { --page: #f5f5f5; --ink: #0d0d0d; --soft: #6b6b6b; --line: rgba(13,13,13,.14); }
+    html, body { background: var(--page); color: var(--ink); }
+    body { font: 400 15px/1.7 "Montserrat", system-ui, sans-serif; overflow-x: clip; }
+
+    /* header: the mark top-left, the shop menu in the middle, account + bag on the right */
+    .top {
+      position: fixed; z-index: 5; top: 0; left: 0; right: 0;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      padding: 28px clamp(20px, 3.4vw, 52px);
+      font: 500 11px/1 "Montserrat", system-ui, sans-serif; letter-spacing: .22em; text-transform: uppercase;
+    }
+    .top a { color: #0d0d0d; text-decoration: none; white-space: nowrap; }
+    .mark { justify-self: start; display: block; width: 44px; }
+    .mark svg { display: block; width: 100%; overflow: visible; }
+    .mark path { fill: none; stroke: #0d0d0d; stroke-width: 1.5px; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+    .menu, .util { display: flex; gap: clamp(22px, 2.6vw, 40px); list-style: none; padding: 0; }
+    .util { justify-self: end; }
+    /* hairline that draws in under a link on hover */
+    .menu a, .util a { position: relative; padding: 6px 0; }
+    .menu a::after, .util a::after {
+      content: ""; position: absolute; left: 0; right: .22em; bottom: 0; height: 1px; background: currentColor;
+      transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.2,.7,.2,1);
+    }
+    .menu a:hover::after, .util a:hover::after, .menu a:focus-visible::after { transform: scaleX(1); }
+    .menu-btn { display: none; }
+
+    /* phones: links fold into a full-screen menu behind a two-line button */
+    @media (max-width: 860px) {
+      .top { grid-template-columns: 1fr auto; padding: 22px 20px; }
+      .top nav, .util .hide-sm { display: none; }
+      .util { gap: 22px; align-items: center; }
+      .menu-btn {
+        display: grid; gap: 6px; width: 26px; padding: 8px 0; background: none; border: 0; cursor: pointer;
+      }
+      .menu-btn i { display: block; height: 1.5px; background: #0d0d0d; transition: transform .35s ease; }
+      .menu-open .menu-btn i:first-child { transform: translateY(3.75px) rotate(45deg); }
+      .menu-open .menu-btn i:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+    }
+    .sheet {
+      position: fixed; z-index: 4; inset: 0; background: rgba(245,245,245,.94);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      display: grid; align-content: center; padding: 0 28px;
+      opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s .35s;
+    }
+    .menu-open .sheet { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+    .sheet ul { list-style: none; padding: 0; display: grid; gap: 22px; }
+    .sheet a {
+      color: #0d0d0d; text-decoration: none; text-transform: uppercase;
+      font: 400 26px/1 "Montserrat", system-ui, sans-serif; letter-spacing: .24em;
+      display: inline-block; opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease;
+    }
+    .menu-open .sheet a { opacity: 1; transform: none; }
+    .menu-open .sheet li:nth-child(2) a { transition-delay: .05s; } .menu-open .sheet li:nth-child(3) a { transition-delay: .1s; }
+    .menu-open .sheet li:nth-child(4) a { transition-delay: .15s; } .menu-open .sheet li:nth-child(5) a { transition-delay: .2s; }
+    .sheet .small { margin-top: 44px; gap: 16px; }
+    .sheet .small a { font-size: 12px; letter-spacing: .22em; color: #555; }
+
+    /* expeditions: a dotted world map with climbs and stores, a toggle, and a detail card */
+    .exp { padding: 120px clamp(20px, 5vw, 80px) 40px; }
+    html.has-rs .exp, html.has-rs .list { padding-right: max(54px, clamp(20px, 5vw, 80px)); }
+    .exp-head { display: flex; justify-content: space-between; align-items: end; gap: 28px; flex-wrap: wrap; }
+    .exp-head h1 { font: 400 clamp(44px, 6.4vw, 110px)/.98 "Montserrat", system-ui, sans-serif; letter-spacing: .02em; text-transform: uppercase; }
+    .exp-head p { max-width: 40ch; margin-top: 18px; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .chips button { padding: 12px 20px; border-radius: 999px; border: 1px solid rgba(13,13,13,.18); background: transparent; cursor: pointer;
+      font: 500 10.5px/1 "Montserrat", sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #0d0d0d; transition: background .25s, color .25s, border-color .25s; }
+    .chips button:hover { border-color: #0d0d0d; }
+    .chips button[aria-pressed="true"] { background: #0d0d0d; color: #fff; border-color: #0d0d0d; }
+    .chips .key { display: inline-block; width: 7px; height: 7px; margin-right: 9px; transform: rotate(45deg) translateY(-1px); border: 1px solid currentColor; }
+    .chips .key.solid { background: currentColor; }
+
+    .mapwrap { position: relative; margin-top: clamp(28px, 4vw, 52px); display: grid; grid-template-columns: 1fr minmax(300px, 360px); gap: clamp(16px, 2vw, 28px); align-items: start; }
+    .map { position: relative; aspect-ratio: 2 / 1; border-radius: 28px; overflow: hidden;
+      background: linear-gradient(115deg, rgba(255,255,255,.65), rgba(255,255,255,0) 45%), rgba(255,255,255,.28);
+      border: 1px solid rgba(255,255,255,.85); box-shadow: inset 0 1px 0 #fff, 0 50px 90px -60px rgba(0,0,0,.35); }
+    .map canvas, .map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .map svg { pointer-events: none; }
+    #leads line { stroke: rgba(13,13,13,.45); stroke-width: 1; } #leads circle { fill: rgba(13,13,13,.6); }
+    .route { fill: none; stroke: #0d0d0d; stroke-width: 1.3; stroke-dasharray: 3 5; opacity: .75; }
+    .route-head { fill: #0d0d0d; }
+    /* markers: climbs are solid diamonds, stores are hollow ones (the same diamond as the logo and cursor) */
+    .pin { position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border: 0; padding: 0; background: none; cursor: pointer;
+      transition: opacity .35s, transform .45s cubic-bezier(.2,.8,.2,1); }
+    .pin i { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px; transform: rotate(45deg);
+      border: 1.5px solid #0d0d0d; background: #f5f5f5; transition: transform .35s cubic-bezier(.2,.8,.2,1), background .25s; }
+    .pin.climb i { background: #0d0d0d; }
+    .pin.climb::before { content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+      border: 1px solid #0d0d0d; transform: rotate(45deg); animation: ping 2.8s cubic-bezier(.2,.7,.2,1) infinite; animation-delay: var(--d, 0s); opacity: 0; }
+    @keyframes ping { 0% { transform: rotate(45deg) scale(1); opacity: .7; } 70%, 100% { transform: rotate(45deg) scale(3.2); opacity: 0; } }
+    .pin:hover i, .pin.on i { transform: rotate(45deg) scale(1.5); }
+    .pin.on.store i { background: #0d0d0d; }
+    .pin span { position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, 4px); white-space: nowrap; pointer-events: none; opacity: 0;
+      padding: 7px 10px; border-radius: 999px; font: 500 9.5px/1 "Montserrat", sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #0d0d0d;
+      background: rgba(255,255,255,.8); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 8px 20px -10px rgba(0,0,0,.3);
+      transition: opacity .25s, transform .35s cubic-bezier(.2,.8,.2,1); }
+    .pin:hover span, .pin.on span { opacity: 1; transform: translate(-50%, -2px); }
+    .pin.gone { opacity: 0; pointer-events: none; transform: scale(.4); }
+
+    /* the detail card beside the map */
+    .detail { position: sticky; top: 100px; border-radius: 24px; overflow: hidden;
+      background: linear-gradient(115deg, rgba(255,255,255,.7), rgba(255,255,255,0) 45%), rgba(255,255,255,.4);
+      border: 1px solid rgba(255,255,255,.9); box-shadow: inset 0 1px 0 #fff, 0 40px 80px -50px rgba(0,0,0,.4); }
+    .detail .ph { aspect-ratio: 4 / 3; background: #e9e9e9 center / cover no-repeat; transition: opacity .3s; }
+    .detail .body { padding: 22px 24px 24px; }
+    .detail .kind { font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .24em; text-transform: uppercase; color: #6b6b6b; }
+    .detail h2 { margin-top: 10px; font: 400 30px/1.05 "Montserrat", sans-serif; letter-spacing: .02em; text-transform: uppercase; }
+    .detail .where { margin-top: 6px; color: #6b6b6b; font-size: 13px; }
+    .detail dl { margin-top: 18px; border-top: 1px solid rgba(13,13,13,.12); }
+    .detail dl div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-bottom: 1px solid rgba(13,13,13,.12); font-size: 13px; }
+    .detail dt { color: #6b6b6b; font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; }
+    .detail .go { display: block; margin-top: 20px; padding: 16px; border-radius: 999px; background: #0d0d0d; color: #fff; text-align: center; text-decoration: none;
+      font: 500 10.5px/1 "Montserrat", sans-serif; letter-spacing: .22em; text-transform: uppercase; transition: background .25s; }
+    .detail .go:hover { background: #333; }
+    .detail .link { display: block; margin-top: 14px; text-align: center; color: #0d0d0d; font-size: 12px; }
+    .detail.swap .ph, .detail.swap .body { animation: swap .5s cubic-bezier(.2,.85,.25,1); }
+    @keyframes swap { from { opacity: 0; transform: translateY(8px); filter: blur(4px); } }
+
+    /* everything as a list too */
+    .list { padding: 60px clamp(20px, 5vw, 80px) 110px; }
+    .list h3 { font: 500 11px/1 "Montserrat", sans-serif; letter-spacing: .24em; text-transform: uppercase; margin-bottom: 22px; }
+    .rows { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px; }
+    .row { display: grid; grid-template-rows: auto 1fr; border-radius: 18px; overflow: hidden; color: #0d0d0d; text-decoration: none; cursor: pointer; text-align: left;
+      border: 1px solid rgba(255,255,255,.85); background: rgba(255,255,255,.35); box-shadow: inset 0 1px 0 #fff, 0 30px 50px -36px rgba(0,0,0,.3);
+      font: inherit; padding: 0; transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s; }
+    .row:hover { transform: translateY(-6px) rotate(-.6deg); box-shadow: inset 0 1px 0 #fff, 0 40px 60px -36px rgba(0,0,0,.38); }
+    .row .ph { aspect-ratio: 4 / 3; background: #e9e9e9 center / cover no-repeat; }
+    .row .t { padding: 14px 16px 16px; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; display: flex; justify-content: space-between; gap: 10px; }
+    .row .t small { display: block; color: #777; font-size: 9px; margin-top: 4px; letter-spacing: .16em; }
+    .row.gone { display: none; }
+
+    @media (max-width: 900px) {
+      .mapwrap { grid-template-columns: 1fr; }
+      .detail { position: relative; top: 0; display: grid; grid-template-columns: 40% 1fr; }
+      .detail .ph { aspect-ratio: auto; min-height: 100%; }
+      .map { aspect-ratio: 1.6 / 1; border-radius: 18px; }
+    }
+    @media (max-width: 560px) {
+      .detail { grid-template-columns: 1fr; } .detail .ph { aspect-ratio: 16 / 9; } .exp-head h1 { font-size: 44px; }
+      /* phones: the map runs edge to edge and taller, with smaller pins */
+      .map { margin: 0 -20px; aspect-ratio: 1.75 / 1; border-radius: 0; border-left: 0; border-right: 0; }
+      html.has-rs .map { margin-right: -54px; }
+      .pin { transform: scale(.72); } .pin:hover, .pin.on { transform: scale(.9); }
+      .rows { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .row .t { flex-direction: column; font-size: 9.5px; padding: 10px 12px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="mark" href="index.html" aria-label="Rime home">
+      <svg viewBox="0 0 48 24" aria-hidden="true"><path d="M2 22 L20 6 Q24 2.6 28 6 L46 22 M13.81 11.5 L24 16.2 L34.19 11.5"/></svg>
+    </a>
+    <nav aria-label="Shop">
+      <ul class="menu">
+        <li><a href="index.html#outerwear">Outerwear</a></li>
+        <li><a href="index.html#technical">Technical</a></li>
+        <li><a href="index.html#equipment">Equipment</a></li>
+        <li><a href="expeditions.html">Expeditions</a></li>
+        <li><a href="journal.html">Journal</a></li>
+      </ul>
+    </nav>
+    <ul class="util">
+      <li class="hide-sm"><a href="index.html#search">Search</a></li>
+      <li class="hide-sm"><a href="index.html#account">Account</a></li>
+      <li><a href="index.html#bag">Bag (0)</a></li>
+      <li><button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sheet"><i></i><i></i></button></li>
+    </ul>
+  </header>
+
+  <div class="sheet" id="sheet">
+    <ul>
+      <li><a href="index.html#outerwear">Outerwear</a></li>
+      <li><a href="index.html#technical">Technical</a></li>
+      <li><a href="index.html#equipment">Equipment</a></li>
+      <li><a href="expeditions.html">Expeditions</a></li>
+      <li><a href="journal.html">Journal</a></li>
+    </ul>
+    <ul class="small">
+      <li><a href="index.html#search">Search</a></li>
+      <li><a href="index.html#account">Account</a></li>
+    </ul>
+  </div>
+
+
+
+  <main class="exp" data-chapter="Map">
+    <div class="exp-head">
+      <div>
+        <h1>Expeditions</h1>
+        <p>Guided climbs on the world's great mountains, and the stores that kit you out before you go.</p>
+      </div>
+      <div class="chips" role="group" aria-label="Show on map">
+        <button type="button" data-f="all" aria-pressed="true">All</button>
+        <button type="button" data-f="climb" aria-pressed="false"><span class="key solid"></span>Climbs</button>
+        <button type="button" data-f="store" aria-pressed="false"><span class="key"></span>Stores</button>
+      </div>
+    </div>
+    <div class="mapwrap">
+      <div class="map" id="map" aria-label="World map of Rime climbs and stores">
+        <canvas id="dots"></canvas>
+        <svg id="leads"></svg>
+        <svg id="routes"></svg>
+      </div>
+      <aside class="detail" id="detail" aria-live="polite"></aside>
+    </div>
+  </main>
+
+  <section class="list" data-chapter="Everything">
+    <h3 id="listTitle">Every climb and store</h3>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  <script src="catalog.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+  <script>
+    /* phone menu: the button toggles the sheet; a link, Esc or widening the window closes it */
+    (() => {
+      const root = document.documentElement, btn = document.getElementById('menuBtn'), sheet = document.getElementById('sheet');
+      const set = open => {
+        root.classList.toggle('menu-open', open);
+        btn.setAttribute('aria-expanded', open);
+        btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      };
+      btn.addEventListener('click', () => set(!root.classList.contains('menu-open')));
+      sheet.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+      addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+      matchMedia('(min-width: 861px)').addEventListener('change', e => { if (e.matches) set(false); });
+    })();
+
+    /* placeholder places: names, prices and details are made up for now */
+    const PLACES = [
+      { id: 'montblanc', type: 'climb', name: 'Mont Blanc', where: 'France / Italy', ll: [6.8652, 45.8326], store: 'chamonix',
+        facts: [['Summit', '4,808 m'], ['Season', 'Jun – Sep'], ['Duration', '6 days'], ['From', '$4,900']] },
+      { id: 'matterhorn', type: 'climb', name: 'Matterhorn', where: 'Switzerland', ll: [7.6586, 45.9763], store: 'zermatt',
+        facts: [['Summit', '4,478 m'], ['Season', 'Jul – Sep'], ['Duration', '5 days'], ['From', '$5,600']] },
+      { id: 'denali', type: 'climb', name: 'Denali', where: 'Alaska, USA', ll: [-151.007, 63.0692], store: 'anchorage',
+        facts: [['Summit', '6,190 m'], ['Season', 'May – Jun'], ['Duration', '21 days'], ['From', '$14,800']] },
+      { id: 'everest', type: 'climb', name: 'Everest Base Camp', where: 'Nepal', ll: [86.8528, 28.0026], store: 'kathmandu',
+        facts: [['Altitude', '5,364 m'], ['Season', 'Mar – May, Oct – Nov'], ['Duration', '14 days'], ['From', '$6,200']] },
+      { id: 'aconcagua', type: 'climb', name: 'Aconcagua', where: 'Argentina', ll: [-70.0109, -32.6532], store: 'mendoza',
+        facts: [['Summit', '6,961 m'], ['Season', 'Dec – Feb'], ['Duration', '18 days'], ['From', '$7,400']] },
+      { id: 'kilimanjaro', type: 'climb', name: 'Kilimanjaro', where: 'Tanzania', ll: [37.3556, -3.0674], store: 'arusha',
+        facts: [['Summit', '5,895 m'], ['Season', 'Jan – Mar, Jun – Oct'], ['Duration', '8 days'], ['From', '$5,200']] },
+      { id: 'fuji', type: 'climb', name: 'Mount Fuji', where: 'Japan', ll: [138.7274, 35.3606], store: 'tokyo',
+        facts: [['Summit', '3,776 m'], ['Season', 'Jul – Sep'], ['Duration', '2 days'], ['From', '$1,400']] },
+      { id: 'chamonix', type: 'store', name: 'Chamonix', where: 'France', ll: [6.8694, 45.9237],
+        facts: [['Address', '12 Rue du Lyret'], ['Hours', '9 – 19 daily'], ['Guides', 'Mont Blanc expeditions']] },
+      { id: 'zermatt', type: 'store', name: 'Zermatt', where: 'Switzerland', ll: [7.7491, 46.0207],
+        facts: [['Address', 'Bahnhofstrasse 41'], ['Hours', '8 – 19 daily'], ['Guides', 'Matterhorn expeditions']] },
+      { id: 'boulder', type: 'store', name: 'Boulder', where: 'Colorado, USA', ll: [-105.2705, 40.015],
+        facts: [['Address', '1450 Pearl Street'], ['Hours', '10 – 19, Sun 11 – 17'], ['Also', 'Repairs workshop']] },
+      { id: 'banff', type: 'store', name: 'Banff', where: 'Alberta, Canada', ll: [-115.5708, 51.1784],
+        facts: [['Address', '208 Banff Avenue'], ['Hours', '9 – 20 daily'], ['Also', 'Ice climbing clinics']] },
+      { id: 'anchorage', type: 'store', name: 'Anchorage', where: 'Alaska, USA', ll: [-149.9003, 61.2181],
+        facts: [['Address', '510 W 4th Avenue'], ['Hours', '9 – 18 daily'], ['Guides', 'Denali expeditions']] },
+      { id: 'mendoza', type: 'store', name: 'Mendoza', where: 'Argentina', ll: [-68.8458, -32.8895],
+        facts: [['Address', 'Av. Arístides 320'], ['Hours', '10 – 20, closed Mon'], ['Guides', 'Aconcagua expeditions']] },
+      { id: 'arusha', type: 'store', name: 'Arusha', where: 'Tanzania', ll: [36.683, -3.3869],
+        facts: [['Address', 'Old Moshi Road'], ['Hours', '8 – 18 daily'], ['Guides', 'Kilimanjaro expeditions']] },
+      { id: 'kathmandu', type: 'store', name: 'Kathmandu', where: 'Nepal', ll: [85.324, 27.7172],
+        facts: [['Address', 'Thamel Marg'], ['Hours', '9 – 19 daily'], ['Guides', 'Everest expeditions']] },
+      { id: 'tokyo', type: 'store', name: 'Tokyo', where: 'Japan', ll: [139.6503, 35.6762],
+        facts: [['Address', '5-2 Jingumae, Shibuya'], ['Hours', '11 – 20 daily'], ['Guides', 'Fuji climbs']] },
+    ];
+    const byId = Object.fromEntries(PLACES.map(p => [p.id, p]));
+    const photo = p => `places/${p.id}.jpg`;
+
+    const map = document.getElementById('map'), cv = document.getElementById('dots'), svg = d3.select('#routes');
+    const detail = document.getElementById('detail');
+    let proj, filter = new URLSearchParams(location.search).get('f') || 'all', current = null;
+
+    // pins
+    PLACES.forEach((p, i) => {
+      const b = document.createElement('button');
+      b.className = 'pin ' + p.type; b.type = 'button'; b.dataset.id = p.id; b.style.setProperty('--d', (i * .37 % 2.8) + 's');
+      b.setAttribute('aria-label', p.name + (p.type === 'climb' ? ' climb' : ' store'));
+      b.innerHTML = `<i></i><span>${p.name}</span>`;
+      b.addEventListener('click', () => select(p.id));
+      b.addEventListener('pointerenter', () => { if (matchMedia('(hover: hover)').matches) preview(p.id); });
+      map.appendChild(b); p.el = b;
+    });
+
+    // the land as dots: draw it once offscreen, then place a dot wherever there's land
+    let land;
+    const draw = () => {
+      const W = map.clientWidth, H = map.clientHeight, dpr = Math.min(2, devicePixelRatio);
+      proj = W / H < 1.5
+        ? d3.geoEqualEarth().fitExtent([[-W * .02, H * .14], [W * 1.02, H * .9]], land)     // phones: land a touch larger than the frame width allows
+        : d3.geoEqualEarth().fitExtent([[W * .03, H * .05], [W * .97, H * .97]], land);
+      const off = document.createElement('canvas'); off.width = W; off.height = H;
+      const o = off.getContext('2d'); d3.geoPath(proj, o)(land); o.fill();
+      const px = o.getImageData(0, 0, W, H).data;
+      cv.width = W * dpr; cv.height = H * dpr; const c = cv.getContext('2d'); c.scale(dpr, dpr);
+      const step = W < 600 ? 5 : W < 1000 ? 6 : 7, r = step * .2;
+      c.fillStyle = 'rgba(13,13,13,.32)';
+      for (let y = step / 2; y < H; y += step) for (let x = step / 2; x < W; x += step) {
+        if (px[((y | 0) * W + (x | 0)) * 4 + 3] > 128) { c.beginPath(); c.arc(x, y, r, 0, 7); c.fill(); }
+      }
+      svg.attr('viewBox', `0 0 ${W} ${H}`); d3.select('#leads').attr('viewBox', `0 0 ${W} ${H}`);
+      PLACES.forEach(p => { const [x, y] = proj(p.ll); p.ax = p.x = x; p.ay = p.y = y; });
+      spread();
+      route(current, false);
+    };
+
+    // pins that land on top of each other (a store beside its mountain, the Alps) nudge apart;
+    // a short hairline ties each moved pin back to its true spot
+    const spread = () => {
+      const vis = PLACES.filter(p => filter === 'all' || p.type === filter), MIN = map.clientWidth < 600 ? 12 : 22;
+      vis.forEach(p => { p.x = p.ax; p.y = p.ay; });
+      for (let k = 0; k < 60; k++) vis.forEach((a, i) => vis.slice(i + 1).forEach(b => {
+        let dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+        if (d >= MIN) return;
+        if (d < .01) { dx = a.type === 'climb' ? -1 : 1; dy = .6; d = Math.hypot(dx, dy); }
+        const push = (MIN - d) / 2 / d;
+        a.x -= dx * push; a.y -= dy * push; b.x += dx * push; b.y += dy * push;
+      }));
+      PLACES.forEach(p => { p.el.style.left = p.x + 'px'; p.el.style.top = p.y + 'px'; });
+      const lead = d3.select('#leads').selectAll('line').data(vis.filter(p => Math.hypot(p.x - p.ax, p.y - p.ay) > 3), p => p.id);
+      lead.exit().remove();
+      lead.enter().append('line').merge(lead).attr('x1', p => p.ax).attr('y1', p => p.ay).attr('x2', p => p.x).attr('y2', p => p.y);
+      const dot = d3.select('#leads').selectAll('circle').data(vis.filter(p => Math.hypot(p.x - p.ax, p.y - p.ay) > 3), p => p.id);
+      dot.exit().remove();
+      dot.enter().append('circle').attr('r', 1.6).merge(dot).attr('cx', p => p.ax).attr('cy', p => p.ay);
+    };
+
+    // a dashed arc from the store where you kit up to the mountain, drawn on as you pick a climb
+    const route = (p, animate = true) => {
+      svg.selectAll('*').remove();
+      if (!p) return;
+      const a = p.type === 'climb' ? byId[p.store] : PLACES.find(c => c.store === p.id);
+      if (!a) return;
+      const s = p.type === 'climb' ? a : p, e = p.type === 'climb' ? p : a;
+      const dx = e.x - s.x, dy = e.y - s.y, d = Math.hypot(dx, dy);
+      const lift = Math.max(26, d * .6);
+      const path = `M${s.x},${s.y} Q${(s.x + e.x) / 2},${(s.y + e.y) / 2 - lift} ${e.x},${e.y}`;
+      const pth = svg.append('path').attr('class', 'route').attr('d', path);
+      if (animate) {
+        const L = pth.node().getTotalLength();
+        pth.attr('stroke-dasharray', `${L} ${L}`).attr('stroke-dashoffset', L)
+          .transition().duration(900).ease(d3.easeCubicOut).attr('stroke-dashoffset', 0)
+          .on('end', () => pth.attr('stroke-dasharray', '3 5'));
+      }
+    };
+
+    const card = p => {
+      const pair = p.type === 'climb' ? byId[p.store] : PLACES.find(c => c.store === p.id);
+      const link = pair ? (p.type === 'climb' ? `Kit up at our ${pair.name} store` : `Gateway to ${pair.name}`) : '';
+      detail.classList.remove('swap'); void detail.offsetWidth; detail.classList.add('swap');
+      detail.innerHTML = `
+        <div class="ph" style="background-image:url(${photo(p)})"></div>
+        <div class="body">
+          <div class="kind">${p.type === 'climb' ? 'Guided climb' : 'Rime store'}</div>
+          <h2>${p.name}</h2><div class="where">${p.where}</div>
+          <dl>${p.facts.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+          <a class="go" href="#">${p.type === 'climb' ? 'Join an expedition' : 'Get directions'}</a>
+          ${pair ? `<a class="link" href="#" data-go="${pair.id}">${link} &rarr;</a>` : ''}
+        </div>`;
+      const l = detail.querySelector('[data-go]'); if (l) l.addEventListener('click', e => { e.preventDefault(); select(l.dataset.go); });
+    };
+    let previewing = null;
+    const preview = id => { if (previewing === id) return; previewing = id; const p = byId[id]; card(p); route(p); mark(id); };
+    const select = id => { current = byId[id]; previewing = null; preview(id); };
+    const mark = id => PLACES.forEach(p => p.el.classList.toggle('on', p.id === id));
+    map.addEventListener('pointerleave', () => { if (current && previewing !== current.id) { previewing = null; preview(current.id); } });
+
+    // filter
+    const apply = () => {
+      document.querySelectorAll('.chips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.f === filter));
+      PLACES.forEach(p => p.el.classList.toggle('gone', filter !== 'all' && p.type !== filter));
+      if (proj) { spread(); route(current, false); }
+      document.querySelectorAll('.row').forEach(r => r.classList.toggle('gone', filter !== 'all' && r.dataset.type !== filter));
+      document.getElementById('listTitle').textContent = filter === 'climb' ? 'Every climb' : filter === 'store' ? 'Every store' : 'Every climb and store';
+      if (!current || (filter !== 'all' && current.type !== filter)) select(PLACES.find(p => filter === 'all' || p.type === filter).id);
+    };
+    document.querySelectorAll('.chips button').forEach(b => b.addEventListener('click', () => { filter = b.dataset.f; apply(); }));
+
+    // list
+    document.getElementById('rows').innerHTML = PLACES.map(p => `
+      <button class="row" type="button" data-id="${p.id}" data-type="${p.type}">
+        <div class="ph" style="background-image:url(${photo(p)})"></div>
+        <div class="t"><span>${p.name}<small>${p.where}</small></span><span>${p.type === 'climb' ? p.facts[0][1] : 'Store'}</span></div>
+      </button>`).join('');
+    document.querySelectorAll('.row').forEach(r => r.addEventListener('click', () => { select(r.dataset.id); scrollTo({ top: 0, behavior: 'smooth' }); }));
+
+    fetch('data/land-110m.json').then(r => r.json()).then(topo => {
+      const all = topojson.feature(topo, topo.objects.land);
+      // leave Antarctica off so the map fills the frame
+      land = { type: 'FeatureCollection', features: all.features.map(f => ({ ...f, geometry: { ...f.geometry,
+        coordinates: f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates.filter(poly => d3.geoBounds({ type: 'Polygon', coordinates: poly })[1][1] > -60) : f.geometry.coordinates } })) };
+      draw(); apply();
+      new ResizeObserver(() => draw()).observe(map);
+    });
+  </script>
+  <script src="bag.js"></script>
+  <script src="header.js"></script>
+  <script src="search.js"></script>
+  <script src="scroller.js"></script>
+  <script src="cursor.js"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

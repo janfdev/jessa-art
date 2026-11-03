@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tandem</title>
+  <meta name="description" content="Long-haul road freight in 40 countries, run by one team with a live view of every load.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..600&family=Geist+Mono:wght@400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --space: #000;
+      --ink: #f4f5f7;
+      --ink-2: rgba(244, 245, 247, 0.66);
+      --ink-3: rgba(244, 245, 247, 0.42);
+      --line: rgba(255, 255, 255, 0.14);
+      --serif: "Instrument Serif", Georgia, serif;
+      --sans: "Geist", system-ui, sans-serif;
+      --mono: "Geist Mono", ui-monospace, monospace;
+      --gutter: clamp(16px, 3.5vw, 48px);
+      --ease: cubic-bezier(.2, .7, .1, 1);
+    }
+    * { margin: 0; box-sizing: border-box; }
+    html, body { background: var(--space); }
+    .scroll-track { height: 2400vh; }
+    body { color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    #earth { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+    #road, #pass { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; pointer-events: none; }
+
+    /* overhead scene */
+    #topdown { position: fixed; inset: 0; overflow: hidden; opacity: 0; visibility: hidden; background-color: #1c2431; }
+    .td-yard { transform: scaleX(-1); }
+    #cloudpass { position: fixed; inset: 0; overflow: hidden; pointer-events: none; visibility: hidden; }
+    .bank { position: absolute; top: -10%; height: 120%; width: 78%; will-change: transform, opacity; }
+    .bank.left { left: -4%; transform-origin: 0 50%; }
+    .bank.right { right: -4%; transform-origin: 100% 50%; }
+    .bank i { position: absolute; border-radius: 50%; }
+    .blob { background: radial-gradient(closest-side, rgba(255, 255, 255, .92), rgba(244, 247, 252, .75) 35%, rgba(228, 235, 246, .4) 62%, rgba(220, 229, 243, .12) 82%, rgba(220, 229, 243, 0)); }
+    .veil { background: radial-gradient(closest-side, rgba(246, 249, 254, .4), rgba(236, 242, 251, .2) 50%, rgba(236, 242, 251, 0)); }
+    .cloud-fill { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, #f4f7fc, #e3eaf5); opacity: 0; }
+    .td-world { position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+    .td-world > *, .td-ground > * { position: absolute; left: 0; top: 0; }
+    .td-ground { position: absolute; left: 0; top: 0; }
+    .td-ocean { position: absolute; inset: 0; background-color: #031f37; }
+    .td-ocean::before { content: ""; position: absolute; inset: 0; background: inherit; background-color: transparent; background-image: url(assets/td/ocean.jpg); opacity: var(--tex, 1); }
+    .td-road { background: url(assets/td/road.jpg) repeat-y; }
+    .td-port {
+      -webkit-mask-image: linear-gradient(transparent, #000 7%), linear-gradient(to right, #000 72%, transparent 96%);
+      -webkit-mask-composite: source-in; mask-image: linear-gradient(transparent, #000 7%), linear-gradient(to right, #000 72%, transparent 96%); mask-composite: intersect;
+    }
+    .td-yard { -webkit-mask-image: linear-gradient(transparent, #000 7%); mask-image: linear-gradient(transparent, #000 7%); }
+    .td-truck, .td-container, .td-ship { will-change: transform; }
+    .td-container { transform-origin: 50% 50%; }
+    .td-beams {
+      pointer-events: none; mix-blend-mode: screen; will-change: transform;
+      -webkit-mask-image: linear-gradient(transparent, #000 18%, #000 60%, transparent); mask-image: linear-gradient(transparent, #000 18%, #000 60%, transparent);
+      background:
+        radial-gradient(ellipse 22% 100% at 30% 0, rgba(255, 238, 205, .38), transparent 72%),
+        radial-gradient(ellipse 22% 100% at 70% 0, rgba(255, 238, 205, .38), transparent 72%);
+    }
+    .td-wake {
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+      background: linear-gradient(to top, rgba(220, 235, 255, .22), rgba(220, 235, 255, .04) 70%, transparent);
+    }
+    .td-trolley {
+      background: repeating-linear-gradient(90deg, #2a2d33 0 6px, #34373e 6px 12px); border: 1px solid rgba(255, 214, 120, .7); border-radius: 2px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.45);
+    }
+    .td-title { translate: -50% 0; width: min(560px, 90vw); text-align: center; text-shadow: 0 2px 24px rgba(0,0,0,.8); }
+    .td-title h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(44px, 5.4vw, 92px); line-height: .94; letter-spacing: -0.02em; margin-top: 16px; }
+    .td-title h2 em { font-style: italic; }
+    .td-card { color: var(--ink); text-shadow: 0 1px 2px rgba(0,0,0,.6), 0 2px 18px rgba(0,0,0,.6); will-change: opacity, translate; isolation: isolate; }
+    /* a soft dark pool behind the words, painted once as a gradient instead of wide blurred shadows */
+    .td-card::before { content: ''; position: absolute; inset: -22% -18%; z-index: -1; pointer-events: none;
+      background: radial-gradient(closest-side, rgba(4,8,16,.5), rgba(4,8,16,.28) 55%, transparent); }
+    .td-card.left { text-align: right; }
+    .td-card h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(48px, 4.6vw, 76px); line-height: .95; letter-spacing: -0.02em; }
+    .td-card h3::after { content: ''; display: block; width: 44px; height: 1px; background: rgba(255,255,255,.5); margin: 26px 0 0; }
+    .td-card.left h3::after { margin-left: auto; }
+    .td-card p { margin-top: 22px; font-size: clamp(18px, 1.35vw, 21px); line-height: 1.55; font-weight: 300; color: rgba(255,255,255,.88); }
+    .td-card a { display: inline-flex; align-items: center; gap: 10px; margin-top: 26px; padding-bottom: 6px; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink); border-bottom: 1px solid rgba(255,255,255,.45); transition: border-color .4s var(--ease); }
+    .td-card a:hover { border-color: #fff; }
+    .td-card a svg { width: 13px; height: 13px; transition: transform .4s var(--ease); }
+    .td-card a:hover svg { transform: translateX(3px); }
+
+    /* closing: the planet hangs overhead and the footer settles beneath it */
+    .end { position: relative; z-index: 4; padding: 50vh var(--gutter) 0; background: linear-gradient(transparent 40vh, rgba(0,0,0,.6) 60vh, #000 85vh); }
+    .end-cta { display: grid; justify-items: center; text-align: center; }
+    .end-cta h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(52px, 7vw, 120px); line-height: .92; letter-spacing: -0.025em; margin-top: 20px; }
+    .end-cta h2 em { font-style: italic; }
+    .end-cta .ctas { margin-top: 34px; }
+    .end-cols { display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; margin-top: clamp(80px, 14vh, 160px); padding-top: 32px; border-top: 1px solid var(--line); }
+    .end-cols div { display: grid; gap: 10px; align-content: start; font-size: 14px; color: var(--ink-2); }
+    .end-cols b { color: var(--ink); font-weight: 500; margin-bottom: 4px; }
+    .end-cols a:hover { color: var(--ink); }
+    .wordmark {
+      font-weight: 500; letter-spacing: .1em; text-transform: uppercase; text-align: center;
+      font-size: 17.5vw; line-height: .8; margin: 64px calc(var(--gutter) * -1) 0; padding-left: .1em;
+      background: linear-gradient(var(--ink) 20%, rgba(244,245,247,.06)); -webkit-background-clip: text; background-clip: text; color: transparent;
+      user-select: none;
+    }
+    .end-bottom { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 24px 0 28px; font: 11px var(--mono); letter-spacing: .06em; color: var(--ink-3); }
+
+    .cue {
+      position: fixed; left: 50%; bottom: 24px; translate: -50% 0; z-index: 5;
+      display: grid; justify-items: center; gap: 10px; opacity: 0;
+      font: 10px var(--mono); letter-spacing: .24em; text-transform: uppercase; color: var(--ink-2);
+      text-shadow: 0 1px 8px rgba(0,0,0,.8); pointer-events: none;
+    }
+    .cue i { width: 1px; height: 34px; background: linear-gradient(var(--ink-2), transparent); transform-origin: top; animation: cue 2.2s var(--ease) infinite; }
+    @keyframes cue { 0% { transform: scaleY(0); } 55% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(1); opacity: 0; } }
+
+    /* finale: holds on the last frame of the clip */
+    .shade {
+      position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity 1.2s var(--ease);
+      background:
+        linear-gradient(to left, rgba(0,0,0,.55), transparent 45%),
+        linear-gradient(transparent 45%, rgba(0,0,0,.85));
+    }
+    .finale {
+      position: fixed; left: var(--gutter); right: var(--gutter); bottom: clamp(24px, 4.5vh, 48px);
+      display: grid; gap: clamp(28px, 5vh, 56px); pointer-events: none;
+    }
+    .finale.on, .finale.on + * { pointer-events: auto; }
+    .on-shade { opacity: 1; }
+    .finale .f {
+      opacity: 0; transform: translateY(18px);
+      transition: opacity 1s var(--ease), transform 1.2s var(--ease);
+    }
+    .finale.on .f { opacity: 1; transform: none; }
+    .finale.on .f1 { transition-delay: .05s; }
+    .finale.on .f2 { transition-delay: .2s; }
+    .finale.on .f3 { transition-delay: .35s; }
+    .finale.on .f4 { transition-delay: .55s; }
+
+    .pitch { justify-self: end; text-align: right; max-width: 440px; display: grid; justify-items: end; }
+    .pitch .eyebrow::before { display: none; }
+    .pitch h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(48px, 5.4vw, 96px); line-height: .92; letter-spacing: -0.025em; margin-top: 18px; }
+    .pitch h2 em { font-style: italic; }
+    .pitch .body { margin-top: 18px; font-size: clamp(15px, 1.2vw, 17px); line-height: 1.6; font-weight: 300; color: var(--ink-2); max-width: 22em; }
+    .pitch .ctas { justify-content: flex-end; margin-top: 30px; }
+
+    .metrics {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+    .metrics div { padding: 20px 24px 0 0; }
+    .metrics div + div { padding-left: 24px; border-left: 1px solid rgba(255,255,255,.1); }
+    .metrics dd {
+      font-family: var(--serif); font-size: clamp(40px, 4.4vw, 72px); line-height: 1; letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+    }
+    .metrics dd small { font-size: .5em; margin-left: .06em; color: var(--ink-2); }
+    .metrics dt { margin-top: 10px; font: 10.5px var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+
+    /* loader */
+    .loader {
+      position: fixed; inset: 0; display: grid; place-content: center; gap: 14px; justify-items: center;
+      font: 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3);
+      transition: opacity .8s; pointer-events: none;
+    }
+    .loader i { width: 120px; height: 1px; background: var(--line); position: relative; overflow: hidden; }
+    .loader i::after { content: ""; position: absolute; inset: 0; background: var(--ink); transform-origin: left; transform: scaleX(var(--p, 0)); transition: transform .3s; }
+    .loader.done { opacity: 0; }
+
+    /* entrance: everything waits for the planet */
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity 1.4s var(--ease), transform 1.4s var(--ease); }
+    .ready .reveal { opacity: 1; transform: none; }
+    .ready .d1 { transition-delay: 1.2s; }
+    .ready .d2 { transition-delay: 1.45s; }
+    .ready .d3 { transition-delay: 1.7s; }
+    .ready .d4 { transition-delay: 1.95s; }
+
+    /* nav */
+    .nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 10;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      padding: 22px var(--gutter);
+    }
+    .logo { display: inline-flex; align-items: center; gap: 12px; justify-self: start; }
+    .logo svg { width: 34px; height: 20px; overflow: visible; }
+    .logo svg circle { fill: none; stroke: var(--ink); stroke-width: 1.5; }
+    .logo span { font-weight: 500; font-size: 15px; letter-spacing: .32em; text-transform: uppercase; margin-right: -.32em; }
+    .links { display: flex; gap: 36px; font-size: 14px; color: var(--ink-2); }
+    .links a, .nav-end a:not(.pill) { position: relative; transition: color .3s; }
+    .links a::after, .nav-end a:not(.pill)::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 1px; background: var(--ink);
+      transform: scaleX(0); transform-origin: left; transition: transform .45s var(--ease);
+    }
+    .links a:hover, .nav-end a:hover { color: var(--ink); }
+    .links a:hover::after, .nav-end a:not(.pill):hover::after { transform: scaleX(1); }
+    .nav-end { justify-self: end; display: flex; align-items: center; gap: 28px; font-size: 14px; color: var(--ink-2); }
+
+    .pill {
+      display: inline-flex; align-items: center; gap: 10px; height: 42px; padding: 0 22px; border-radius: 999px;
+      background: var(--ink); color: #0a0b0d; font-weight: 500; font-size: 14px;
+      transition: background .3s, transform .4s var(--ease);
+    }
+    .pill:hover { background: #fff; transform: translateY(-1px); }
+    .pill-lg { height: 52px; padding: 0 28px; font-size: 15px; }
+    .ghost {
+      display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border-radius: 999px;
+      font-size: 15px; color: var(--ink); box-shadow: inset 0 0 0 1px var(--line);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: rgba(255,255,255,.03);
+      transition: box-shadow .3s, background .3s;
+    }
+    .ghost:hover { box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); background: rgba(255,255,255,.07); }
+    .ghost svg { width: 14px; height: 14px; transition: transform .4s var(--ease); }
+    .ghost:hover svg { transform: translateX(3px); }
+
+    /* hero copy: centred in the sky between the nav and the planet's crest (--crest is set by earth.js) */
+    .hero {
+      position: fixed; left: var(--gutter); right: var(--gutter);
+      top: 88px; height: calc(var(--crest, 62vh) - 88px - clamp(20px, 3vh, 40px));
+      display: grid; justify-items: center; align-content: center; text-align: center;
+      pointer-events: none;
+    }
+    .hero > * { pointer-events: auto; }
+    .eyebrow {
+      font: 11px var(--mono); letter-spacing: .22em; text-transform: uppercase; color: var(--ink-3);
+      display: inline-flex; align-items: center; gap: 14px;
+    }
+    .eyebrow::before, .eyebrow::after { content: ""; width: 28px; height: 1px; background: var(--line); }
+    h1 {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(44px, min(7.6vw, 12vh), 124px); line-height: .94; letter-spacing: -0.025em;
+      margin-top: 22px;
+    }
+    h1 em { font-style: italic; }
+    .sub {
+      max-width: 30em; margin-top: 22px;
+      font-size: clamp(15px, 1.25vw, 18px); line-height: 1.6; font-weight: 300; color: var(--ink-2);
+    }
+    .ctas { display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap; justify-content: center; }
+
+    /* mobile menu: two lines (like the logo's two axles) that cross into an X */
+    .menu-btn { display: none; position: relative; width: 42px; height: 42px; margin-right: -9px; border: 0; padding: 0; background: none; cursor: pointer; }
+    .menu-btn i { position: absolute; left: 11px; right: 11px; height: 1.5px; background: var(--ink); border-radius: 2px;
+      transition: transform .45s var(--ease), top .45s var(--ease); }
+    .menu-btn i:first-child { top: 16px; } .menu-btn i:last-child { top: 24.5px; }
+    .menu-open .menu-btn i:first-child { top: 20.25px; transform: rotate(45deg); }
+    .menu-open .menu-btn i:last-child { top: 20.25px; transform: rotate(-45deg); }
+    .menu {
+      position: fixed; inset: 0; z-index: 9; display: flex; flex-direction: column; justify-content: space-between;
+      padding: 104px var(--gutter) calc(28px + env(safe-area-inset-bottom, 0px));
+      background: rgba(0, 0, 0, .78); backdrop-filter: blur(22px) saturate(120%); -webkit-backdrop-filter: blur(22px) saturate(120%);
+      opacity: 0; transition: opacity .45s var(--ease);
+    }
+    .menu.on { opacity: 1; }
+    .menu nav { display: grid; }
+    .menu nav a { font-family: var(--serif); font-size: clamp(44px, 12vw, 64px); line-height: 1.12; letter-spacing: -0.02em;
+      padding: 4px 0; border-bottom: 1px solid var(--line);
+      opacity: 0; transform: translateY(14px); transition: opacity .6s var(--ease), transform .7s var(--ease); }
+    .menu.on nav a { opacity: 1; transform: none; }
+    .menu.on nav a:nth-child(2) { transition-delay: .05s; } .menu.on nav a:nth-child(3) { transition-delay: .1s; } .menu.on nav a:nth-child(4) { transition-delay: .15s; }
+    .menu-end { display: grid; gap: 12px; opacity: 0; transition: opacity .6s var(--ease) .2s; }
+    .menu.on .menu-end { opacity: 1; }
+    .menu-end a { justify-content: center; }
+    .menu-open { overflow: hidden; }
+
+    @media (max-width: 900px) {
+      .links, .nav-end .track { display: none; }
+      .menu-btn { display: block; }
+      .nav-end { gap: 14px; }
+      .nav { grid-template-columns: 1fr auto; }
+      .pitch { justify-self: start; text-align: left; justify-items: start; }
+      .pitch .ctas { justify-content: flex-start; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .metrics div:nth-child(3) { border-left: 0; padding-left: 0; }
+      .shade { background: linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.85) 55%); }
+      .hero { top: 76px; height: calc(var(--crest, 64vh) - 76px - 16px); }
+    }
+    /* phones: every headline steps up a size */
+    @media (max-width: 600px) {
+      h1 { font-size: clamp(52px, 14.5vw, 66px); }
+      .td-title h2 { font-size: clamp(52px, 14vw, 64px); }
+      .td-card h3 { font-size: clamp(54px, 14.5vw, 66px); }
+      .pitch h2 { font-size: clamp(56px, 15vw, 68px); }
+      .end-cta h2 { font-size: clamp(60px, 16.5vw, 78px); }
+    }
+    @media (max-width: 480px) {
+      .eyebrow::before, .eyebrow::after { width: 16px; }
+      h1 { margin-top: 16px; }
+      .sub { max-width: 22em; margin-top: 16px; font-size: 14.5px; }
+      .ctas { margin-top: 24px; }
+      .ctas a { height: 46px; padding: 0 20px; font-size: 14px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { transition: opacity .6s; transform: none; }
+    }
+  </style>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="scroll-track" aria-hidden="true"></div>
+  <canvas id="earth" aria-label="Earth rising from the bottom of the screen, spinning"></canvas>
+  <video id="road" src="assets/road.mp4?v=2" muted playsinline preload="auto" aria-label="A black semi truck driving toward the camera on a desert highway at dusk"></video>
+  <video id="pass" src="assets/pass.mp4?v=2" muted playsinline preload="auto" aria-label="The truck sweeps past the camera"></video>
+  <div id="topdown" aria-label="Overhead view of the truck driving to the port"></div>
+  <div id="cloudpass" aria-hidden="true"></div>
+  <div class="loader" id="loader"><span>Acquiring satellite imagery</span><i></i></div>
+
+  <header class="nav reveal d1">
+    <a class="logo" href="#" aria-label="Tandem home">
+      <!-- two tandem axles, coupled -->
+      <svg viewBox="0 0 34 20" aria-hidden="true"><circle cx="10" cy="10" r="8.25"/><circle cx="24" cy="10" r="8.25"/></svg>
+      <span>Tandem</span>
+    </a>
+    <nav class="links" aria-label="Main">
+      <a href="#">Services</a>
+      <a href="#">Network</a>
+      <a href="#">Fleet</a>
+      <a href="#">Company</a>
+    </nav>
+    <div class="nav-end">
+      <a href="#" class="track">Track a shipment</a>
+      <a href="#" class="pill">Get a quote</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="menu"><i></i><i></i></button>
+    </div>
+  </header>
+  <!-- mobile menu: outside the header so the header's reveal transform can't trap it -->
+  <div class="menu" id="menu" hidden>
+    <nav aria-label="Main">
+      <a href="#">Services</a>
+      <a href="#">Network</a>
+      <a href="#">Fleet</a>
+      <a href="#">Company</a>
+    </nav>
+    <div class="menu-end">
+      <a href="#" class="ghost">Track a shipment</a>
+      <a href="#" class="pill pill-lg">Get a quote</a>
+    </div>
+  </div>
+
+  <main class="hero">
+    <p class="eyebrow reveal d2">Worldwide road freight</p>
+    <h1 class="reveal d2">The whole world,<br><em>in tandem.</em></h1>
+    <p class="sub reveal d3">Long-haul trucking in 40 countries, run by one team with a live view of every load from the first dock to the last.</p>
+    <div class="ctas reveal d4">
+      <a href="#" class="pill pill-lg">Get a quote</a>
+      <a href="#" class="ghost">See our network
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5"/></svg>
+      </a>
+    </div>
+  </main>
+
+  <div class="cue"><span>Scroll</span><i></i></div>
+
+  <div class="shade"></div>
+  <section class="finale" aria-label="Tandem in numbers">
+    <div class="pitch">
+      <p class="eyebrow f f1">The fleet</p>
+      <h2 class="f f1">Built for<br><em>the long way.</em></h2>
+      <p class="body f f2">Late-model tractors, our own drivers, and nothing brokered out. Every mile, in every country, runs on one team.</p>
+      <div class="ctas f f3">
+        <a href="#" class="pill pill-lg">Get a quote</a>
+        <a href="#" class="ghost">Track a shipment
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5"/></svg>
+        </a>
+      </div>
+    </div>
+    <dl class="metrics f f4">
+      <div><dd data-to="40">0</dd><dt>Countries served</dt></div>
+      <div><dd data-to="6200">0</dd><dt>Trucks on the road</dt></div>
+      <div><dd data-to="410" data-unit="M">0</dd><dt>Miles a year</dt></div>
+      <div><dd data-to="99.2" data-dec="1" data-unit="%">0</dd><dt>On-time delivery</dt></div>
+    </dl>
+  </section>
+
+  <footer class="end">
+    <div class="end-cta">
+      <p class="eyebrow">Where to next</p>
+      <h2>Let's move<br><em>the world.</em></h2>
+      <div class="ctas">
+        <a href="#" class="pill pill-lg">Get a quote</a>
+        <a href="#" class="ghost">Talk to dispatch
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M1 7h12M8 2l5 5-5 5"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="end-cols">
+      <div><b>Shippers</b><a href="#">Get a quote</a><a href="#">Track a shipment</a><a href="#">Services</a></div>
+      <div><b>Drivers</b><a href="#">Drive with us</a><a href="#">Owner-operators</a><a href="#">Safety</a></div>
+      <div><b>Company</b><a href="#">About</a><a href="#">Network</a><a href="#">Careers</a></div>
+      <div><b>Dispatch</b><a href="#">+1 800 826 3361</a><a href="#">dispatch@tandem.co</a><a href="#">Open 24/7</a></div>
+    </div>
+    <div class="wordmark" aria-hidden="true">Tandem</div>
+    <div class="end-bottom"><span>© 2026 Tandem Freight</span><span>Earth imagery: NASA via Solar System Scope</span><span>Two axles. One load. Every road.</span></div>
+  </footer>
+
+  <script>
+  (() => {
+    const btn = document.getElementById('menuBtn'), menu = document.getElementById('menu'), root = document.documentElement;
+    const set = open => {
+      root.classList.toggle('menu-open', open);
+      btn.setAttribute('aria-expanded', String(open)); btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('on')); menu.querySelector('a').focus({ preventScroll: true }); }
+      else { menu.classList.remove('on'); setTimeout(() => { if (!menu.classList.contains('on')) menu.hidden = true; }, 450); }
+    };
+    btn.addEventListener('click', () => set(!root.classList.contains('menu-open')));
+    menu.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+    addEventListener('keydown', e => { if (e.key === 'Escape' && root.classList.contains('menu-open')) { set(false); btn.focus(); } });
+    matchMedia('(min-width: 901px)').addEventListener('change', e => { if (e.matches) set(false); });
+  })();
+  </script>
+  <script type="module" src="earth.js?v=4"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

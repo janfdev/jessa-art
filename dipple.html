@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Dipple · Jessa Wolfe</title>
+<meta name="description" content="Dipple, a soft, chunky display font drawn from scratch by Jessa Wolfe, and the scroll-story landing page built to show it off." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<style>
+  @font-face { font-family: "Dipple Rough"; src: url("dipple/fonts/Dipple-Rough.woff2") format("woff2"); font-display: swap; }
+  @font-face { font-family: "Dipple Smooth"; src: url("dipple/fonts/Dipple-Smooth.woff2") format("woff2"); font-display: swap; }
+  /* Dipple: the page's own colours. Videos sit in a plain browser window, like Rime */
+  body.dipple { --dred: #e2583e; --dyel: #f9c74a; --dblue: #0062ff; --dcream: #fff3e6; --dbrown: #2a1d14; }
+  body.dipple .cs-cover { --fill: var(--dred); } body.dipple .cs-cover .content { background: var(--dred); }
+  body.dipple .cs-cover video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  body.dipple .xs-sky { --fill: #dcecf6; } body.dipple .xs-red { --fill: #fbe1da; } body.dipple .xs-yel { --fill: #fdf0cc; } body.dipple .xs-blue { --fill: #d6e5ff; }
+  body.dipple .xs-vids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; width: 100%; }
+  body.dipple .xs-vid { padding: 18px 18px 16px; } body.dipple .xs-vid.wide { grid-column: 1 / -1; }
+  body.dipple .xs-vid .win { border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 12px 30px rgba(20, 20, 30, .16); }
+  body.dipple .xs-vid .win i.bar { display: flex; gap: 6px; padding: 9px 12px; background: #fff; border-bottom: 1px solid #e8e9ec; }
+  body.dipple .xs-vid .win i.bar b { width: 9px; height: 9px; border-radius: 50%; background: #d6d9de; }
+  body.dipple .xs-vid video { width: 100%; height: auto; display: block; background: #fff; }
+  body.dipple .xs-vid h4 { margin: 14px 4px 4px; font-size: 18px; letter-spacing: -.01em; }
+  body.dipple .xs-vid p { margin: 0 4px; font-size: 15px; line-height: 1.5; font-weight: 500; color: #3d4148; }
+  /* the live specimen: real Dipple, not a picture */
+  body.dipple .xs-spec { --fill: var(--dcream); width: 100%; padding: 28px 32px 30px; }
+  body.dipple .xs-spec .content { display: block; color: var(--dbrown); }
+  body.dipple .spec-top { display: grid; grid-template-columns: auto 1fr; gap: 34px; align-items: center; }
+  body.dipple .spec-aa { font: 400 clamp(110px, 15vw, 210px)/.9 var(--sf, "Dipple Rough"); color: var(--dred); }
+  body.dipple .spec-side { display: grid; gap: 12px; min-width: 0; }
+  body.dipple .spec-tog { display: inline-flex; gap: 6px; justify-self: start; background: #fff; padding: 5px; border-radius: 999px; box-shadow: 0 0 0 2px var(--dbrown); }
+  body.dipple .spec-tog button { border: 0; background: none; padding: 8px 16px; border-radius: 999px; font: 700 14px/1 "DM Sans", sans-serif; color: var(--dbrown); cursor: pointer; }
+  body.dipple .spec-tog button.on { background: var(--dyel); }
+  body.dipple .spec-label { font: 700 13px/1 "DM Sans", sans-serif; letter-spacing: .04em; text-transform: uppercase; color: #8a6f60; }
+  body.dipple .spec-in { width: 100%; min-width: 0; border: 0; border-bottom: 3px dashed rgba(42, 29, 20, .25); background: none; padding: 4px 0 8px; font: 400 clamp(34px, 5vw, 66px)/1.1 var(--sf, "Dipple Rough"); color: var(--dbrown); outline: none; }
+  body.dipple .spec-in:focus { border-bottom-color: var(--dred); }
+  body.dipple .spec-set { margin-top: 24px; font: 400 clamp(22px, 2.6vw, 36px)/1.35 var(--sf, "Dipple Rough"); color: var(--dbrown); overflow-wrap: anywhere; }
+  /* the song, playable right here */
+  body.dipple .xs-sound { --fill: var(--dblue); width: 100%; padding: 22px 28px; }
+  body.dipple .xs-sound .content { display: flex; align-items: center; gap: 22px; color: #fff; }
+  body.dipple .snd { position: relative; flex: none; width: 96px; height: 96px; border: 0; background: none; padding: 0; cursor: pointer; display: grid; place-items: center; }
+  body.dipple .snd-star { display: block; font: 400 96px/1 "Dipple Rough"; color: var(--dyel); }
+  body.dipple .snd::after { content: ""; position: absolute; left: 50%; top: 52%; transform: translate(-38%, -50%); border-left: 18px solid var(--dbrown); border-top: 11px solid transparent; border-bottom: 11px solid transparent; }
+  body.dipple .snd.on::after { transform: translate(-50%, -50%); width: 16px; height: 20px; border: 0; background: linear-gradient(90deg, var(--dbrown) 0 5.5px, transparent 5.5px 10.5px, var(--dbrown) 10.5px 16px); }
+  body.dipple .xs-sound h4 { margin: 0 0 4px; font: 400 30px/1 "Dipple Rough"; color: #fff; }
+  body.dipple .xs-sound p { margin: 0; color: rgba(255, 255, 255, .82); font-size: 15.5px; }
+  body.dipple .xs-phone { padding: 22px 26px; }
+  body.dipple .xs-phone .content { display: grid; grid-template-columns: auto 1fr; gap: 34px; align-items: center; }
+  body.dipple .xs-phone .phs { display: flex; gap: 14px; }
+  body.dipple .xs-phone .ph { width: 170px; border-radius: 28px; overflow: hidden; border: 8px solid #0d0b10; background: #0d0b10; box-shadow: 0 18px 40px rgba(20, 20, 30, .22); }
+  body.dipple .xs-phone .ph img { width: 100%; display: block; }
+  body.dipple .xs-phone h4 { margin: 0 0 8px; font-size: 24px; letter-spacing: -.02em; }
+  body.dipple .xs-phone p { margin: 0 0 12px; font-size: 16px; line-height: 1.55; color: #3d4148; }
+  body.dipple .xs-tried { width: 100%; display: grid; gap: 12px; }
+  body.dipple .xs-try { padding: 16px 22px; }
+  body.dipple .xs-try .content { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: baseline; }
+  body.dipple .xs-try b { font-size: 17px; letter-spacing: -.01em; text-decoration: line-through; text-decoration-color: #f4a28f; text-decoration-thickness: 2px; }
+  body.dipple .xs-try span { font-size: 15.5px; line-height: 1.5; color: #3d4148; }
+  body.dipple .xs-try q { font: 700 22px/1.2 'Caveat', cursive; color: var(--dred); quotes: "“" "”"; margin-right: 6px; }
+  body.dipple .xs-cta { --fill: var(--dred); }
+  body.dipple .xs-cta .content { display: flex; align-items: center; gap: 14px 18px; flex-wrap: wrap; padding: 26px 30px; color: #fff; }
+  body.dipple .xs-cta .cta-t { flex: 1; min-width: 220px; } body.dipple .xs-cta h3 { margin: 0 0 4px; font: 400 32px/1.05 "Dipple Rough"; color: #fff; } body.dipple .xs-cta p { margin: 0; color: rgba(255, 255, 255, .85); font-size: 15.5px; }
+  body.dipple .xs-cta a { display: inline-flex; padding: 14px 24px; border-radius: 999px; background: var(--dcream); color: var(--dbrown); font-weight: 700; font-size: 16px; text-decoration: none; --wb: var(--dcream); transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  body.dipple .xs-cta a.alt { background: transparent; color: #fff; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .7); --wb: transparent; }
+  body.dipple .xs-cta a:hover { transform: rotate(-2deg) scale(1.05); }
+  @media (max-width: 860px) { body.dipple .xs-vids { grid-template-columns: 1fr; } body.dipple .xs-phone .content, body.dipple .xs-try .content, body.dipple .spec-top { grid-template-columns: 1fr; gap: 14px; } body.dipple .xs-phone .phs { justify-content: center; } body.dipple .xs-phone .ph { width: 31%; max-width: 170px; border-width: 5px; border-radius: 18px; } body.dipple .xs-phone { padding: 18px 20px 20px; } body.dipple .xs-spec { padding: 20px; } body.dipple .xs-sound .content { gap: 14px; } body.dipple .snd { width: 76px; height: 76px; } body.dipple .snd-star { font-size: 76px; } }
+  /* night: body copy light, coloured frames outlined by night.js */
+  html.night body.dipple .xs-vid p, html.night body.dipple .xs-phone p, html.night body.dipple .xs-try span { color: var(--ink-soft); }
+  html.night body.dipple .xs-vid .win { box-shadow: 0 0 0 1px rgba(255, 255, 255, .12), 0 12px 30px rgba(0, 0, 0, .5); }
+  html.night body.dipple .xs-spec .content, html.night body.dipple .spec-in, html.night body.dipple .spec-set { color: var(--ink); }
+  html.night body.dipple .spec-label { color: var(--ink-soft); }
+  html.night body.dipple .xs-cta a:not(.alt)::before { background: #ece6f0 !important; box-shadow: none !important; }
+  html.night body.dipple .xs-cta a:not(.alt), html.night body.dipple .xs-cta a:not(.alt) * { color: #17141b !important; }
+  /* glyph grid: every character, live; hover shows it big */
+  body.dipple .xs-glyphs { --fill: #fff; width: 100%; padding: 24px 26px 26px; }
+  body.dipple .xs-glyphs .content { display: grid; grid-template-columns: 250px 1fr; gap: 26px; align-items: start; color: var(--dbrown); }
+  body.dipple .gh { position: sticky; top: 90px; background: var(--dcream); border-radius: 18px; padding: 18px; text-align: center; }
+  body.dipple .gbig { font: 400 170px/1.15 "Dipple Rough"; color: var(--dred); }
+  body.dipple .gmeta b { display: block; font: 700 16px/1.2 "DM Sans", sans-serif; } body.dipple .gmeta small { color: #8a6f60; font: 500 13px/1.4 "DM Sans", sans-serif; }
+  body.dipple .ggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(54px, 1fr)); gap: 6px; }
+  body.dipple .ggrid .g { aspect-ratio: 1; display: grid; place-items: center; border-radius: 12px; background: #faf6f1; font: 400 30px/1 "Dipple Rough"; color: var(--dbrown); cursor: default; transition: transform .25s cubic-bezier(.3, 1.8, .5, 1), background .2s; }
+  body.dipple .ggrid .g:hover, body.dipple .ggrid .g.on { background: var(--dyel); transform: scale(1.12) rotate(-4deg); }
+  /* art direction */
+  body.dipple .xs-ad { --fill: var(--dcream); width: 100%; padding: 22px 24px 18px; }
+  body.dipple .xs-ad .content { display: block; }
+  body.dipple .adgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  body.dipple .ad { margin: 0; position: relative; border-radius: 14px; overflow: hidden; opacity: .55; filter: saturate(.7); transition: opacity .3s, filter .3s; }
+  body.dipple .ad:hover { opacity: 1; filter: none; }
+  body.dipple .ad.pick { opacity: 1; filter: none; box-shadow: 0 0 0 4px var(--dred); }
+  body.dipple .ad img { width: 100%; display: block; }
+  body.dipple .ad figcaption { position: absolute; left: 10px; top: 10px; padding: 5px 11px; border-radius: 999px; background: rgba(255, 255, 255, .9); font: 700 12px/1 "DM Sans", sans-serif; color: var(--dbrown); }
+  body.dipple .ad.pick figcaption { background: var(--dred); color: #fff; }
+  body.dipple .adcap { margin: 14px 4px 0; font-size: 15px; color: #3d4148; }
+  body.dipple .xs-swatch { --fill: #fff; width: 100%; padding: 20px 22px; }
+  body.dipple .swgrid { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 12px; }
+  body.dipple .sw i { display: block; aspect-ratio: 1; border-radius: 50% 46% 52% 44% / 48% 54% 46% 52%; box-shadow: inset 0 0 0 2px rgba(42, 29, 20, .12); margin-bottom: 8px; }
+  body.dipple .sw b { display: block; font-size: 14px; } body.dipple .sw small { font: 500 12px/1.4 "DM Sans", sans-serif; color: #8a6f60; }
+  /* elements board */
+  body.dipple .xs-els { --fill: #fff; width: 100%; padding: 20px 24px 22px; }
+  body.dipple .xs-els .content { display: block; }
+  body.dipple .xs-els h4 { margin: 0 0 12px; font: 400 26px/1 "Dipple Rough"; color: var(--dbrown); } body.dipple .xs-els h4.mt { margin-top: 20px; }
+  body.dipple .elrow { display: flex; flex-wrap: wrap; gap: 14px 18px; align-items: flex-end; }
+  body.dipple .el { margin: 0; display: grid; justify-items: center; gap: 8px; }
+  body.dipple .el img { display: block; height: 84px; width: auto; transition: transform .35s cubic-bezier(.3, 1.8, .5, 1); }
+  body.dipple .xs-els .elrow.world { justify-content: space-around; align-items: flex-end; gap: 20px; padding: 10px 10px 4px; }
+  body.dipple .el.wd img { height: 210px; } body.dipple .el.bb img { height: 70px; }
+  body.dipple .el:hover img { transform: scale(1.12) rotate(-6deg); }
+  body.dipple .el figcaption { font: 600 12.5px/1.2 "DM Sans", sans-serif; color: #6b5a50; text-align: center; }
+  body.dipple .el.st { background: #2a1d14; border-radius: 16px; padding: 14px 14px 10px; } body.dipple .el.st figcaption { color: #fff3e3; }
+  body.dipple .xs-elpair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; width: 100%; }
+  body.dipple .xs-elpair .xs-els { --fill: var(--dyel); }
+  body.dipple .xs-elpair .xs-els + .xs-els { --fill: var(--dblue); } body.dipple .xs-elpair .xs-els + .xs-els h4 { color: #fff; } body.dipple .xs-elpair .xs-els + .xs-els .el figcaption { color: rgba(255, 255, 255, .85); }
+  body.dipple .xs-elpair .xs-els + .xs-els .uistar { color: var(--dyel); }
+  body.dipple .crabbox { width: min(100%, 380px); margin: 0 auto; }
+  body.dipple .crabbox img { width: 100%; height: auto; display: block; }
+  body.dipple .parts { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-top: 12px; }
+  body.dipple .parts img { height: 48px; width: auto; transition: transform .35s cubic-bezier(.3, 1.8, .5, 1); }
+  body.dipple .parts img:hover { transform: scale(1.25) rotate(-8deg); }
+  body.dipple .crabbox:hover { animation: crabWig .6s ease-in-out; } @keyframes crabWig { 25% { transform: rotate(-4deg); } 75% { transform: rotate(4deg); } }
+  body.dipple .elcap { text-align: center; margin: 8px 0 0; font-size: 14px; color: #3d4148; }
+  body.dipple .uistar { font: 400 64px/1 "Dipple Rough"; color: var(--dred); display: block; animation: uiSpin 6s linear infinite; }
+  @keyframes uiSpin { to { transform: rotate(360deg); } }
+  body.dipple .uipill { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px 9px; border-radius: 999px; background: var(--dcream); box-shadow: 0 0 0 3px var(--dbrown); font: 400 18px/1 "Dipple Rough"; color: var(--dbrown); transform: rotate(3deg); margin-bottom: 8px; }
+  body.dipple .uipill i { font-style: normal; }
+  body.dipple .uistalk { display: block; width: 14px; height: 64px; border-radius: 8px; background: repeating-linear-gradient(170deg, #8fd9b6 0 3px, #6fc49c 3px 6px); position: relative; }
+  body.dipple .uistalk i { position: absolute; left: 50%; top: 20px; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: radial-gradient(circle, #ffcf4a 0 4px, #ff9ec4 5px); animation: uiClimb 3s ease-in-out infinite alternate; }
+  @keyframes uiClimb { from { top: 44px; } to { top: 0; } }
+  @media (max-width: 860px) { body.dipple .xs-glyphs .content { grid-template-columns: 1fr; } body.dipple .gh { position: static; display: none; } body.dipple .adgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } body.dipple .swgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); } body.dipple .xs-elpair { grid-template-columns: 1fr; } body.dipple .el.wd img { height: 110px; } body.dipple .xs-els .elrow.world { justify-content: center; } }
+  @media (prefers-reduced-motion: reduce) { body.dipple .uistar, body.dipple .uistalk i { animation: none; } }
+  html.night body.dipple .xs-glyphs .content, html.night body.dipple .ggrid .g { color: var(--ink); } html.night body.dipple .ggrid .g { background: rgba(255, 255, 255, .06); } html.night body.dipple .ggrid .g:hover { color: #17141b; }
+  html.night body.dipple .gh { background: rgba(255, 255, 255, .06); } html.night body.dipple .adcap, html.night body.dipple .elcap, html.night body.dipple .el figcaption { color: var(--ink-soft); } html.night body.dipple .xs-els h4 { color: var(--ink); }
+</style>
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page dipple">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Dipple</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+  <main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Dipple">
+      <div class="tag">01 · Dipple</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Dipple, a font I drew from scratch</span><span class="typed"><span class="t" data-text="Dipple, a font I drew from scratch"></span><span class="caret"></span></span></span></h1><nav class="subnav pasted"><a class="wob" href="#idea">The idea</a><a class="wob" href="#art">Art direction</a><a class="wob" href="#learned">What I learned</a><a class="wob" href="dipple/index.html" target="_blank" rel="noopener">Visit ↗</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/dipple/cover.mp4" poster="image/dipple/cover.jpg" autoplay muted loop playsinline aria-label="The Dipple page from top to bottom: a clay world builds itself, the alphabet rolls past on a wheel, a crab pulls the name together, and the page fills with blue water"></video></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Type design + build, solo</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Typeface + landing page</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Focus">
+      <div class="tag">05 · Focus</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Focus</div><div class="v">Letters, motion, sound</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Started">
+      <div class="tag">06 · Started</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Started</div><div class="v">Fall 2026</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="07 · The idea" id="idea">
+      <div class="tag">07 · The idea</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Soft, chunky, a little bit squishy.</span><span class="typed"><span class="t" data-text="Soft, chunky, a little bit squishy."></span><span class="caret"></span></span></span></h2><p class="pasted">Dipple is a display font I drew from scratch, and the page I built to show it off. I saw a brand film with round, chunky lettering that looked like it was made from clay, and I wanted a face like that of my own.</p><p class="pasted">Most free fonts in this space are either perfectly smooth or messy on purpose. My bet was in between: letters that lean forward like they’re in a hurry, with blobby ends and edges that look inked by hand, but still clean enough to set a headline in.</p><p class="pasted">Then the page. A font is easy to scroll past on a specimen sheet, so I gave it a world to live in instead.</p></div>
+    </div>
+    <div class="slot xs-cta paste" data-name="08 · Visit">
+      <div class="tag">08 · Visit</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="cta-t"><h3>Scroll through it yourself.</h3><p>The whole page is live, music and all. The font is free to download at the end.</p></div><a class="wob" href="dipple/index.html" target="_blank" rel="noopener">Visit Dipple ↗</a></div>
+    </div>
+    <div class="slot prose" data-name="09 · The letters" id="letters">
+      <div class="tag">09 · The letters</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Drawn as lines, then puffed up.</span><span class="typed"><span class="t" data-text="Drawn as lines, then puffed up."></span><span class="caret"></span></span></span></h2><p class="pasted">I didn’t draw outlines. Every letter starts as a single centre line, like a pen path, and a script inflates it into a round stroke, adds a soft blob to each end, and leans the whole thing forward seven degrees.</p><p class="pasted">That one decision kept the family honest. Change the thickness once and all 90-odd characters stay in step, which meant I could tune the weight across the whole alphabet in minutes instead of redrawing it.</p><p class="pasted">It comes in two styles. Smooth is the clean one. Rough runs a little ink noise along every edge, and it swaps in a slightly different version when a letter repeats, so a double “l” or “p” never looks stamped.</p></div>
+    </div>
+    <div class="slot xs-spec sub paste" data-name="10 · Type it">
+      <div class="tag">10 · Type it</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="spec-top"><div class="spec-aa" aria-hidden="true">Aa</div><div class="spec-side"><div class="spec-tog" role="group" aria-label="Style"><button class="on" data-f="Dipple Rough">Rough</button><button data-f="Dipple Smooth">Smooth</button></div><label class="spec-label" for="specIn">Type something</label><input id="specIn" class="spec-in" value="Hello, tiny planet" maxlength="40" autocomplete="off" spellcheck="false"></div></div><div class="spec-set" aria-label="The Dipple character set">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789 !?&amp;@$%*+=()“”’ ★ ✦</div></div>
+    </div>
+    <div class="slot prose" data-name="11 · Glyphs" id="glyphs">
+      <div class="tag">11 · Glyphs</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Every character, 95 of them.</span><span class="typed"><span class="t" data-text="Every character, 95 of them."></span><span class="caret"></span></span></span></h2><p class="pasted">Capitals, lowercase, numbers, the punctuation you actually use, curly quotes, and six little stars that only Dipple has. Hover any one to see it up close.</p><p class="pasted">Rough also carries 53 alternates, so when a letter repeats in a word, the second one is drawn a little differently.</p></div>
+    </div>
+    <div class="slot xs-glyphs sub paste" data-name="12 · Glyph set">
+      <div class="tag">12 · Glyph set</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="gh"><div class="gbig" id="gBig" aria-hidden="true">D</div><div class="gmeta"><b id="gName">D</b><small id="gCode">U+0044</small></div></div><div class="ggrid" aria-label="Every Dipple character"><span class="g" title="U+0041">A</span><span class="g" title="U+0042">B</span><span class="g" title="U+0043">C</span><span class="g" title="U+0044">D</span><span class="g" title="U+0045">E</span><span class="g" title="U+0046">F</span><span class="g" title="U+0047">G</span><span class="g" title="U+0048">H</span><span class="g" title="U+0049">I</span><span class="g" title="U+004A">J</span><span class="g" title="U+004B">K</span><span class="g" title="U+004C">L</span><span class="g" title="U+004D">M</span><span class="g" title="U+004E">N</span><span class="g" title="U+004F">O</span><span class="g" title="U+0050">P</span><span class="g" title="U+0051">Q</span><span class="g" title="U+0052">R</span><span class="g" title="U+0053">S</span><span class="g" title="U+0054">T</span><span class="g" title="U+0055">U</span><span class="g" title="U+0056">V</span><span class="g" title="U+0057">W</span><span class="g" title="U+0058">X</span><span class="g" title="U+0059">Y</span><span class="g" title="U+005A">Z</span><span class="g" title="U+0061">a</span><span class="g" title="U+0062">b</span><span class="g" title="U+0063">c</span><span class="g" title="U+0064">d</span><span class="g" title="U+0065">e</span><span class="g" title="U+0066">f</span><span class="g" title="U+0067">g</span><span class="g" title="U+0068">h</span><span class="g" title="U+0069">i</span><span class="g" title="U+006A">j</span><span class="g" title="U+006B">k</span><span class="g" title="U+006C">l</span><span class="g" title="U+006D">m</span><span class="g" title="U+006E">n</span><span class="g" title="U+006F">o</span><span class="g" title="U+0070">p</span><span class="g" title="U+0071">q</span><span class="g" title="U+0072">r</span><span class="g" title="U+0073">s</span><span class="g" title="U+0074">t</span><span class="g" title="U+0075">u</span><span class="g" title="U+0076">v</span><span class="g" title="U+0077">w</span><span class="g" title="U+0078">x</span><span class="g" title="U+0079">y</span><span class="g" title="U+007A">z</span><span class="g" title="U+0030">0</span><span class="g" title="U+0031">1</span><span class="g" title="U+0032">2</span><span class="g" title="U+0033">3</span><span class="g" title="U+0034">4</span><span class="g" title="U+0035">5</span><span class="g" title="U+0036">6</span><span class="g" title="U+0037">7</span><span class="g" title="U+0038">8</span><span class="g" title="U+0039">9</span><span class="g" title="U+0021">!</span><span class="g" title="U+0022">&quot;</span><span class="g" title="U+0023">#</span><span class="g" title="U+0024">$</span><span class="g" title="U+0025">%</span><span class="g" title="U+0026">&amp;</span><span class="g" title="U+0027">&#x27;</span><span class="g" title="U+0028">(</span><span class="g" title="U+0029">)</span><span class="g" title="U+002A">*</span><span class="g" title="U+002B">+</span><span class="g" title="U+002C">,</span><span class="g" title="U+002D">-</span><span class="g" title="U+002E">.</span><span class="g" title="U+002F">/</span><span class="g" title="U+003A">:</span><span class="g" title="U+003B">;</span><span class="g" title="U+003D">=</span><span class="g" title="U+003F">?</span><span class="g" title="U+0040">@</span><span class="g" title="U+005F">_</span><span class="g" title="U+2013">–</span><span class="g" title="U+2018">‘</span><span class="g" title="U+2019">’</span><span class="g" title="U+201C">“</span><span class="g" title="U+201D">”</span><span class="g" title="U+2026">…</span><span class="g" title="U+2605">★</span><span class="g" title="U+2726">✦</span><span class="g" title="U+2727">✧</span><span class="g" title="U+2736">✶</span><span class="g" title="U+2737">✷</span><span class="g" title="U+2738">✸</span></div></div>
+    </div>
+    <div class="xs-tried group">
+    <div class="slot xs-try sub paste" data-name="13 · Tried · A heavier first pass">
+      <div class="tag">13 · Tried · A heavier first pass</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><b>A heavier first pass</b><span><q>too heavy</q>The first version was chunkier. It looked great as one big word, but the holes in the e and s closed up in a sentence. I took the weight down about ten percent and opened them back up.</span></div>
+    </div>
+    <div class="slot xs-try sub paste" data-name="14 · Tried · Calling it Pebble">
+      <div class="tag">14 · Tried · Calling it Pebble</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><b>Calling it Pebble</b><span><q>too plain</q>Its working name was Pebble. It described the shape but not the feeling. Dipple sounds like the letters look: round, a bit silly, and impossible to say seriously.</span></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="15 · Art direction" id="art">
+      <div class="tag">15 · Art direction</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Clay, paper and a painted sky.</span><span class="typed"><span class="t" data-text="Clay, paper and a painted sky."></span><span class="caret"></span></span></span></h2><p class="pasted">The font is soft and handmade, so the world had to be too. I generated six takes on an alien landscape and picked two: the patterned clay hills and fuzzy plants from one, and the clouds hanging on strings from another.</p><p class="pasted">The rule I held to was mixed media you could almost touch. Paper hills with dots and stripes, clay flowers, a watercolour sky, a moon that looks like a cookie. Nothing glossy, nothing 3D-rendered, nothing that looks like a stock illustration.</p><p class="pasted">The colours come straight from that world: a goop red, a crab yellow, one deep blue for the water, and cream and ink for the type. The letters are always flat, with no shadow, so the font stays the cleanest thing on the screen.</p></div>
+    </div>
+    <div class="slot xs-ad sub paste" data-name="16 · Six worlds">
+      <div class="tag">16 · Six worlds</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="adgrid"><figure class="ad"><img src="image/dipple/ad-01.jpg" alt="Art direction option 1" loading="lazy"><figcaption>01</figcaption></figure><figure class="ad pick"><img src="image/dipple/ad-02.jpg" alt="Art direction option 2" loading="lazy"><figcaption>Picked</figcaption></figure><figure class="ad"><img src="image/dipple/ad-03.jpg" alt="Art direction option 3" loading="lazy"><figcaption>03</figcaption></figure><figure class="ad"><img src="image/dipple/ad-04.jpg" alt="Art direction option 4" loading="lazy"><figcaption>04</figcaption></figure><figure class="ad"><img src="image/dipple/ad-05.jpg" alt="Art direction option 5" loading="lazy"><figcaption>05</figcaption></figure><figure class="ad pick"><img src="image/dipple/ad-06.jpg" alt="Art direction option 6" loading="lazy"><figcaption>Picked</figcaption></figure></div><p class="adcap">Six first takes. I picked the clay hills and plants of the last one and the clouds on strings of the second.</p></div>
+    </div>
+    <div class="slot xs-swatch sub paste" data-name="17 · Palette">
+      <div class="tag">17 · Palette</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="swgrid"><div class="sw"><i style="background:#e2583e"></i><b>Goop red</b><small>#E2583E</small></div><div class="sw"><i style="background:#ffcf4a"></i><b>Crab yellow</b><small>#FFCF4A</small></div><div class="sw"><i style="background:#0062ff"></i><b>Deep water</b><small>#0062FF</small></div><div class="sw"><i style="background:#fff3e3"></i><b>Cream</b><small>#FFF3E3</small></div><div class="sw"><i style="background:#2a1d14"></i><b>Ink</b><small>#2A1D14</small></div><div class="sw"><i style="background:#ff9ec4"></i><b>Pink</b><small>#FF9EC4</small></div><div class="sw"><i style="background:#ffe08a"></i><b>Butter</b><small>#FFE08A</small></div><div class="sw"><i style="background:#8fd9b6"></i><b>Mint</b><small>#8FD9B6</small></div></div></div>
+    </div>
+    <div class="xs-tried group">
+    <div class="slot xs-try sub paste" data-name="18 · Tried · Letters with shadows">
+      <div class="tag">18 · Tried · Letters with shadows</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><b>Letters with shadows</b><span><q>muddy</q>The first title had a soft drop shadow to lift it off the world. It made the letters look stuck on. Flat letters read cleaner, and let the clay be the only thing with depth.</span></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="19 · The elements" id="elements">
+      <div class="tag">19 · The elements</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A sticker sheet for a tiny planet.</span><span class="typed"><span class="t" data-text="A sticker sheet for a tiny planet."></span><span class="caret"></span></span></span></h2><p class="pasted">Everything on the page comes from one small kit, so every scene feels like the same world.</p><p class="pasted">Seven hand-inked stars, each in six colours and each with its own little animation. Hand-inked bubbles that rise alone or in clusters, and pop when they reach the top or when you click them. A clay crab cut into six pieces, shell, eyes, two claws and two sets of legs, so each part can move on its own. And the world itself, built as separate layers that rise up as you scroll.</p></div>
+    </div>
+    <div class="slot xs-els sub paste" data-name="20 · Stars">
+      <div class="tag">20 · Stars</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Stars</h4><div class="elrow"><figure class="el st"><img src="image/dipple/el/star.gif" alt="Star" loading="lazy"><figcaption>Star</figcaption></figure><figure class="el st"><img src="image/dipple/el/sparkle.gif" alt="Sparkle" loading="lazy"><figcaption>Sparkle</figcaption></figure><figure class="el st"><img src="image/dipple/el/burst.gif" alt="Burst" loading="lazy"><figcaption>Burst</figcaption></figure><figure class="el st"><img src="image/dipple/el/six.gif" alt="Six-point" loading="lazy"><figcaption>Six-point</figcaption></figure><figure class="el st"><img src="image/dipple/el/eight.gif" alt="Eight-point" loading="lazy"><figcaption>Eight-point</figcaption></figure><figure class="el st"><img src="image/dipple/el/shooting.gif" alt="Shooting star" loading="lazy"><figcaption>Shooting star</figcaption></figure><figure class="el st"><img src="image/dipple/el/twinkle-cream.gif" alt="Twinkle" loading="lazy"><figcaption>Twinkle</figcaption></figure></div></div>
+    </div>
+    <div class="xs-elpair group">
+    <div class="slot xs-els sub paste" data-name="21 · The crab">
+      <div class="tag">21 · The crab</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>The crab</h4><div class="crabbox"><img src="image/dipple/el/crab-whole.webp" alt="The clay crab, whole"></div><div class="parts"><img src="image/dipple/el/shell.webp" alt="Shell" title="Shell"><img src="image/dipple/el/eyes.webp" alt="Eyes" title="Eyes"><img src="image/dipple/el/clawL.webp" alt="Left claw" title="Left claw"><img src="image/dipple/el/clawR.webp" alt="Right claw" title="Right claw"><img src="image/dipple/el/legsL.webp" alt="Left legs" title="Left legs"><img src="image/dipple/el/legsR.webp" alt="Right legs" title="Right legs"></div><p class="elcap">Six clay parts, so each claw and set of legs can move on its own.</p></div>
+    </div>
+    <div class="slot xs-els sub paste" data-name="22 · Bubbles">
+      <div class="tag">22 · Bubbles</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Bubbles</h4><div class="elrow"><figure class="el bb"><img src="image/dipple/el/bubble-cream-192.webp" alt="Bubble" loading="lazy"><figcaption>Bubble</figcaption></figure><figure class="el bb"><img src="image/dipple/el/cluster-blue-192.webp" alt="Cluster" loading="lazy"><figcaption>Cluster</figcaption></figure></div><h4 class="mt">Interface</h4><div class="elrow ui"><figure class="el"><span class="uistar">★</span><figcaption>Cursor + player</figcaption></figure><figure class="el"><span class="uipill">Download <i>✦</i></span><figcaption>Download pill</figcaption></figure><figure class="el"><span class="uistalk"><i></i></span><figcaption>Stalk scroll bar</figcaption></figure></div></div>
+    </div>
+    </div>
+    <div class="slot xs-els sub paste" data-name="23 · The world">
+      <div class="tag">23 · The world</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>The world, in pieces</h4><div class="elrow world"><figure class="el wd"><img src="image/dipple/el/moon.webp" alt="Cookie moon" loading="lazy"><figcaption>Cookie moon</figcaption></figure><figure class="el wd"><img src="image/dipple/el/cloud1.webp" alt="Cloud on a string" loading="lazy"><figcaption>Cloud on a string</figcaption></figure><figure class="el wd"><img src="image/dipple/el/p1.webp" alt="Fuzzy plant" loading="lazy"><figcaption>Fuzzy plant</figcaption></figure><figure class="el wd"><img src="image/dipple/el/p3.webp" alt="Clay flower" loading="lazy"><figcaption>Clay flower</figcaption></figure></div></div>
+    </div>
+    <div class="slot prose bare" data-name="24 · The page" id="page">
+      <div class="tag">24 · The page</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A world that builds itself as you scroll.</span><span class="typed"><span class="t" data-text="A world that builds itself as you scroll."></span><span class="caret"></span></span></span></h2><p class="pasted">The page opens on an empty painted sky that just says “Scroll down to explore”. Scroll, and those letters pop away as a clay and paper world assembles itself: mountains rise, clouds drop in on strings, a river starts moving, flowers sway, the moon comes up and “Dipple” lands in the middle.</p><p class="pasted">Then red goop swallows the world, and the whole alphabet rolls past on one slow wheel, each letter growing as it reaches the centre. The camera pulls into the page to show every character at once. Yellow goop rises, and a clay crab pinches the name together letter by letter. Finally the screen fills with blue water, the crab floats off, and “Download Dipple today” pops up one letter at a time.</p><p class="pasted">Every scene is a chance to see the font do something different: huge and alone, in a crowd, moving, and as plain body text on a button.</p></div>
+    </div>
+    <div class="xs-vids group">
+    <div class="slot xs-vid xs-sky sub paste" data-name="25 · The world">
+      <div class="tag">25 · The world</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/dipple/world.mp4" poster="image/dipple/world.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The painted sky fills with clay mountains, clouds on strings, flowers and a river, and Dipple lands in the middle"></video></div><h4>The world builds itself</h4><p>Each layer pops up as you scroll, then the name lands on top.</p></div>
+    </div>
+    <div class="slot xs-vid xs-red sub paste" data-name="26 · The wheel">
+      <div class="tag">26 · The wheel</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/dipple/ring.mp4" poster="image/dipple/ring.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The alphabet rolls across a red screen on a giant wheel, each letter growing at the centre"></video></div><h4>The alphabet on a wheel</h4><p>One slow turn carries every letter across, biggest in the middle.</p></div>
+    </div>
+    <div class="slot xs-vid xs-red sub paste" data-name="27 · Every character">
+      <div class="tag">27 · Every character</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/dipple/grid.mp4" poster="image/dipple/grid.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Every Dipple character pulls into view in a grid"></video></div><h4>Pulled into the page</h4><p>The camera pushes in and the whole set arrives at once.</p></div>
+    </div>
+    <div class="slot xs-vid xs-yel sub paste" data-name="28 · The crab">
+      <div class="tag">28 · The crab</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/dipple/crab.mp4" poster="image/dipple/crab.jpg" autoplay muted loop playsinline preload="metadata" aria-label="A clay crab pinches the letters of Dipple together on yellow"></video></div><h4>The crab builds the name</h4><p>Each claw reaches for a letter and pulls it home.</p></div>
+    </div>
+    <div class="slot xs-vid xs-blue sub paste wide" data-name="29 · Download">
+      <div class="tag">29 · Download</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/dipple/download.mp4" poster="image/dipple/download.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Blue water fills the screen and Download Dipple today pops in letter by letter"></video></div><h4>Download Dipple today</h4><p>The water rises, the crab floats away, and the button pops in last.</p></div>
+    </div>
+    </div>
+    <div class="xs-tried group">
+    <div class="slot xs-try sub paste" data-name="30 · Tried · A hopping parade">
+      <div class="tag">30 · Tried · A hopping parade</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><b>A hopping parade</b><span><q>it made me dizzy</q>The letters first hopped across the screen one at a time. Big was right, but that much fast motion made me dizzy. Putting them on one slow wheel kept the size and lost the dizziness.</span></div>
+    </div>
+    <div class="slot xs-try sub paste" data-name="31 · Tried · Fading text in">
+      <div class="tag">31 · Tried · Fading text in</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><b>Fading text in</b><span><q>too soft</q>The download headline used to fade in. It felt like every other website. Now each letter pops in on its own, like a sticker being pressed down.</span></div>
+    </div>
+    <div class="slot xs-try sub paste" data-name="32 · Tried · Letters that just appear">
+      <div class="tag">32 · Tried · Letters that just appear</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><b>Letters that just appear</b><span><q>no entrance</q>In the crab scene the letters were simply waiting when the yellow arrived. Now they tumble in from the edges first, so the crab has something to catch.</span></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="33 · The sound" id="sound">
+      <div class="tag">33 · The sound</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A song for a tiny planet.</span><span class="typed"><span class="t" data-text="A song for a tiny planet."></span><span class="caret"></span></span></span></h2><p class="pasted">I wrote a brief for a short instrumental, bouncy and curious, made of soft blips, bubble pops and rubber-band boings, and generated it with ElevenLabs. It’s called Tiny Planet Playroom.</p><p class="pasted">The player is a single Dipple star in the corner. It never plays on its own. When you press it, the volume eases in, and the star pulses and spins to the beat. I tried a little paper cassette with dancing sound lines first, but the star felt more like the rest of the page.</p></div>
+    </div>
+    <div class="slot xs-sound sub paste" data-name="34 · Listen">
+      <div class="tag">34 · Listen</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><button class="snd" id="snd" aria-label="Play Tiny Planet Playroom" aria-pressed="false"><span class="snd-star" id="sndStar">★</span></button><div class="snd-t"><h4>Tiny Planet Playroom</h4><p id="sndSub">Press the star to play it here.</p></div><audio id="sndAu" src="dipple/music/tiny-planet-playroom.mp3" loop preload="none"></audio></div>
+    </div>
+    <div class="slot prose" data-name="35 · Small things">
+      <div class="tag">35 · Small things</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The little details.</span><span class="typed"><span class="t" data-text="The little details."></span><span class="caret"></span></span></span></h2><div class="bullets pasted"><div class="b wob"><b>A star for a cursor.</b>Your pointer is a spinning Dipple star that leaves a twinkle trail, and it turns red on yellow and yellow on red so it never disappears.</div><div class="b wob"><b>A pipe-cleaner scroll bar.</b>The scroll bar is a fuzzy green stalk with a little flower that climbs it as you go.</div><div class="b wob"><b>Bubbles you can pop.</b>Hand-inked bubbles rise through the water, and clicking one pops it.</div><div class="b wob"><b>Download from anywhere.</b>A small Download pill waits in the corner on every scene after the first, then steps aside when the big one arrives.</div></div></div>
+    </div>
+    <div class="slot xs-phone xs-sky sub paste" data-name="36 · On a phone">
+      <div class="tag">36 · On a phone</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="phs"><div class="ph"><img src="image/dipple/m1-open.jpg" alt="Dipple on a phone: Scroll down to explore" loading="lazy"></div><div class="ph"><img src="image/dipple/m2-world.jpg" alt="Dipple on a phone: the clay world" loading="lazy"></div><div class="ph"><img src="image/dipple/m3-ring.jpg" alt="Dipple on a phone: the alphabet wheel" loading="lazy"></div></div><div><h4>The same world, held in one hand.</h4><p>On a phone the world grows to fill the tall screen and the letters stay huge.</p><p>The player and the Download pill shrink and tuck into the corners, out of the way of your thumb.</p></div></div>
+    </div>
+    <div class="slot prose" data-name="37 · What I learned" id="learned">
+      <div class="tag">37 · What I learned</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Let the font be the main character.</span><span class="typed"><span class="t" data-text="Let the font be the main character."></span><span class="caret"></span></span></span></h2><div class="bullets pasted"><div class="b wob"><b>Draw the bones, not the skin.</b>Building every letter from one centre line made the whole family easy to change at once.</div><div class="b wob"><b>Big doesn’t have to be fast.</b>The letters could stay huge once they moved slowly and together.</div><div class="b wob"><b>Pop, don’t fade.</b>Letters that pop in one by one feel handmade. Fades feel like a template.</div><div class="b wob"><b>Sound is opt-in.</b>Music only plays when you ask for it, and it eases in instead of starting loud.</div></div></div>
+    </div>
+    <div class="slot prose tools" data-name="38 · Tools" id="tools">
+      <div class="tag">38 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2><p class="pasted">Drawn, coded and directed by me, with Claude in the loop. No font editor, no templates.</p><div class="row pasted"><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude Code</b><small>Building the font and the page with me</small></div><div class="tlc"><img src="image/tools/figma.svg" alt=""><b>Figma</b><small>Sketching the letters and laying out the scenes</small></div><div class="tlc"><img src="image/tools/python.svg" alt=""><b>Python</b><small>Drawing and inflating every letter</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>The scroll story, the wheel, the crab and the player</small></div><div class="tlc"><img src="image/tools/higgsfield.png" alt=""><b>Higgsfield</b><small>The clay world, the crab and the stickers</small></div><div class="tlc"><img src="image/tools/elevenlabs.svg" alt=""><b>ElevenLabs</b><small>The song</small></div></div></div>
+    </div>
+    <div class="slot prose quote" data-name="39 · North star">
+      <div class="tag">39 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Type you want to squish.</span><span class="typed"><span class="t" data-text="Type you want to squish."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot xs-cta paste" data-name="40 · Download">
+      <div class="tag">40 · Download</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="cta-t"><h3>Take Dipple home.</h3><p>Both styles, free, ready for Figma, Keynote or the web.</p></div><a class="wob" href="dipple/download/Dipple.zip" download="Dipple.zip">Download Dipple</a><a class="wob alt" href="dipple/index.html" target="_blank" rel="noopener">Visit the page ↗</a></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="dipple/index.html" target="_blank" rel="noopener">Visit Dipple →</a><a class="wob" href="app.html#work">More work →</a></div>
+  </article>
+</main>
+
+<script>
+(() => {
+  // live specimen: switch Rough / Smooth, and type your own words
+  const spec = document.querySelector('.xs-spec');
+  if (spec) spec.querySelectorAll('.spec-tog button').forEach(b => b.addEventListener('click', () => {
+    spec.querySelectorAll('.spec-tog button').forEach(x => x.classList.toggle('on', x === b)); spec.style.setProperty('--sf', '"' + b.dataset.f + '"'); }));
+  // glyph grid: hover or tap a character to see it big
+  const big = document.getElementById('gBig'), gName = document.getElementById('gName'), gCode = document.getElementById('gCode');
+  document.querySelectorAll('.ggrid .g').forEach(g => { const show = () => { document.querySelectorAll('.ggrid .g.on').forEach(x => x.classList.remove('on')); g.classList.add('on'); big.textContent = g.textContent; gName.textContent = g.textContent; gCode.textContent = g.title; };
+    g.addEventListener('mouseenter', show); g.addEventListener('click', show); });
+  // the song: a Dipple star that pulses with the beat; eases in, never autoplays
+  const btn = document.getElementById('snd'), star = document.getElementById('sndStar'), au = document.getElementById('sndAu'), sub = document.getElementById('sndSub');
+  if (!btn) return;
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ctx, an, gain, data, on = false, rot = 0, beat = 0, raf = 0;
+  function setup() { if (ctx) return; ctx = new (window.AudioContext || window.webkitAudioContext)(); const src = ctx.createMediaElementSource(au); an = ctx.createAnalyser(); an.fftSize = 256; an.smoothingTimeConstant = .6; gain = ctx.createGain(); gain.gain.value = 0; data = new Uint8Array(an.frequencyBinCount); src.connect(an); an.connect(gain); gain.connect(ctx.destination); }
+  function set(v) { on = v; btn.classList.toggle('on', v); btn.setAttribute('aria-pressed', v); btn.setAttribute('aria-label', (v ? 'Pause' : 'Play') + ' Tiny Planet Playroom'); sub.textContent = v ? 'Now playing ✦ press again to pause.' : 'Press the star to play it here.'; if (v && !raf) draw(); }
+  btn.addEventListener('click', () => { setup(); ctx.resume(); const t = ctx.currentTime;
+    if (au.paused) au.play().then(() => { set(true); gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(.55, t + .9); }).catch(() => {});
+    else { set(false); gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(0, t + .35); setTimeout(() => { if (!on) au.pause(); }, 380); } });
+  function draw() {
+    let bass = 0; if (an && on) { an.getByteFrequencyData(data); for (let i = 1; i < 7; i++) bass += data[i]; bass /= 6 * 255; }
+    beat += ((on ? Math.pow(bass, 1.6) : 0) - beat) * (bass > beat ? .55 : .2);
+    if (!RM) { rot += on ? .5 + beat * 6 : 0; star.style.transform = `scale(${1 + beat * .38}) rotate(${rot}deg)`; }
+    raf = (on || beat > .01) ? requestAnimationFrame(draw) : 0;
+  }
+})();
+</script>
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=19"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Indent prototype · Jessa Wolfe</title>
+<meta name="description" content="Tap through the working Indent prototype." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="proto-page case-page">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <a class="chip wob crumb" href="indent.html">/ Indent</a>
+  <span class="chip wob crumb" id="crumb">/ Prototype</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+
+<main class="canvas">
+  <article class="case proto" id="proto">
+    <div class="slot cs-title flow-head" data-name="00 · Prototype">
+      <div class="tag">00 · Prototype</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Tap through Indent</span><span class="typed"><span class="t" data-text="Tap through Indent"></span><span class="caret"></span></span></span></h1>
+        <p class="pasted lead">The whole journey, live: splash, landing, sign up, then in. Read, write, and indent. Nothing is stored or sent anywhere.</p>
+        <nav class="subnav pasted"><a class="wob" href="indent.html">← Case study</a><a class="wob" href="indent-flows.html">Flows</a><a class="wob restart" role="button" tabindex="0" style="cursor:pointer">↻ Restart</a><a class="wob" href="apps/indent/landing.html" target="_blank" rel="noopener">Full screen ↗</a></nav></div>
+    </div>
+    <div class="slot proto-slot fit" data-name="01 · Live app" style="--fill: var(--peach); --pw: 390px; --ph: 844px; --pr: 44px">
+      <div class="tag">01 · Live app</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><iframe id="appFrame" src="apps/indent/landing.html" title="Indent prototype" allow="microphone"></iframe></div>
+    </div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+<script>
+(() => {
+  /* Let the frame's pastel show behind the app, and wire Restart */
+  const f = document.getElementById('appFrame'), src = f.getAttribute('src');
+  f.addEventListener('load', () => {
+    try { const s = f.contentDocument.createElement('style'); s.textContent = `.stage{background:transparent!important}`; f.contentDocument.head.appendChild(s); } catch (e) {}
+  });
+  /* delegated: the subnav is also cloned into the floating pill */
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.restart')) return;
+    e.preventDefault();
+    
+    f.src = src + (src.includes('?') ? '&' : '?') + 'r=' + Math.random().toString(36).slice(2);
+  });
+})();
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

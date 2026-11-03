@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Ukiniwa · Jessa Wolfe</title>
+<meta name="description" content="Ukiniwa, the floating garden: a concept site for a Japanese garden that draws itself as you scroll. Designed, written and built by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<style>
+/* Ukiniwa: paper and ink only. Clips sit in a plain browser window, like Rime */
+body.uki .cs-cover { --fill: #f4f0e8; }
+body.uki .cs-cover .content { background: #f4f0e8; }
+body.uki .cs-cover video { width: 100%; height: 100%; object-fit: cover; display: block; }
+body.uki .xs-paper { --fill: #f4f0e8; } body.uki .xs-deep { --fill: #12110f; color: #ece6da; } body.uki .xs-mist { --fill: #ece6da; }
+body.uki .xs-vids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; width: 100%; }
+body.uki .xs-vid { padding: 18px 18px 16px; }
+body.uki .xs-vid.wide { grid-column: 1 / -1; }
+body.uki .xs-vid .win { border-radius: 14px; overflow: hidden; background: #f4f0e8; box-shadow: 0 12px 30px rgba(40, 30, 20, .16); }
+body.uki .xs-vid .win i.bar { display: flex; gap: 6px; padding: 9px 12px; background: #fbf8f1; border-bottom: 1px solid #e6dfd1; }
+body.uki .xs-vid .win i.bar b { width: 9px; height: 9px; border-radius: 50%; background: #d9d1c1; }
+body.uki .xs-vid video, body.uki .xs-vid img { width: 100%; height: auto; display: block; background: #f4f0e8; }
+body.uki .xs-vid h4 { margin: 14px 4px 4px; font-size: 18px; letter-spacing: -.01em; }
+body.uki .xs-vid p { margin: 0 4px; font-size: 15px; line-height: 1.5; font-weight: 500; color: #4a463f; }
+body.uki .xs-deep h4 { color: #ece6da; } body.uki .xs-deep p { color: rgba(236, 230, 218, .75); }
+body.uki .xs-pieces { padding: 0; overflow: hidden; } body.uki .xs-pieces .content { padding: 0; } body.uki .xs-pieces img { width: 100%; display: block; }
+body.uki .xs-phone { padding: 22px 26px; }
+body.uki .xs-phone .content { display: grid; grid-template-columns: auto 1fr; gap: 34px; align-items: center; }
+body.uki .xs-phone .phs { display: flex; gap: 14px; }
+body.uki .xs-phone .ph { width: 190px; border-radius: 30px; overflow: hidden; border: 8px solid #12110f; background: #12110f; box-shadow: 0 18px 40px rgba(40, 30, 20, .22); }
+body.uki .xs-phone .ph img { width: 100%; display: block; }
+body.uki .xs-phone h4 { margin: 0 0 8px; font-size: 24px; letter-spacing: -.02em; }
+body.uki .xs-phone p { margin: 0 0 12px; font-size: 16px; line-height: 1.55; color: #4a463f; }
+body.uki .xs-tried { width: 100%; display: grid; gap: 12px; }
+body.uki .xs-try { padding: 16px 22px; --fill: #ece6da; }
+body.uki .xs-try .content { display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: baseline; }
+body.uki .xs-try b { font-size: 17px; letter-spacing: -.01em; text-decoration: line-through; text-decoration-color: #b8ad98; text-decoration-thickness: 2px; }
+body.uki .xs-try span { font-size: 15.5px; line-height: 1.5; color: #4a463f; }
+body.uki .xs-try q { font: 700 22px/1.2 'Caveat', cursive; color: #7d7466; quotes: "“" "”"; margin-right: 6px; }
+body.uki .xs-cta { --fill: #12110f; }
+body.uki .xs-cta .content { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; padding: 26px 30px; color: #ece6da; }
+body.uki .xs-cta .cta-t { flex: 1; min-width: 220px; } body.uki .xs-cta h3 { margin: 0 0 4px; font-size: 22px; color: #ece6da; } body.uki .xs-cta p { margin: 0; color: rgba(236, 230, 218, .72); font-size: 15.5px; }
+body.uki .xs-cta a { display: inline-flex; padding: 14px 24px; border-radius: 999px; background: #f4f0e8; color: #12110f; font-weight: 700; font-size: 16px; text-decoration: none; --wb: #f4f0e8; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+body.uki .xs-cta a:hover { transform: rotate(-2deg) scale(1.05); }
+@media (max-width: 860px) { body.uki .xs-vids { grid-template-columns: 1fr; } body.uki .xs-phone .content, body.uki .xs-try .content { grid-template-columns: 1fr; gap: 14px; } body.uki .xs-phone .phs { justify-content: center; } body.uki .xs-phone .ph { width: 46%; max-width: 190px; } body.uki .xs-phone { padding: 18px 20px 20px; } }
+/* night: body copy light, coloured frames outlined by night.js, the CTA a light pill with dark words */
+html.night body.uki .xs-vid p, html.night body.uki .xs-phone p, html.night body.uki .xs-try span { color: var(--ink-soft); }
+html.night body.uki .xs-try q { color: #b8ad98; }
+html.night body.uki .xs-cta a::before { background: #ece6f0 !important; box-shadow: none !important; }
+html.night body.uki .xs-cta a, html.night body.uki .xs-cta a * { color: #17141b !important; }
+html.night body.uki .xs-vid .win { box-shadow: 0 0 0 1px rgba(255, 255, 255, .12), 0 12px 30px rgba(0, 0, 0, .5); }
+</style>
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page uki">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Ukiniwa</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+  <main class="canvas">
+  <article class="case">
+      <div class="slot cs-title" data-name="01 · Ukiniwa">
+        <div class="tag">01 · Ukiniwa</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Ukiniwa, a garden that draws itself</span><span class="typed"><span class="t" data-text="Ukiniwa, a garden that draws itself"></span><span class="caret"></span></span></span></h1><nav class="subnav pasted"><a class="wob" href="#idea">The idea</a><a class="wob" href="#pen">The pen</a><a class="wob" href="#story">The story</a><a class="wob" href="#walk">The walk</a><a class="wob" href="#night">Night</a><a class="wob" href="apps/ukiniwa/index.html" target="_blank" rel="noopener">Visit ↗</a></nav></div>
+      </div>
+      <div class="slot cs-cover paste" data-name="02 · Cover">
+        <div class="tag">02 · Cover</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><video src="image/ukiniwa/cover.mp4" poster="image/ukiniwa/cover.jpg" autoplay muted loop playsinline aria-label="A pavilion over a pond is drawn stroke by stroke, a poem is written beside it and a stamp is pressed on"></video></div>
+      </div>
+      <div class="facts group">
+      <div class="slot fact sub paste" data-name="03 · Role">
+        <div class="tag">03 · Role</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="k">Role</div><div class="v">Design + build, solo</div></div>
+      </div>
+      <div class="slot fact sub paste" data-name="04 · Type">
+        <div class="tag">04 · Type</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="k">Type</div><div class="v">Concept site</div></div>
+      </div>
+      <div class="slot fact sub paste" data-name="05 · Focus">
+        <div class="tag">05 · Focus</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="k">Focus</div><div class="v">Drawing, motion, story</div></div>
+      </div>
+      <div class="slot fact sub paste" data-name="06 · Started">
+        <div class="tag">06 · Started</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="k">Started</div><div class="v">Fall 2026</div></div>
+      </div>
+      </div>
+      <div class="slot prose" data-name="07 · The idea" id="idea">
+        <div class="tag">07 · The idea</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Paper, ink, and one stamp.</span><span class="typed"><span class="t" data-text="Paper, ink, and one stamp."></span><span class="caret"></span></span></span></h2><p class="pasted">Ukiniwa (浮庭) means the floating garden. It is a concept site for a small Japanese garden, and I wanted moving through it to feel like a dream: pieces of the place drifting in like a collage, the whole page reading like a poem.</p><p class="pasted">I gave myself one rule for it: <em>the absence of complexity makes a design perfect.</em> Every time I wanted to add something, I looked for something already on the page that could do the job instead.</p><p class="pasted">So the whole site is made of very few things. Off-white paper. Black ink. A handful of Polaroids. One stamp. And one motion, a pen drawing a line, which does almost everything.</p></div>
+      </div>
+      <div class="slot xs-cta paste" data-name="08 · Visit">
+        <div class="tag">08 · Visit</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="cta-t"><h3>Walk through it yourself.</h3><p>The whole site is live: the drawing, the story, the map and the night.</p></div><a class="wob" href="apps/ukiniwa/index.html" target="_blank" rel="noopener">Visit Ukiniwa ↗</a></div>
+      </div>
+      <div class="slot prose" data-name="09 · The mark">
+        <div class="tag">09 · The mark</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A seal, not a logo.</span><span class="typed"><span class="t" data-text="A seal, not a logo."></span><span class="caret"></span></span></span></h2><p class="pasted">The mark is a hand-drawn hanko stamp: a square with uneven corners, one pine branch and a crescent moon. I explored a dozen line-drawn ideas, from koi to moon windows, and picked the one that looked like it had been pressed onto the page by a person.</p><p class="pasted">It is the only branding on the site, and it never gets bigger than it needs to. The moon in it comes back later as the scrollbar.</p></div>
+      </div>
+      <div class="xs-tried group">
+      <div class="slot xs-try sub paste" data-name="10 · Tried · Crisp vector marks">
+        <div class="tag">10 · Tried · Crisp vector marks</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><b>Crisp vector marks</b><span><q>too clean</q>My first round was precise vector line art. It looked finished, and that was the problem: a dream should look a little unfinished, so I went looser.</span></div>
+      </div>
+      </div>
+      <div class="slot prose" data-name="11 · The pen" id="pen">
+        <div class="tag">11 · The pen</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">One motion, used everywhere.</span><span class="typed"><span class="t" data-text="One motion, used everywhere."></span><span class="caret"></span></span></span></h2><p class="pasted">The pavilion is not faded in. It is drawn. I traced the centre of every ink line in the sketch, about 3,100 strokes, and ordered them the way a person sketches: the long lines of the roof and posts first, then windows and reeds, then the hatching in the water.</p><p class="pasted">Then I ran it backwards. Scroll down and the pavilion is erased in reverse pen order, hatching first, structure last, and the next drawing begins. The hall, the cherry branch and the map all arrive the same way. The poem and the labels are written letter by letter, and each letter leans a little, as if written quickly.</p><p class="pasted">The decision that shaped everything else: one motion, repeated, instead of a new effect for every scene. It is what makes the site feel calm.</p></div>
+      </div>
+      <div class="xs-vids group">
+      <div class="slot xs-vid xs-paper sub paste" data-name="12 · Drawn in">
+        <div class="tag">12 · Drawn in</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/ukiniwa/cover.mp4" poster="image/ukiniwa/cover.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The pavilion drawn stroke by stroke"></video></div><h4>Drawn, not faded</h4><p>Structure first, then details, then the water. The poem is written beside it and the stamp is pressed on last.</p></div>
+      </div>
+      <div class="slot xs-vid xs-paper sub paste" data-name="13 · Erased into the story">
+        <div class="tag">13 · Erased into the story</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/ukiniwa/story.mp4" poster="image/ukiniwa/story.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Scrolling erases the pavilion and draws the hall, the story and the polaroids"></video></div><h4>Erased, then the next page</h4><p>The pen runs backwards, and the hall, the story and three Polaroids arrive in its place.</p></div>
+      </div>
+      </div>
+      <div class="xs-tried group">
+      <div class="slot xs-try sub paste" data-name="14 · Tried · Cross-fades between scenes">
+        <div class="tag">14 · Tried · Cross-fades between scenes</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><b>Cross-fades between scenes</b><span><q>a slideshow</q>Fading one picture into the next read like a slideshow. Drawing and erasing made each scene arrive like a thought.</span></div>
+      </div>
+      </div>
+      <div class="slot prose" data-name="15 · The story" id="story">
+        <div class="tag">15 · The story</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Japanese first, then English.</span><span class="typed"><span class="t" data-text="Japanese first, then English."></span><span class="caret"></span></span></span></h2><p class="pasted">In the middle of the page sits the garden’s story: a lantern maker who dug a pond under the window of his wife, who could not sleep, so the moon would have somewhere to rest.</p><p class="pasted">The Japanese is written in first, in vertical handwritten columns. The English follows beside it, one sentence at a time, in a plain book type. I kept the English deliberately ordinary. The poetry is in the words, so the type does not need to perform.</p><p class="pasted">The Polaroids are real photographs of the same place, given one shared instant-film grade so they look like one roll of film, set in old frames I aged and then toned back down.</p></div>
+      </div>
+      <div class="slot xs-pieces xs-paper paste" data-name="16 · The pieces">
+        <div class="tag">16 · The pieces</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><img src="image/ukiniwa/pieces.jpg" alt="The pieces of Ukiniwa laid out on paper: the stamp, pen drawings of the pavilion, hall, cherry branch and koi, and Polaroids in aged frames" loading="lazy"></div>
+      </div>
+      <div class="xs-tried group">
+      <div class="slot xs-try sub paste" data-name="17 · Tried · Frames that looked really old">
+        <div class="tag">17 · Tried · Frames that looked really old</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><b>Frames that looked really old</b><span><q>too aged</q>The first Polaroid frames had coffee rings, grime and deep yellowing. They pulled focus from the photos, so I kept the tape and the folded corners and faded the rest back to clean cream.</span></div>
+      </div>
+      </div>
+      <div class="slot prose" data-name="18 · The walk" id="walk">
+        <div class="tag">18 · The walk</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A map you walk, one stop at a time.</span><span class="typed"><span class="t" data-text="A map you walk, one stop at a time."></span><span class="caret"></span></span></span></h2><p class="pasted">Next comes a sketchbook map of the whole garden. Once it is drawn, a dotted path walks from the gate along the stepping stones, around the edge of the raked gravel (nobody walks on the gravel), past the lantern and the pine, and ends at the pavilion.</p><p class="pasted">Each stop is written onto a small paper tag as the path reaches it, Japanese first: 門 the gate, 蹲踞 the basin, 枯山水 the dry garden. A Polaroid drops beside the matching sketch in the margin, so the page fills up like a scrapbook as you walk.</p><p class="pasted">The last stop says 東屋, where the moon rests. It is the same line as the story, which is the same image as the poem on the first screen.</p></div>
+      </div>
+      <div class="xs-vids group">
+      <div class="slot xs-vid xs-paper sub paste wide" data-name="19 · The path">
+        <div class="tag">19 · The path</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/ukiniwa/walk.mp4" poster="image/ukiniwa/walk.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The map is drawn and a dotted path walks from the gate to the pavilion"></video></div><h4>The path walks the garden</h4><p>Labels are written on paper tags as it passes, and the Polaroids drop by the margin sketches.</p></div>
+      </div>
+      </div>
+      <div class="xs-tried group">
+      <div class="slot xs-try sub paste" data-name="20 · Tried · Red handwriting on the map">
+        <div class="tag">20 · Tried · Red handwriting on the map</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><b>Red handwriting on the map</b><span><q>hard to read</q>I first wrote the labels and path in red, straight onto the drawing. The real problem turned out to be layering: the map’s ink ran through the words. Lifting the labels onto paper tags in plain ink fixed it, and the red went.</span></div>
+      </div>
+      </div>
+      <div class="slot prose" data-name="21 · Night" id="night">
+        <div class="tag">21 · Night</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Night falls, then you can visit.</span><span class="typed"><span class="t" data-text="Night falls, then you can visit."></span><span class="caret"></span></span></span></h2><p class="pasted">The ending is the night. Ink spreads out from the pavilion with a ragged, soaking edge until the page is black. The stamp is pressed on in white, and the practical part arrives: how to find the gate, when it is open, and how to write.</p><p class="pasted">The small things follow the same rules. The cursor is an ink dot with a loose pen loop trailing it. The scrollbar is a hand-drawn line with the stamp’s crescent moon floating down it, and the little visit button in the corner is a word with a pen loop around it.</p></div>
+      </div>
+      <div class="xs-vids group">
+      <div class="slot xs-vid xs-deep sub paste wide" data-name="22 · Night falls">
+        <div class="tag">22 · Night falls</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/ukiniwa/night.mp4" poster="image/ukiniwa/night.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Ink spreads across the map until the page is black, then the stamp and visit details appear"></video></div><h4>Night spreads from the pavilion</h4><p>A ragged ink edge, then the stamp in white and the details to visit.</p></div>
+      </div>
+      </div>
+      <div class="slot xs-phone xs-mist sub paste" data-name="23 · On a phone">
+        <div class="tag">23 · On a phone</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="phs"><div class="ph"><img src="image/ukiniwa/m1.jpg" alt="Ukiniwa on a phone: the pavilion with the poem above it" loading="lazy"></div><div class="ph"><img src="image/ukiniwa/m2.jpg" alt="Ukiniwa on a phone: the map with Polaroids below it" loading="lazy"></div></div><div><h4>The same garden, held in one hand.</h4><p>On a phone the poem moves above the pavilion, the story stacks into one column, and the map’s Polaroids line up underneath it.</p><p>There is no cursor to draw, so the pen stays in the drawings.</p></div></div>
+      </div>
+      <div class="slot prose" data-name="24 · What I learned" id="learned">
+        <div class="tag">24 · What I learned</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Less, but drawn by hand.</span><span class="typed"><span class="t" data-text="Less, but drawn by hand."></span><span class="caret"></span></span></span></h2><div class="bullets pasted"><div class="b wob"><b>Repeat one idea.</b>One pen motion carried every scene. Adding a new effect each time would have made it noisy.</div><div class="b wob"><b>Keep the materials few.</b>Paper, ink, Polaroids and a stamp. Everything new had to be made of those.</div><div class="b wob"><b>Readable beats clever.</b>The English is plain book type and the map labels sit on paper. The feeling comes from the drawing, not from making words hard to read.</div><div class="b wob"><b>Nothing shows before it is needed.</b>A blank paper tag left on the first screen was enough to break the calm, so every piece waits for its moment.</div></div></div>
+      </div>
+      <div class="slot prose tools" data-name="25 · Tools" id="tools">
+        <div class="tag">25 · Tools</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2><p class="pasted">Designed, written and coded by me, with Claude in the loop. No templates, no page builder.</p><div class="row pasted"><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude Code</b><small>Building the site with me</small></div><div class="tlc"><img src="image/tools/higgsfield.png" alt=""><b>Higgsfield</b><small>The stamp ideas, sketches, photos and map</small></div><div class="tlc"><img src="image/tools/python.svg" alt=""><b>Python</b><small>Tracing 3,100 pen strokes from the drawings</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>The pen, the scroll story and the night</small></div></div></div>
+      </div>
+      <div class="slot prose quote" data-name="26 · North star">
+        <div class="tag">26 · North star</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The absence of complexity makes a design perfect.</span><span class="typed"><span class="t" data-text="The absence of complexity makes a design perfect."></span><span class="caret"></span></span></span></h2></div>
+      </div>
+      <div class="slot xs-cta paste" data-name="27 · Visit again">
+        <div class="tag">27 · Visit again</div>
+        <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+        <div class="content"><div class="cta-t"><h3>Go on, take the walk.</h3><p>Watch it draw, scroll the story, follow the path, and stay for the night.</p></div><a class="wob" href="apps/ukiniwa/index.html" target="_blank" rel="noopener">Visit Ukiniwa ↗</a></div>
+      </div>
+      <div class="cs-end"><a class="wob" href="apps/ukiniwa/index.html" target="_blank" rel="noopener">Visit Ukiniwa →</a><a class="wob" href="app.html#work">More work →</a></div>
+    </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=19"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

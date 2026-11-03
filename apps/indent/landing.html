@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#F9F4EA" />
+<title>Indent — a quieter place to write</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#F9F4EA; --paper2:#F2EBDA; --ink:#1A1815; --mut:#8C8579;
+    --o:#D05C08; --r:#C36A75; --line:rgba(26,24,21,.12);
+    --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+  }
+  html,body{ margin:0; padding:0; }
+  *{ box-sizing:border-box; }
+  button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+  body{ background:var(--paper); color:var(--ink); font-family:var(--sans);
+        -webkit-font-smoothing:antialiased; }
+
+  .wrap{ max-width:480px; margin:0 auto; min-height:100svh;
+         display:flex; flex-direction:column; padding:0 0 26px; }
+
+  /* ---- brand row ---- */
+  .top{ display:flex; align-items:center; justify-content:center; padding:40px 24px 6px; }
+  .brand{ display:flex; align-items:center; gap:0;
+          font-family:var(--serif); font-size:19px; font-weight:500; letter-spacing:-.01em; }
+  .brand svg{ display:block; }
+
+  /* ---- the slides ---- */
+  .rail{ flex:1; display:flex; overflow-x:auto; scroll-snap-type:x mandatory;
+         scrollbar-width:none; }
+  .rail::-webkit-scrollbar{ display:none; }
+  .slide{ flex:0 0 100%; scroll-snap-align:center; scroll-snap-stop:always;
+          display:flex; flex-direction:column; align-items:center; justify-content:center;
+          padding:14px 24px; min-width:0; }
+  .vid{ width:100%; border-radius:20px; overflow:hidden; background:var(--paper2); }
+  .vid video{ display:block; width:100%; aspect-ratio:1/1; object-fit:cover;
+              max-height:44svh; }
+  .txt{ padding:16px 4px 0; text-align:center; }
+  .eye{ font-size:10.5px; letter-spacing:.32em; text-transform:uppercase;
+        font-weight:600; color:var(--o); margin-bottom:10px; }
+  .txt h2{ font-family:var(--serif); font-size:28px; font-weight:500; line-height:1.16;
+           letter-spacing:-.01em; margin:0 0 12px; }
+  .txt h2 em{ font-style:italic; color:var(--o); }
+  .txt p{ font-family:var(--serif); font-size:16px; font-weight:400; line-height:1.55;
+          color:#4c463d; margin:0 auto; max-width:40ch; }
+
+  /* ---- dots ---- */
+  .dots{ display:flex; justify-content:center; gap:7px; padding:14px 0 18px; }
+  .dots button{ width:6px; height:6px; border-radius:50%; background:rgba(26,24,21,.18);
+                padding:0; transition:background .25s, transform .25s; }
+  .dots button.on{ background:var(--o); transform:scale(1.35); }
+
+  /* ---- splash intro: the squiggle draws, then the slides fade in ---- */
+  .intro{ position:fixed; inset:0; z-index:80; background:var(--paper);
+          display:flex; flex-direction:column; align-items:center; justify-content:center;
+          transition:opacity .8s ease, visibility .8s; }
+  .intro.gone{ opacity:0; visibility:hidden; }
+  .intro .introtxt{ display:flex; flex-direction:column; align-items:center; gap:20px; margin-top:-10px; }
+  .intro .wm{ font-family:var(--serif); font-size:40px; font-weight:500; letter-spacing:-.01em; line-height:1;
+              opacity:0; animation:riseIn .8s cubic-bezier(.4,0,.2,1) .7s forwards; }
+  .intro .sub{ font-size:10px; letter-spacing:.36em; text-transform:uppercase; color:var(--mut); line-height:1;
+               opacity:0; animation:riseIn .8s cubic-bezier(.4,0,.2,1) 1.05s forwards; }
+  .intro .stroke-draw{ stroke-dasharray:265; stroke-dashoffset:265;
+                       animation:strokeDraw 1.5s cubic-bezier(.65,0,.35,1) .25s forwards; }
+  @keyframes strokeDraw{ to{ stroke-dashoffset:0; } }
+  @keyframes riseIn{ from{ opacity:0; transform:translateY(9px); } to{ opacity:1; transform:none; } }
+  @media(prefers-reduced-motion:reduce){
+    .intro .wm, .intro .sub{ animation:none; opacity:1; }
+    .intro .stroke-draw{ animation:none; stroke-dashoffset:0; }
+  }
+
+  /* ---- doors in ---- */
+  .cta{ padding:0 24px; display:flex; flex-direction:column; gap:12px; }
+  .btn-primary{ display:block; width:100%; padding:16px; border-radius:999px;
+                background:linear-gradient(150deg, var(--o), var(--r)); color:#fff;
+                font-size:13px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+                text-align:center; text-decoration:none;
+                box-shadow:0 10px 24px -10px rgba(208,92,8,.55);
+                transition:transform .2s, box-shadow .2s; }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 30px -10px rgba(208,92,8,.6); }
+  .btn-quiet{ display:block; text-align:center; font-size:13px; color:var(--mut);
+              text-decoration:none; padding:4px; }
+  .btn-quiet b{ color:var(--ink); font-weight:600; }
+  .btn-quiet:hover b{ color:var(--o); }
+</style>
+</head>
+<body>
+
+<div class="intro" id="intro" aria-hidden="true">
+  <svg viewBox="0 0 172 172" width="96" height="96">
+    <defs>
+      <linearGradient id="introMark" x1="86" y1="0" x2="86" y2="172" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#D05C08"/><stop offset="1" stop-color="#C36A75"/>
+      </linearGradient>
+    </defs>
+    <path class="stroke-draw"
+          d="M147.5 94.9966C127.5 112 90.0925 135.967 82.2582 94.9966C71.919 40.9278 112.581 49.8358 108.529 74.1085C104.476 98.3813 74.5 123.5 25 116"
+          stroke="url(#introMark)" stroke-width="13" fill="none" stroke-linecap="round"/>
+  </svg>
+  <div class="introtxt">
+    <div class="wm">indent</div>
+    <div class="sub">a quieter place to read</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="top">
+    <span class="brand">
+      <svg viewBox="0 0 172 172" width="22" height="22" aria-hidden="true">
+        <defs>
+          <linearGradient id="mark" x1="86" y1="0" x2="86" y2="172" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#D05C08"/><stop offset="1" stop-color="#C36A75"/>
+          </linearGradient>
+        </defs>
+        <path d="M147.5 94.9966C127.5 112 90.0925 135.967 82.2582 94.9966C71.919 40.9278 112.581 49.8358 108.529 74.1085C104.476 98.3813 74.5 123.5 25 116"
+              stroke="url(#mark)" stroke-width="13" fill="none" stroke-linecap="round"/>
+      </svg>
+      indent
+    </span>
+  </div>
+
+  <div class="rail" id="rail">
+
+    <section class="slide">
+      <div class="vid"><video src="images/onboarding/slide-1-welcome-notebook-birds.mp4"
+        poster="images/onboarding/slide-1-welcome-notebook-birds.png"
+        autoplay muted loop playsinline preload="metadata"></video></div>
+      <div class="txt">
+        <div class="eye">Welcome</div>
+        <h2>A <em>quieter</em> place to write.</h2>
+        <p>No feeds that shout. No numbers to chase. Just a page that waits, and people who read slowly.</p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="vid"><video src="images/onboarding/slide-2-write-messy-desk.mp4"
+        poster="images/onboarding/slide-2-write-messy-desk.png"
+        autoplay muted loop playsinline preload="metadata"></video></div>
+      <div class="txt">
+        <div class="eye">Write</div>
+        <h2>Come as you are. <em>Drafts and all.</em></h2>
+        <p>Poems start as three words on a napkin. Write messy, write small, write at midnight. The page keeps no score.</p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="vid"><video src="images/onboarding/slide-3-make-space-indent.mp4"
+        poster="images/onboarding/slide-3-make-space-indent.png"
+        autoplay muted loop playsinline preload="metadata"></video></div>
+      <div class="txt">
+        <div class="eye">Make space</div>
+        <h2>It starts with an <em>indent</em>.</h2>
+        <p>A small step in from the margin. The pause before the first word. We built a whole place inside that pause.</p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="vid"><video src="images/onboarding/slide-4-share-paper-planes.mp4?v=2"
+        poster="images/onboarding/slide-4-share-paper-planes.png?v=2"
+        autoplay muted loop playsinline preload="metadata"></video></div>
+      <div class="txt">
+        <div class="eye">Share</div>
+        <h2>Like a <em>letter</em>, not a broadcast.</h2>
+        <p>Your work travels quietly, to people who chose to read you. What comes back are replies, not likes.</p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <div class="vid"><video src="images/onboarding/slide-5-discover-reading-grass.mp4"
+        poster="images/onboarding/slide-5-discover-reading-grass.png"
+        autoplay muted loop playsinline preload="metadata"></video></div>
+      <div class="txt">
+        <div class="eye">Discover</div>
+        <h2>We <em>read</em> here first.</h2>
+        <p>Reading is the work. Writing follows. Find a writer worth your afternoon, and let someone find you.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="dots" id="dots" role="tablist" aria-label="Slides"></div>
+
+  <div class="cta">
+    <a class="btn-primary" href="signup.html">Create account</a>
+    <a class="btn-quiet" href="index.html?scene=feed">Already have one? <b>Sign in</b></a>
+  </div>
+
+</div>
+
+<script>
+  /* splash first, then the slides; ?nosplash=1 (the flow map) skips straight
+     to them, and ?slide=N pins one slide with no splash and no auto-advance */
+  const Q = new URLSearchParams(location.search);
+  const PIN = Q.has("slide") ? Math.max(0, Math.min(4, +Q.get("slide") || 0)) : null;
+  const NOSPLASH = /[?&]nosplash=1/.test(location.search) || PIN !== null;
+  const intro = document.getElementById("intro");
+  if (NOSPLASH) intro.remove();
+  else setTimeout(() => intro.classList.add("gone"), 2600);
+
+  const rail = document.getElementById("rail");
+  const slides = [...rail.children];
+  const dots = document.getElementById("dots");
+  slides.forEach((_, i) => {
+    const d = document.createElement("button");
+    d.setAttribute("aria-label", "Slide " + (i + 1));
+    if (i === 0) d.className = "on";
+    d.addEventListener("click", () => { stopAuto(); go(i); });
+    dots.appendChild(d);
+  });
+
+  let idx = 0;
+  function go(i) {
+    idx = Math.max(0, Math.min(slides.length - 1, i));
+    rail.scrollTo({ left: idx * rail.clientWidth, behavior: "smooth" });
+  }
+  rail.addEventListener("scroll", () => {
+    const i = Math.round(rail.scrollLeft / rail.clientWidth);
+    if (i !== idx) {
+      idx = i;
+      [...dots.children].forEach((d, k) => d.classList.toggle("on", k === idx));
+    }
+  }, { passive: true });
+
+  /* gentle auto-advance until the reader takes over; waits out the splash.
+     A pinned slide stays put. */
+  let auto = null;
+  if (PIN === null) {
+    setTimeout(() => {
+      if (auto !== false) auto = setInterval(() => go(idx >= slides.length - 1 ? 0 : idx + 1), 5000);
+    }, NOSPLASH ? 0 : 2600);
+  }
+  function stopAuto() { clearInterval(auto); auto = false; }
+  rail.addEventListener("pointerdown", stopAuto, { once: true });
+  rail.addEventListener("wheel", stopAuto, { once: true, passive: true });
+
+  if (PIN !== null) {
+    rail.scrollTo({ left: PIN * rail.clientWidth });
+    idx = PIN;
+    [...dots.children].forEach((d, k) => d.classList.toggle("on", k === PIN));
+  }
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

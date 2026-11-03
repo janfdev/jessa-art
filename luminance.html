@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Luminance · Jessa Wolfe</title>
+<meta name="description" content="Luminance, a narrative game I'm building: the story, the storyboard tool, the journal, the characters, and a playable first scene. A case study by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<style>
+  /* Luminance case: cast cards, sprite strip, tools */
+  .screens.cast { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 30px 14px; overflow: visible; padding: 28px 4px 18px; }
+  .screens.cast .screen { width: auto; aspect-ratio: 880 / 1168; --r: 22px; }
+  @media (max-width: 860px) { .screens.cast { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 12px; } }
+  /* her reason for making it, a step up from the body text */
+  #about .content > p:first-of-type { font-size: clamp(19px, 1.9vw, 24px); font-weight: 600; line-height: 1.4; letter-spacing: -.01em; }
+  /* the small rules: a floating heading, then one card per rule with its example overlapping the card's edge */
+  .rulecards { display: grid; gap: 64px; }
+  .rulecard { --fill: #fff; padding: 30px 34px; width: min(760px, 100%); }
+  .rulecard:nth-child(2) { justify-self: end; }
+  .rulecard .content { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 18px; align-items: start; padding-right: 36%; min-height: 150px; }
+  .rulecard:nth-child(2) .content { padding-right: 0; padding-left: 36%; }
+  .rulecard .rn { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50% 50% 50% 8px; background: var(--pink); color: #fff; font-weight: 800; font-size: 19px; box-shadow: 0 0 0 3px #fff; rotate: -6deg; }
+  .rulecard:nth-child(2) .rn { background: var(--mint-deep); } .rulecard:nth-child(3) .rn { background: #8cc1ff; }
+  .rulecard p { margin: 4px 0 0; font-size: 17px; line-height: 1.6; }
+  .rulecard video { position: absolute; right: -9%; top: 50%; width: 44%; transform: translateY(-50%) rotate(2.5deg); border-radius: 16px; display: block; box-shadow: 0 0 0 4px #fff, 0 18px 40px rgba(130,95,140,.25); z-index: 2; }
+  .rulecard:nth-child(2) video { right: auto; left: -9%; transform: translateY(-50%) rotate(-2.5deg); }
+  .rulecard:nth-child(2) .content { grid-template-columns: 52px minmax(0, 1fr); }
+  @media (max-width: 860px) {
+    .rulecard, .rulecard:nth-child(2) { justify-self: stretch; }
+    .rulecard .content, .rulecard:nth-child(2) .content { padding: 0; }
+    .rulecard video, .rulecard:nth-child(2) video { position: relative; left: auto; right: auto; top: auto; width: 100%; transform: rotate(1.5deg); grid-column: 1 / -1; margin-top: 10px; }
+  }
+  .facts.six { grid-template-columns: repeat(3, 1fr); row-gap: 40px; }
+  @media (max-width: 860px) { .facts.six { grid-template-columns: 1fr 1fr; } }
+  .world .content { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); column-gap: 34px; align-items: center; }
+  .world .content > h2 { grid-column: 1 / -1; }
+  .world .wmap { grid-column: 2; grid-row: 2 / span 3; margin: 0; rotate: 1.6deg; }
+  .world .wmap img { width: 100%; display: block; border-radius: 18px; box-shadow: 0 0 0 4px #fff, 0 18px 40px rgba(130,95,140,.22); }
+  .world .wmap figcaption { margin-top: 10px; font-family: var(--hand); font-weight: 700; font-size: 20px; line-height: 1.15; text-align: center; color: var(--ink); }
+  .world .content > p { grid-column: 1; }
+  @media (max-width: 860px) { .world .content { grid-template-columns: 1fr; } .world .wmap { grid-column: 1; grid-row: auto; margin-top: 10px; } }
+  /* lead-in phrases: a highlighter swipe across the bottom of the words, not a box */
+  b.lead { padding: 0 .18em; margin: 0 .02em; color: inherit; font-weight: 700; border-radius: .25em .6em .35em .5em; box-decoration-break: clone; -webkit-box-decoration-break: clone;
+    background: linear-gradient(176deg, transparent 0 36%, var(--hl) 36% 90%, transparent 90%); }
+  b.lead.l1 { --hl: rgba(255, 143, 194, .55); } b.lead.l2 { --hl: rgba(122, 211, 163, .5); } b.lead.l3 { --hl: rgba(243, 210, 90, .6); } b.lead.l4 { --hl: rgba(140, 193, 255, .5); } b.lead.l5 { --hl: rgba(184, 155, 255, .5); }
+  /* emotions */
+  .emo .row { margin-top: 26px; }
+  .emo .row h4 { margin: 0 0 4px; font-size: 17px; } .emo .row > p { margin: 0 0 12px; font-size: 14.5px; opacity: .78; }
+  .emo .faces { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+  .emo .faces.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .emo figure { margin: 0; transition: transform .45s var(--spring); }
+  .emo figure:nth-child(odd) { rotate: -1.4deg; } .emo figure:nth-child(even) { rotate: 1.2deg; translate: 0 6px; }
+  .emo figure:hover { transform: translateY(-4px) scale(1.05); }
+  .emo figure img { width: 100%; aspect-ratio: 360 / 402; object-fit: cover; display: block; border-radius: 16px; box-shadow: 0 0 0 3px #fff, 0 8px 18px rgba(40,60,110,.12); }
+  .emo figcaption { font-family: var(--hand); font-weight: 700; font-size: 21px; line-height: 1; text-align: center; margin-top: 8px; color: var(--ink); }
+  .emo .pairs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 16px; }
+  .emo .pair .faces { grid-template-columns: 1fr 1fr; gap: 8px; } .emo .pair h4 { font-size: 14px; margin-bottom: 8px; }
+  @media (max-width: 860px) { .emo .faces { grid-template-columns: repeat(3, minmax(0, 1fr)); } .emo .faces.four { grid-template-columns: repeat(2, minmax(0, 1fr)); } .emo .pairs { grid-template-columns: 1fr 1fr; } }
+  .screens.cast .screen .content { border-radius: 22px; }
+  .screens.cast .screen figcaption { position: absolute; left: 10px; right: 10px; bottom: 10px; padding: 8px 12px; border-radius: 14px; background: rgba(255,255,255,.92); font-size: 13px; line-height: 1.3; font-weight: 700; color: var(--ink); }
+  .screens.cast .screen figcaption small { display: block; font-weight: 500; font-size: 11.5px; opacity: .7; }
+  .strip { --fill: #fff; padding: 12px; width: 100%; }
+  .strip img { width: 100%; display: block; border-radius: 18px; }
+  .strip p { margin: 12px 8px 4px; font-size: 14px; opacity: .75; }
+  .tools .tlc { display: grid; justify-items: center; gap: 10px; padding: 20px 12px 16px; border-radius: 22px; background: var(--paper, #fbf8f3); text-align: center; transition: transform .45s var(--spring, ease); }
+  .tools .tlc:nth-child(odd) { rotate: -1.2deg; } .tools .tlc:nth-child(even) { rotate: 1deg; }
+  .tools .tlc:hover { transform: translateY(-3px) scale(1.04); }
+  .tools .tlc img { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; }
+  .tools .tlc b { font-size: 14px; color: var(--ink); }
+  .tools .tlc small { font-size: 12px; line-height: 1.35; opacity: .7; }
+  .site-embed .browser .snd { all: unset; cursor: pointer; margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--ink-soft); padding: 5px 12px 5px 9px; border-radius: 100px; background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--ink-faint); transition: transform .45s var(--spring); }
+  .site-embed .browser .snd:hover { transform: scale(1.05); }
+  .site-embed .browser .snd:focus-visible { outline: 2px solid var(--pink-deep); outline-offset: 2px; }
+  .site-embed .browser .snd svg { width: 16px; height: 16px; }
+  .site-embed .browser .snd .on, .site-embed .browser .snd[aria-pressed="true"] .off { display: none; }
+  .site-embed .browser .snd[aria-pressed="true"] .on { display: inline; }
+  .site-embed .browser .snd[aria-pressed="true"] { color: var(--ink); background: var(--mint); box-shadow: inset 0 0 0 1.5px var(--mint-deep); }
+  .site-embed .browser .snd + a { margin-left: 4px; }
+  /* the soundtrack panel, in the game's own hologram style */
+  .sound .content { display: grid; grid-template-columns: 1fr 330px; gap: 28px; align-items: start; }
+  .sound .content > h2 { grid-column: 1 / -1; }
+  .sound .txt p { margin-top: 0; }
+  .lum-mp { font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace; padding: 14px; border-radius: 18px; color: #2a5f9e; rotate: 1.4deg;
+    background: linear-gradient(160deg, rgba(255,255,255,.96), rgba(232,244,255,.92)); box-shadow: 0 0 0 1px rgba(120,200,255,.55), 0 0 22px rgba(51,198,255,.18), 0 18px 40px rgba(20,60,130,.14); }
+  .lum-mp h5 { margin: 2px 4px 10px; font-size: 9.5px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: #1f7cff; display: flex; gap: 8px; align-items: center; }
+  .lum-mp h5::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(31,124,255,.4), transparent); }
+  .lum-mp ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+  .lum-mp button { all: unset; cursor: pointer; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 9px; padding: 9px 8px; border-radius: 10px; font-size: 11px; }
+  .lum-mp button:hover { background: rgba(31,124,255,.07); }
+  .lum-mp button:focus-visible { outline: 2px solid #1f7cff; outline-offset: -2px; }
+  .lum-mp button[aria-pressed="true"] { background: rgba(31,124,255,.1); box-shadow: inset 2px 0 0 #1f7cff; }
+  .lum-mp .n { font-size: 10px; color: #5b7393; } .lum-mp button[aria-pressed="true"] .n { color: #1f7cff; }
+  .lum-mp b { display: block; font: 400 11.5px/1.3 "Michroma", ui-sans-serif, sans-serif; letter-spacing: .05em; color: #082a5c; }
+  .lum-mp small { display: block; font-size: 10px; line-height: 1.45; letter-spacing: .02em; color: #5b7393; margin-top: 3px; font-family: "IBM Plex Sans", system-ui, sans-serif; }
+  .lum-mp .pl { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #1f7cff; color: #fff; box-shadow: 0 0 10px rgba(51,198,255,.5); }
+  .lum-mp .pl svg { width: 10px; height: 10px; }
+  .lum-mp .pl .ps, .lum-mp button[aria-pressed="true"] .pl .py { display: none; } .lum-mp button[aria-pressed="true"] .pl .ps { display: block; }
+  .lum-mp .tag2 { margin: 12px 4px 0; font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase; color: #5b7393; }
+  .sfx { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .sfx span { font-size: 13px; font-weight: 600; padding: 7px 12px; border-radius: 100px; background: var(--paper, #fff); box-shadow: inset 0 0 0 1.5px var(--ink-faint); }
+  .sfx span:nth-child(3n+1) { rotate: -1.5deg; } .sfx span:nth-child(3n+2) { rotate: 1deg; }
+  .sfx span i { font-style: normal; color: var(--pink-deep); }
+  .sfx span small { font-weight: 500; opacity: .65; margin-left: 4px; }
+  @media (max-width: 860px) { .sound .content { grid-template-columns: 1fr; } .lum-mp { rotate: 0deg; } .site-embed .browser .snd span { display: none; } }
+  /* scribbled note pointing into the storyboard */
+  .scrib { position: absolute; right: 27%; top: -92px; z-index: 3; display: flex; align-items: flex-start; gap: 2px; pointer-events: none; rotate: -3deg; }
+  .scrib span { font-family: var(--hand); font-weight: 700; font-size: 27px; line-height: .95; color: var(--pink-deep); text-align: right; padding-top: 4px;
+    opacity: 0; transform: translateY(6px); transition: opacity .5s .5s, transform .6s .5s var(--spring); }
+  .scrib svg { width: 104px; height: 84px; overflow: visible; margin-top: 10px; }
+  .scrib path { fill: none; stroke: var(--pink-deep); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+  .scrib .ln { stroke-dasharray: 190; stroke-dashoffset: 190; transition: stroke-dashoffset .9s .9s cubic-bezier(.6,.1,.3,1); }
+  .scrib .hd { stroke-dasharray: 40; stroke-dashoffset: 40; transition: stroke-dashoffset .3s 1.75s ease-out; }
+  .slot.on .scrib span { opacity: 1; transform: none; }
+  .slot.on .scrib .ln, .slot.on .scrib .hd { stroke-dashoffset: 0; }
+  @media (prefers-reduced-motion: reduce) { .scrib span, .scrib path { transition: none; } }
+  @media (max-width: 860px) { .scrib { right: 4%; top: -78px; } .scrib span { font-size: 22px; } .scrib svg { width: 80px; height: 66px; } }
+  /* phones: the game and the storyboard open full screen from a preview instead of a tiny frame */
+  .mposter { display: none; }
+  @media (max-width: 860px) {
+    .site-embed.hasposter iframe { display: none; }
+    .mposter { display: block; position: relative; border-radius: 18px; overflow: hidden; text-decoration: none; color: var(--ink); }
+    .mposter img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+    .mposter span { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -60%); white-space: nowrap; font-weight: 800; font-size: 16px; padding: 12px 20px; border-radius: 100px; --wb: #fff; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.18); }
+    .mposter small { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); white-space: nowrap; font-size: 12px; font-weight: 700; color: #fff; padding: 5px 12px; border-radius: 100px; background: rgba(30,28,40,.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+    .site-embed.hasposter .browser .snd { display: none; }
+  }
+  .soon { text-align: center; margin: 70px 0 30px; font-weight: 800; font-size: clamp(44px, 8vw, 92px); letter-spacing: -.035em; line-height: 1; color: var(--ink); rotate: -2deg; }
+  .soon em { font-style: normal; color: var(--pink-deep); }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Luminance</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Luminance">
+      <div class="tag">01 · Luminance</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Luminance, a game I’m building</span><span class="typed"><span class="t" data-text="Luminance, a game I’m building"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#about">About</a><a class="wob" href="#world">World</a><a class="wob" href="#play">Play</a><a class="wob" href="#rules">Rules</a><a class="wob" href="#tool">Storyboard</a><a class="wob" href="#characters">Cast</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/title.jpg" alt="The Luminance title screen: the name in glowing letters over a hologram city"></div>
+    </div>
+    <div class="facts group six">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Creator: story, art direction, design and build</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Started">
+      <div class="tag">04 · Started</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Started</div><div class="v">Started fall 2026 · Coming 2027</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Built with">
+      <div class="tag">05 · Built with</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Built with</div><div class="v">Claude Code, Higgsfield, ElevenLabs, three.js</div></div>
+    </div>
+    </div>
+    <div class="slot prose" id="about" data-name="06 · About">
+      <div class="tag">06 · About</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A story about choosing.</span><span class="typed"><span class="t" data-text="A story about choosing."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I’m building this because I have such a love for K-dramas, sci-fi and video games. It’s always been a passion project of mine.</p>
+        <p class="pasted">Luminance is a sixteen-episode sci-fi drama I’m writing, and the game I’m building from it. It’s set in Seoul, 3062. Every human carries a luminance chip, and every bot wears a small glowing dot on its neck: cool white when it’s stable, crimson when it starts to crack.</p>
+        <p class="pasted">Aevum, the century-old company that makes the bots, keeps one of them in a room that only looks like a home. Ji-yoo is Subject 001, the first bot built with a mind of his own, and in twenty-two years nobody has asked him what he wants. Across the river, Han Hae is a detective in the unit that handles bots gone rogue. She has worn her late father’s analog watch every day since she was eight, and she doesn’t trust bots.</p>
+        <p class="pasted">A government program pairs them up. He has the work and not the world. She has the world and doesn’t want the work. Each has exactly what the other is missing.</p>
+        <p class="pasted">Two relics hold the story together: his worn copy of Pinocchio, with three handwritten words on the back page, and her father’s watch. Both are twenty years old. The book has aged. He hasn’t.</p>
+        <p class="pasted">It’s still in progress. The opening of episode 1 is playable below, and so is the storyboard I plan it in.</p></div>
+    </div>
+    <div class="facts group six">
+    <div class="slot fact sub paste" data-name="07 · Genre" style="--fill:#fff">
+      <div class="tag">07 · Genre</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Genre</div><div class="v">A sci-fi narrative adventure, told like a K-drama</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="08 · Theme" style="--fill:#fff">
+      <div class="tag">08 · Theme</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Theme</div><div class="v">About choice, grief, and what makes someone real</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="09 · Status" style="--fill:#fff">
+      <div class="tag">09 · Status</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Status</div><div class="v">In progress. The opening of episode 1 is playable</div></div>
+    </div>
+    </div>
+    <div class="slot prose world" id="world" data-name="10 · The world">
+      <div class="tag">10 · The world</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Seoul, 3062.</span><span class="typed"><span class="t" data-text="Seoul, 3062."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I wanted the future to feel old. Brushed metal, visible wear, holograms that look projected instead of rendered. Old Seoul still has fog, wood-paneled elevators and cardigans. Aevum is clean, polite and a little too perfect.</p>
+        <p class="pasted">Aevum only speaks in output, performance and variance. It has no word for love, grief or choice, and that missing vocabulary is the heart of the story. Out in the city, someone keeps spraying one word over Aevum’s billboards: 기억. Remember.</p>
+        <figure class="wmap pasted"><img src="image/luminance/seoul-map.jpg" alt="A painted map of Seoul in 3062: old Seoul in the north, the Han River across the middle, the new city and Aevum’s circular campus in the south" loading="lazy"><figcaption>Old Seoul up top, the Han River, Aevum’s ring bottom right.</figcaption></figure></div>
+    </div>
+    <div class="slot prose" id="play" data-name="11 · Play it">
+      <div class="tag">11 · Play it</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Play the first scene.</span><span class="typed"><span class="t" data-text="Play the first scene."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Turn the sound on, then press Start. Walk with the arrow keys, press E to interact and Q to open the journal. Hold E to skip the film.</p>
+        <p class="pasted">It opens on a line from Pinocchio, then a short film that stops on the handwriting in his book so you can trace it yourself. After that, the room is yours. Open the door, and the Scientist walks him down the corridor, a step ahead.</p></div>
+    </div>
+    <div class="slot site-embed paste hasposter" id="scene" data-name="12 · Scene 1">
+      <div class="tag">12 · Scene 1</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content">
+        <div class="browser"><i></i><i></i><i></i><span class="url">Luminance · Episode 01 · Scene 1</span><button class="snd" type="button" aria-pressed="false" title="Sound for the game frames"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="off" d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Sound off</span></button><a href="apps/luminance/title.html" target="_blank" rel="noopener">Open full screen ↗</a></div>
+        <iframe src="apps/luminance/title.html" title="Luminance, Episode 1, Scene 1, playable" loading="lazy" allow="autoplay; fullscreen"></iframe><a class="mposter" href="apps/luminance/title.html" target="_blank" rel="noopener"><img src="image/luminance/cinematic.jpg" alt=""><span class="wob">Play Scene 1 ↗</span><small>Best with a keyboard and sound on</small></a>
+      </div>
+    </div>
+    <div class="favgrid group">
+    <div class="slot favcard sub paste wide" data-name="13 · The opening">
+      <div class="tag">13 · The opening</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/luminance/clips/trace.mp4" poster="image/luminance/clips/trace.jpg" muted loop playsinline autoplay></video><div class="fbody"><span class="kicker">first move</span><h4>You finish the opening.</h4><p>The film freezes on “My son. – Appa.” The words fade to a ghost and come back in his father’s ink under your finger, with soft taps on the page. The first thing you do in the game is the most emotional moment in it.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste" data-name="14 · The room">
+      <div class="tag">14 · The room</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/luminance/clips/room.mp4" poster="image/luminance/clips/room.jpg" muted loop playsinline autoplay></video><div class="fbody"><span class="kicker">scene 1</span><h4>A room that only looks like a home.</h4><p>Light shafts from a sky that’s really a screen, about 90 dust motes that sparkle inside the light, one panel of the sky that glitches, and soft dreamy edges. Drop the needle and tiny white notes drift up.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste" data-name="15 · Action tags">
+      <div class="tag">15 · Action tags</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/room.jpg" alt=""><div class="fbody"><span class="kicker">interaction</span><h4>Tags that feel like Aevum.</h4><p>Every action is a tilted hologram callout with a glowing E, the action in English with Korean underneath, and a wipe and flicker as it projects in.</p></div></div>
+    </div>
+    </div>
+    <div class="slot prose bare rulehead" data-name="16 · Small mechanics">
+      <div class="tag">16 · Small mechanics</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The small rules.</span><span class="typed"><span class="t" data-text="The small rules."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="rulecards group">
+    <div class="slot rulecard sub paste" data-name="17 · Rule 1">
+      <div class="tag">17 · Rule 1</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><span class="rn">1</span><p>Hold E to skip, with a ring that fills while you hold and drains if you let go, so nobody skips by accident. Skipping still lands you on the tracing, because that moment matters.</p><video src="image/luminance/clips/rule-hold.mp4" poster="image/luminance/clips/rule-hold.jpg" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot rulecard sub paste" data-name="18 · Rule 2">
+      <div class="tag">18 · Rule 2</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><span class="rn">2</span><p>The knocking at the door comes at uneven gaps, about 6 to 10 seconds apart, so it feels like a person and not a loop. Each knock sends a soft ring of light off the door. It stops while the journal is open and picks up a beat after you close it.</p><video src="image/luminance/clips/rule-knock.mp4" poster="image/luminance/clips/rule-knock.jpg" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot rulecard sub paste" data-name="19 · Rule 3">
+      <div class="tag">19 · Rule 3</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><span class="rn">3</span><p>Ji-yoo’s scale and footing went through several passes until he stood on the floor in front of the bed instead of floating over it, with a soft shadow and a faint reflection in the polished floor.</p><video src="image/luminance/clips/rule-stand.mp4" poster="image/luminance/clips/rule-stand.jpg" muted loop playsinline autoplay></video></div>
+    </div>
+    </div>
+    <div class="slot prose" id="tool" data-name="20 · The tool">
+      <div class="tag">20 · The tool</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">It started as a storyboard.</span><span class="typed"><span class="t" data-text="It started as a storyboard."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Luminance is two stories running at once, Ji-yoo inside Aevum and Hae out in the city, and they only work if they meet at the right moments. In a script doc they’re just pages. I needed to see a whole episode at once: every room in story order, split by whose eyes you’re in, so I can tell when one lane goes quiet too long or two scenes land on the same beat.</p>
+        <p class="pasted">So the storyboard came first. It’s where I write, plan and check the game in one place: the script beside the board, every character’s file, and the city they live in.</p>
+        <p class="pasted">It set the look for everything after it. I went with “daylight hologram”: bright, white and blue, glassy, with cyan glow. Aevum is clean, polite and a little too perfect, so the UI is too.</p>
+        <p class="pasted">Go ahead and poke around. Scene 1 of the script is open. The rest stays blurred while I write.</p></div>
+    </div>
+    <div class="slot site-embed paste hasposter" id="board" data-name="21 · Storyboard">
+      <div class="tag">21 · Storyboard</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content">
+        <div class="browser"><i></i><i></i><i></i><span class="url">Luminance · Storyboard</span><button class="snd" type="button" aria-pressed="false" title="Sound for the game frames"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="off" d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Sound off</span></button><a href="apps/luminance/index.html" target="_blank" rel="noopener">Open full screen ↗</a></div>
+        <iframe src="apps/luminance/index.html" title="The Luminance storyboard tool" loading="lazy" allow="autoplay; fullscreen"></iframe><a class="mposter" href="apps/luminance/index.html" target="_blank" rel="noopener"><img src="image/luminance/storyboard.jpg" alt=""><span class="wob">Open the storyboard ↗</span><small>Opens full screen</small></a><div class="scrib" aria-hidden="true"><span>psst, you can actually<br>play with it!</span><svg viewBox="0 0 150 120"><path class="ln" d="M14 10 C 60 6, 112 18, 120 52 C 126 76, 114 92, 104 104"/><path class="hd" d="M90 94 L104 106 L114 88"/></svg></div>
+      </div>
+    </div>
+    <div class="favgrid group">
+    <div class="slot favcard sub paste wide" data-name="22 · Rooms">
+      <div class="tag">22 · Rooms</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/luminance/clips/modal.mp4" poster="image/luminance/clips/modal.jpg" muted loop playsinline autoplay></video><div class="fbody"><span class="kicker">rooms</span><h4>Everything hangs on the room.</h4><p>A game is built room by room, so the room is the unit everything hangs on: the art, who’s there, what’s said, what you can do and which clue it hides. Opening one shows me all of it at once, so I write a scene knowing exactly where the player is standing. The pixel reveal and decoding text are the same language the game uses when something comes into focus.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste" data-name="23 · Toggles">
+      <div class="tag">23 · Toggles</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/toggles.jpg" alt="" style="object-fit:contain;background:#e9f4ff;padding:10px;box-sizing:border-box"><div class="fbody"><span class="kicker">iteration</span><h4>From 2009 to 3062.</h4><p>The first toggles were glossy blue glass, which read “giving 2009 vs like 3062.” They became quiet frosted tracks with a clear lens that springs between options. No gloss, no glow.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste" data-name="24 · Script">
+      <div class="tag">24 · Script</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/script.jpg" alt=""><div class="fbody"><span class="kicker">script</span><h4>The script, next to the story.</h4><p>Writing a game is writing for a place. With the script beside the board I read a scene and see the room it happens in, and a summary of every scene keeps the whole episode in my head. Listen reads it aloud, a voice per character, which is how I catch lines that read fine but sound wrong.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste wide" data-name="25 · Map">
+      <div class="tag">25 · Map</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/luminance/clips/map.mp4" poster="image/luminance/clips/map.jpg" muted loop playsinline autoplay></video><div class="fbody"><span class="kicker">world</span><h4>A world I can walk through.</h4><p>Seoul 3062 is a character too. Flying over it, opening a district and riding the maglev tells me how far apart places really are, what Hae passes on her way to work, and where a scene should happen. For players it becomes the map in Ji-yoo’s journal: a city he’s never been allowed to see, filling in as the story opens it up.</p></div></div>
+    </div>
+    </div>
+    <div class="slot prose why" id="rules" data-name="26 · Script to game">
+      <div class="tag">26 · Script to game</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Turning the story into rules.</span><span class="typed"><span class="t" data-text="Turning the story into rules."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">The story runs on planting things in plain sight and paying them off late. So does the game. Every rule comes from something in the script:</p>
+        <p class="pasted"><b class="lead l1">He has never chosen anything.</b> So every optional thing you do, like looking out the window or putting on a record, is logged in his journal as a choice he made himself.</p>
+        <p class="pasted"><b class="lead l2">Aevum talks in metrics.</b> His door plate reads SUBJECT 001 · PRE-LUMINANT · ANOMALOUS BASELINE. His own thought sits underneath it.</p>
+        <p class="pasted"><b class="lead l3">Someone is writing “Remember.”</b> 기억 tags are hidden in every room. Each one you find is logged in the Case file, with a snapshot of where it was.</p>
+        <p class="pasted"><b class="lead l1">Sixty-three steps.</b> He counted the walk from his door to the lab when he was eight. It’s the name of episode 2, and he’s still counting in the corridor.</p>
+        <p class="pasted"><b class="lead l2">He has never left.</b> The map of Seoul is dark and glitching except for Aevum. It fills in only as he reaches each place.</p></div>
+    </div>
+    <div class="slot prose why" id="why" data-name="27 · Why a tool">
+      <div class="tag">27 · Why a tool</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Why build a tool at all?</span><span class="typed"><span class="t" data-text="Why build a tool at all?"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted"><b class="lead l1">For me, as the writer.</b> I write the story, design the world and build the game, often in the same afternoon. With the script, the board, the characters and the city in one place, I never lose the thread between them. When I change a scene, I can see everything it touches.</p>
+        <p class="pasted"><b class="lead l2">For the game.</b> Almost every feature in the playable scene was built and tested in the storyboard first: the pixel reveal, the hologram labels, the walk cycles, the map. The game and its plan share one visual language and one set of parts, so each new room starts further ahead.</p>
+        <p class="pasted"><b class="lead l3">For players.</b> The things that help me keep track of the story become the things that help players keep track of it: character files, memories, a map of the city. A story told in two lanes needs those anchors, or people get lost.</p></div>
+    </div>
+    <div class="slot prose" id="journal" data-name="28 · The journal">
+      <div class="tag">28 · The journal</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Building the journal.</span><span class="typed"><span class="t" data-text="Building the journal."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">When it was time to design the menu, I started from the story instead of a template. Ji-yoo has spent his whole life being watched and never keeping anything of his own, so the journal became the first thing that’s his: the people he meets, the things he chooses to keep, the city he’s never seen.</p>
+        <p class="pasted">The first version was a pause screen with a sidebar. It felt like a settings page, so it became a full takeover with tabs across the top, each with its own drawn icon and a little badge for what’s new. Quests got their own pill at the top of the room, shaped differently from the action tags, with main story and side quests split.</p>
+        <p class="pasted">Everyone you haven’t met is a soft black and white photo with the storyboard’s pixel shimmer looping over it. My first try was an inverted, pixelated photo, and it looked broken instead of mysterious, so it went. Memories are objects you can touch: open Pinocchio to the back page and the handwriting glows gold, or drop the needle on his record.</p></div>
+    </div>
+    <div class="favgrid group">
+    <div class="slot favcard sub paste wide" data-name="29 · Journal">
+      <div class="tag">29 · Journal</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/luminance/clips/journal.mp4" poster="image/luminance/clips/journal.jpg" muted loop playsinline autoplay></video><div class="fbody"><span class="kicker">journal</span><h4>Quests, characters, memory, Seoul.</h4><p>Press Q in the game. Characters come into focus as you meet them, and the profile tilts toward your cursor like a hologram panel.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste" data-name="30 · Characters">
+      <div class="tag">30 · Characters</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/journal-characters.jpg" alt=""><div class="fbody"><span class="kicker">characters</span><h4>People you have to meet.</h4><p>The whole cast is here from the start, locked. Only Ji-yoo is clear, because he’s the only person he knows.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste" data-name="31 · Memory">
+      <div class="tag">31 · Memory</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/journal-memory.jpg" alt=""><div class="fbody"><span class="kicker">memory</span><h4>Memories you can hold.</h4><p>Tap a memory and it comes up on the right to touch: the book, its back page, the record.</p></div></div>
+    </div>
+    </div>
+    <div class="slot prose" id="characters" data-name="32 · Characters">
+      <div class="tag">32 · Characters</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The people of Luminance.</span><span class="typed"><span class="t" data-text="The people of Luminance."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Every character has a file: a portrait that materializes, a dossier header with a file number and a barcode generated from their name, a scrolling ticker for their role, and tabs for their profile, outfits and props.</p></div>
+    </div>
+    <div class="screens cast group">
+    <div class="slot screen sub paste" data-name="33 · Ji-yoo">
+      <div class="tag">33 · Ji-yoo</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/ji-yoo.jpg" alt="Ji-yoo"><figcaption>Ji-yoo<small>Subject 001 · Aevum</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="34 · Han Hae">
+      <div class="tag">34 · Han Hae</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/hae.jpg" alt="Han Hae"><figcaption>Han Hae<small>Detective · RRU</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="35 · Dr. Lee Ha-Eun">
+      <div class="tag">35 · Dr. Lee Ha-Eun</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/scientist.jpg" alt="Dr. Lee Ha-Eun"><figcaption>Dr. Lee Ha-Eun<small>The Scientist · Aevum</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="36 · Cho Sun-Jin">
+      <div class="tag">36 · Cho Sun-Jin</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/sun-jin.jpg" alt="Cho Sun-Jin"><figcaption>Cho Sun-Jin<small>Head of Aevum</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="37 · Choi Yu-jin">
+      <div class="tag">37 · Choi Yu-jin</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/choi-yujin.jpg" alt="Choi Yu-jin"><figcaption>Choi Yu-jin<small>Aevum liaison</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="38 · Captain Park">
+      <div class="tag">38 · Captain Park</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/captain-park.jpg" alt="Captain Park"><figcaption>Captain Park<small>RRU captain</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="39 · Detective Jang">
+      <div class="tag">39 · Detective Jang</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/jang.jpg" alt="Detective Jang"><figcaption>Detective Jang<small>Hae’s sunbae</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="40 · Kim Yura">
+      <div class="tag">40 · Kim Yura</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/kim-yura.jpg" alt="Kim Yura"><figcaption>Kim Yura<small>RRU detective</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="41 · Mira-class">
+      <div class="tag">41 · Mira-class</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/mira-class.jpg" alt="Mira-class"><figcaption>Mira-class<small>Companion bot</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="42 · Receptionist bot">
+      <div class="tag">42 · Receptionist bot</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/receptionist-bot.jpg" alt="Receptionist bot"><figcaption>Receptionist bot<small>Precinct front desk</small></figcaption></div>
+    </div>
+    <div class="slot screen sub paste" data-name="43 · Halmoni">
+      <div class="tag">43 · Halmoni</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/cast/halmoni.jpg" alt="Halmoni"><figcaption>Halmoni<small>Pojangmacha owner</small></figcaption></div>
+    </div>
+    </div>
+    <div class="slot prose emo" id="emotions" data-name="44 · Emotions">
+      <div class="tag">44 · Emotions</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Faces that change with the story.</span><span class="typed"><span class="t" data-text="Faces that change with the story."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Each character has a set of expressions drawn from the same portrait, so the face you know carries through every mood.</p>
+        <div class="pasted"><div class="row"><h4>Ji-yoo</h4><p>He starts almost blank, the calm face Aevum trained into him. Every expression after that is one nobody gave him.</p><div class="faces "><figure><img src="image/luminance/emo/jiyoo-neutral.jpg" alt="Halmoni, neutral" loading="lazy"><figcaption>neutral</figcaption></figure><figure><img src="image/luminance/emo/jiyoo-thinking.jpg" alt="Halmoni, thinking" loading="lazy"><figcaption>thinking</figcaption></figure><figure><img src="image/luminance/emo/jiyoo-soft-smile.jpg" alt="Halmoni, soft smile" loading="lazy"><figcaption>soft smile</figcaption></figure><figure><img src="image/luminance/emo/jiyoo-sad.jpg" alt="Halmoni, sad" loading="lazy"><figcaption>sad</figcaption></figure><figure><img src="image/luminance/emo/jiyoo-laugh-small.jpg" alt="Halmoni, a little laugh" loading="lazy"><figcaption>a little laugh</figcaption></figure><figure><img src="image/luminance/emo/jiyoo-laugh-big.jpg" alt="Halmoni, laughing" loading="lazy"><figcaption>laughing</figcaption></figure></div></div><div class="row"><h4>Hae, at work</h4><p>Dry and guarded at the precinct. The laugh is rare, so it has to count.</p><div class="faces "><figure><img src="image/luminance/emo/hae-neutral.jpg" alt="Halmoni, neutral" loading="lazy"><figcaption>neutral</figcaption></figure><figure><img src="image/luminance/emo/hae-dry.jpg" alt="Halmoni, dry" loading="lazy"><figcaption>dry</figcaption></figure><figure><img src="image/luminance/emo/hae-annoyed.jpg" alt="Halmoni, annoyed" loading="lazy"><figcaption>annoyed</figcaption></figure><figure><img src="image/luminance/emo/hae-serious.jpg" alt="Halmoni, serious" loading="lazy"><figcaption>serious</figcaption></figure><figure><img src="image/luminance/emo/hae-soft.jpg" alt="Halmoni, soft" loading="lazy"><figcaption>soft</figcaption></figure><figure><img src="image/luminance/emo/hae-laugh-big.jpg" alt="Halmoni, laughing" loading="lazy"><figcaption>laughing</figcaption></figure></div></div><div class="row"><h4>Hae, at home</h4><p>In her father’s apartment, the guard comes down.</p><div class="faces four"><figure><img src="image/luminance/emo/hae-home-neutral.jpg" alt="Halmoni, home" loading="lazy"><figcaption>home</figcaption></figure><figure><img src="image/luminance/emo/hae-home-tired.jpg" alt="Halmoni, tired" loading="lazy"><figcaption>tired</figcaption></figure><figure><img src="image/luminance/emo/hae-home-distant.jpg" alt="Halmoni, distant" loading="lazy"><figcaption>distant</figcaption></figure><figure><img src="image/luminance/emo/hae-home-grief.jpg" alt="Halmoni, grief" loading="lazy"><figcaption>grief</figcaption></figure></div></div><div class="row"><h4>Everyone else</h4><p>Supporting characters get just enough range for their scenes.</p><div class="pairs"><div class="pair"><h4>Dr. Lee Ha-Eun</h4><div class="faces "><figure><img src="image/luminance/emo/scientist-formal.jpg" alt="Halmoni, formal" loading="lazy"><figcaption>formal</figcaption></figure><figure><img src="image/luminance/emo/scientist-soft.jpg" alt="Halmoni, soft" loading="lazy"><figcaption>soft</figcaption></figure></div></div><div class="pair"><h4>Captain Park</h4><div class="faces "><figure><img src="image/luminance/emo/captain-park-serious.jpg" alt="Halmoni, serious" loading="lazy"><figcaption>serious</figcaption></figure><figure><img src="image/luminance/emo/captain-park-tired.jpg" alt="Halmoni, tired" loading="lazy"><figcaption>tired</figcaption></figure></div></div><div class="pair"><h4>Detective Jang</h4><div class="faces "><figure><img src="image/luminance/emo/jang-smirk.jpg" alt="Halmoni, smirk" loading="lazy"><figcaption>smirk</figcaption></figure><figure><img src="image/luminance/emo/jang-concerned.jpg" alt="Halmoni, concerned" loading="lazy"><figcaption>concerned</figcaption></figure></div></div><div class="pair"><h4>Choi Yu-jin</h4><div class="faces "><figure><img src="image/luminance/emo/choi-yujin-thin-smile.jpg" alt="Halmoni, thin smile" loading="lazy"><figcaption>thin smile</figcaption></figure><figure><img src="image/luminance/emo/choi-yujin-warm.jpg" alt="Halmoni, warm" loading="lazy"><figcaption>warm</figcaption></figure></div></div></div></div></div></div>
+    </div>
+    <div class="slot prose" data-name="45 · Walking">
+      <div class="tag">45 · Walking</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Making them walk.</span><span class="typed"><span class="t" data-text="Making them walk."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I generated each walk as a short video, cut it into a 12-frame loop and laid the frames out in a strip, so the game can step through them in time with the character’s movement. Every frame was cleaned of green-screen fringe: despill, trim the matte edge, then neutralize what’s left of the soft edge so there’s no glow around their hair.</p>
+        <p class="pasted">When they stop, they slip straight into a thinking loop instead of freezing. There are front and back walks for the rare moment someone walks toward or away from camera, and a door-opening animation that starts exactly where they stop, so they never pop sideways.</p></div>
+    </div>
+    <div class="slot strip paste" data-name="46 · Walk cycle">
+      <div class="tag">46 · Walk cycle</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/luminance/walk-strip.jpg" alt="Ji-yoo’s walk cycle, twelve frames side by side"><p>Ji-yoo’s walk, all 12 frames.</p></div>
+    </div>
+    <div class="favgrid group">
+    <div class="slot favcard sub paste wide" data-name="47 · Character file">
+      <div class="tag">47 · Character file</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/luminance/clips/castfile.mp4" poster="image/luminance/clips/castfile.jpg" muted loop playsinline autoplay></video><div class="fbody"><span class="kicker">playground</span><h4>A little stage to walk on.</h4><p>Inside each character file there’s a hologram floor. Hold the arrow keys, or click the floor, and they walk there. Let go and they start thinking. Press E and they walk up to the door and slide it open. Try it below.</p></div></div>
+    </div>
+    </div>
+    <div class="slot site-embed paste" id="playground" data-name="48 · Playground">
+      <div class="tag">48 · Playground</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content">
+        <div class="browser"><i></i><i></i><i></i><span class="url">Luminance · Ji-yoo · Take a walk</span><button class="snd" type="button" aria-pressed="false" title="Sound for the game frames"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="on" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="off" d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Sound off</span></button><a href="apps/luminance/index.html?walk=ji-yoo" target="_blank" rel="noopener">Open full screen ↗</a></div>
+        <iframe src="apps/luminance/index.html?walk=ji-yoo" title="Ji-yoo’s character file with a walking stage" loading="lazy" allow="autoplay; fullscreen"></iframe>
+      </div>
+    </div>
+    <div class="slot prose sound" id="sound" data-name="49 · Sound">
+      <div class="tag">49 · Sound</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Every sound, placed by hand.</span><span class="typed"><span class="t" data-text="Every sound, placed by hand."></span><span class="caret"></span></span></span></h2>
+        <div class="txt pasted"><p>All the music and sound effects come from ElevenLabs. The music is instrumental, five tracks so far, each written for one place in the game. Try them on the right, it’s the same soundtrack player that sits at the top of the storyboard.</p>
+        <p>Then I placed every effect by hand: slipper steps on each footfall that cut the instant he stops, a knock synced to the door’s two raps, a page flip timed to the cover swinging open. The music dips whenever the game pauses.</p>
+        <p>Most of my sound prompts start with the same word.</p>
+        <div class="sfx"><span><i>“</i>Soft knocking…<i>”</i><small>the door</small></span><span><i>“</i>Soft slippers…<i>”</i><small>every footstep</small></span><span><i>“</i>Soft paper page…<i>”</i><small>the opening</small></span><span><i>“</i>Soft book closing…<i>”</i><small>Pinocchio</small></span><span><i>“</i>Soft hardcover…<i>”</i><small>the opening</small></span><span><i>“</i>Soft card lifting…<i>”</i><small>hovering a card</small></span><span><i>“</i>Pages flipping…<i>”</i><small>opening the book</small></span><span><i>“</i>Single fingertip…<i>”</i><small>tracing the words</small></span><span><i>“</i>Seamless looping…<i>”</i><small>the room hum</small></span><span><i>“</i>Premium futuristic…<i>”</i><small>a modal opening</small></span><span><i>“</i>Create a premium…<i>”</i><small>every toggle</small></span><span><i>“</i>Short UI tick…<i>”</i><small>hovering a list</small></span></div></div>
+        <div class="lum-mp pasted" role="group" aria-label="Luminance soundtrack"><h5>Soundtrack · 사운드트랙</h5><ol><li><button type="button" aria-pressed="false" data-src="apps/luminance/music/intro.mp3"><span class="pl"><svg class="py" viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg><svg class="ps" viewBox="0 0 10 10"><path d="M2 1h2v8H2zM6 1h2v8H6z" fill="currentColor"/></svg></span><span><b>Intro</b><small>Main title. Plays as the logo comes up and the line city grows in around it.</small></span><span class="n">01</span></button></li><li><button type="button" aria-pressed="false" data-src="apps/luminance/music/intro theme 1.mp3"><span class="pl"><svg class="py" viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg><svg class="ps" viewBox="0 0 10 10"><path d="M2 1h2v8H2zM6 1h2v8H6z" fill="currentColor"/></svg></span><span><b>Intro (backup)</b><small>Another take on the title, kept in case the first one wears thin.</small></span><span class="n">02</span></button></li><li><button type="button" aria-pressed="false" data-src="apps/luminance/music/train ride.mp3"><span class="pl"><svg class="py" viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg><svg class="ps" viewBox="0 0 10 10"><path d="M2 1h2v8H2zM6 1h2v8H6z" fill="currentColor"/></svg></span><span><b>Train ride</b><small>The maglev across the city, for riding the train on the map.</small></span><span class="n">03</span></button></li><li><button type="button" aria-pressed="false" data-src="apps/luminance/music/First Loves Light.mp3"><span class="pl"><svg class="py" viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg><svg class="ps" viewBox="0 0 10 10"><path d="M2 1h2v8H2zM6 1h2v8H6z" fill="currentColor"/></svg></span><span><b>First Loves Light</b><small>The theme, and the record Ji-yoo plays in his room.</small></span><span class="n">04</span></button></li><li><button type="button" aria-pressed="false" data-src="apps/luminance/music/scene 01 - ji-yoo&#x27;s room.mp3"><span class="pl"><svg class="py" viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z" fill="currentColor"/></svg><svg class="ps" viewBox="0 0 10 10"><path d="M2 1h2v8H2zM6 1h2v8H6z" fill="currentColor"/></svg></span><span><b>Scene 01 · Ji-yoo’s room</b><small>A seamless loop that sits low under the knocking.</small></span><span class="n">05</span></button></li></ol><p class="tag2">ElevenLabs Music · instrumental</p></div>
+      </div>
+    </div>
+    <div class="slot prose quote blush" data-name="50 · What I’ve learned">
+      <div class="tag">50 · What I’ve learned</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Feedback is the design tool.</span><span class="typed"><span class="t" data-text="Feedback is the design tool."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">The glossy toggles, the orbiting light, the inverted faces, the music notes that started as drawn cream shapes and ended as tiny white bubbles. Almost everything on this page went through rounds like that.</p>
+        <p class="pasted">Try it, look at it honestly, and try again. I keep a build log of every change and why, so the rounds are part of the story too.</p></div>
+    </div>
+    <div class="slot prose tools" id="tools" data-name="51 · Tools">
+      <div class="tag">51 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I’m building it with.</span><span class="typed"><span class="t" data-text="What I’m building it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">A small stack, and a lot of rounds.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/luminance/tools/claude.svg" alt=""><b>Claude Code</b><small>My engineering partner for the whole build</small></div><div class="tlc"><img src="image/luminance/tools/higgsfield.png" alt=""><b>Higgsfield</b><small>Rooms, characters, sprites and the opening film</small></div><div class="tlc"><img src="image/luminance/tools/elevenlabs.svg" alt=""><b>ElevenLabs</b><small>Music and every sound effect</small></div><div class="tlc"><img src="image/luminance/tools/threedotjs.svg" alt=""><b>three.js</b><small>The hologram city and title screen</small></div><div class="tlc"><img src="image/luminance/tools/googledocs.svg" alt=""><b>Google Docs</b><small>Where the script lives</small></div><div class="tlc"><img src="image/luminance/tools/javascript.svg" alt=""><b>HTML, CSS, JS</b><small>Hand-built, no framework</small></div></div></div>
+    </div>
+    <p class="soon">Coming in <em>2027</em>.</p>
+    <div class="cs-end"><a class="wob" href="apps/luminance/play-01.html" target=_blank rel=noopener>Play full screen →</a><a class="wob" href="apps/luminance/index.html" target=_blank rel=noopener>Open the storyboard →</a><a class="wob" href="app.html#work">← Back to work</a></div>
+  </article>
+</main>
+<script>
+/* Luminance frames: sound starts off; one switch for every game frame */
+(()=>{const btns=[...document.querySelectorAll('.site-embed .snd')];
+  let on=false; try{on=sessionStorage.getItem('lum-sound')==='on';}catch(e){}
+  const set=v=>{on=v; try{sessionStorage.setItem('lum-sound',v?'on':'off');}catch(e){}
+    btns.forEach(b=>{b.setAttribute('aria-pressed',v); b.querySelector('span').textContent=v?'Sound on':'Sound off';});
+    document.querySelectorAll('.site-embed iframe').forEach(f=>{try{f.contentWindow.postMessage({lumSound:v},'*');}catch(e){}});};
+  btns.forEach(b=>b.addEventListener('click',()=>set(!on)));
+  document.querySelectorAll('.site-embed iframe').forEach(f=>f.addEventListener('load',()=>{try{f.contentWindow.postMessage({lumSound:on},'*');}catch(e){}}));
+  set(on);})();
+/* the soundtrack panel */
+(()=>{const au=new Audio(); au.volume=.6; let cur=null;
+  const stop=()=>{au.pause(); if(cur) cur.setAttribute('aria-pressed','false'); cur=null;};
+  document.querySelectorAll('.lum-mp button').forEach(b=>b.addEventListener('click',()=>{
+    if(cur===b){stop(); return;} stop(); cur=b; b.setAttribute('aria-pressed','true'); au.src=b.dataset.src; au.currentTime=0; au.play().catch(stop);}));
+  au.addEventListener('ended',stop);})();
+</script>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

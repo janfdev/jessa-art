@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Snoot · Jessa Wolfe</title>
+<meta name="description" content="Snoot, a dog-care app concept that learns your dog’s normal. Research, brand, mascot, UI and a working prototype by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<style>
+  /* Snoot only: brand pictures keep their own shape instead of the shared crops */
+  body.snoot .screens.wide.story .screen { aspect-ratio: 1168 / 880; }
+  body.snoot .screens.wide.sketch .screen { aspect-ratio: 1344 / 752; }
+  body.snoot .chars.lineart img { aspect-ratio: 1; }
+  body.snoot .chars.icons img { mix-blend-mode: normal; background: none; border-radius: 22%; }
+  body.snoot .brandgrid .bcard img { aspect-ratio: 1; object-fit: contain; background: #F8F4EA; }
+
+  /* type: a live specimen, set big (like Flourish's) */
+  @font-face { font-family: 'DynaPuff'; src: url(apps/snoot/fonts/DynaPuff-Variable.ttf); font-weight: 400 700; font-display: swap; }
+  @font-face { font-family: 'Nunito'; src: url(apps/snoot/fonts/Nunito-Variable.ttf); font-weight: 200 1000; font-display: swap; }
+  body.snoot .sn-spec { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  body.snoot .sn-face { border-radius: 22px; padding: 28px 30px 30px; display: flex; flex-direction: column; gap: 6px; min-height: 340px; }
+  body.snoot .sn-face.puff { background: #F04A32; color: #F8F4EA; font-family: 'DynaPuff', sans-serif; font-weight: 700; }
+  body.snoot .sn-face.nun { background: #FFF6F3; color: #141210; font-family: 'Nunito', sans-serif; font-weight: 900; }
+  body.snoot .sn-face .aa { font-size: 150px; line-height: .95; letter-spacing: -.03em; }
+  body.snoot .sn-face b { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; opacity: .75; margin: 6px 0 auto; }
+  body.snoot .sn-face .sample { font-size: 40px; line-height: 1.08; letter-spacing: -.01em; margin-top: 18px; }
+  body.snoot .sn-face.nun .sample { font-size: 34px; }
+  body.snoot .sn-face .abc { font-size: 17px; letter-spacing: .06em; opacity: .7; margin-top: 12px; word-break: break-all; }
+  /* icons: each one on its own, bobbing a little out of step */
+  body.snoot .sn-icgrid { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 12px; }
+  body.snoot .sn-ic { margin: 0; aspect-ratio: 1 / 1.1; border-radius: 20px; background: #FFF6F3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px 4px; }
+  body.snoot .sn-ic img { width: 64%; height: auto; animation: snBob 2.6s ease-in-out calc(var(--i) * -.37s) infinite; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  body.snoot .sn-ic:hover img { animation-play-state: paused; transform: scale(1.18) rotate(-8deg); }
+  body.snoot .sn-ic figcaption { font: 700 12.5px/1.15 'Nunito', sans-serif; color: #4A443D; text-align: center; }
+  @keyframes snBob { 0%, 100% { transform: translateY(0) rotate(0); } 30% { transform: translateY(-5px) rotate(-4deg); } 60% { transform: translateY(1px) rotate(3deg); } }
+  @media (prefers-reduced-motion: reduce) { body.snoot .sn-ic img { animation: none; } }
+  @media (max-width: 860px) { body.snoot .sn-spec { grid-template-columns: 1fr; } body.snoot .sn-face .aa { font-size: 110px; } body.snoot .sn-icgrid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+
+  /* the journey: eight storyboard moments, each with what's happening underneath */
+  body.snoot .sn-journey { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; width: 100%; }
+  body.snoot .sn-step { --fill: #fff; padding: 10px 10px 16px; }
+  body.snoot .sn-step img { width: 100%; aspect-ratio: 1168 / 880; object-fit: cover; display: block; border-radius: 16px; }
+  body.snoot .sn-step .cap { padding: 12px 6px 0; display: grid; grid-template-columns: auto 1fr; column-gap: 10px; row-gap: 4px; align-items: baseline; }
+  body.snoot .sn-step .n { grid-row: span 2; width: 26px; height: 26px; border-radius: 13px; background: #F04A32; color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; align-self: start; }
+  body.snoot .sn-step h4 { margin: 0; font-size: 17px; letter-spacing: -.01em; }
+  body.snoot .sn-step p { margin: 0; font-size: 14.5px; line-height: 1.45; font-weight: 500; color: #4a4552; }
+  @media (max-width: 1000px) { body.snoot .sn-journey { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { body.snoot .sn-journey { grid-template-columns: 1fr; } }
+  body.snoot .sn-ctas { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  body.snoot .sn-ctas .cta { margin: 0; }
+  body.snoot .sn-icon3, .sn-icon3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; aspect-ratio: 16 / 10; align-items: center; }
+  .sn-icon3 img { width: 100%; aspect-ratio: 1; object-fit: contain; border-radius: 22px; }
+  body.snoot .sn-face { min-height: 220px; padding: 22px 24px 22px; }
+  body.snoot .sn-face .aa { font-size: 96px; }
+  body.snoot .sn-face .sample { font-size: 28px; margin-top: 10px; } body.snoot .sn-face.nun .sample { font-size: 24px; }
+  body.snoot .sn-face .abc { font-size: 14px; margin-top: 8px; }
+  .sn-logo-icons { display: flex; justify-content: center; gap: 12px; margin-top: 12px; } body.snoot .side .polaroid-wrap .sn-logo-icons img, .sn-logo-icons img { width: 64px; height: 64px; border-radius: 16px; display: block; }
+</style>
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page snoot" data-zoom>
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Snoot</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Snoot">
+      <div class="tag">01 · Snoot</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Snoot, a dog-care app</span><span class="typed"><span class="t" data-text="Snoot, a dog-care app"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#about">About the project</a><a class="wob" href="#app">The app</a><a class="wob" href="snoot-flows.html">Flows</a><a class="wob" href="#brand">The brand</a><a class="wob" href="snoot-prototype.html">Prototype</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/snoot/cover.mp4" poster="image/snoot/cover.jpg" autoplay muted loop playsinline aria-label="The Snoot logo animating on tomato red"></video></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Everything, solo</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Personal concept</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Platform">
+      <div class="tag">05 · Platform</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Platform</div><div class="v">iOS app</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Started">
+      <div class="tag">06 · Started</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Started</div><div class="v">Fall 2026</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="07 · The question" id="about">
+      <div class="tag">07 · The question</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Snoot started with the question every dog owner Googles at midnight: is this normal?</span><span class="typed"><span class="t" data-text="Snoot started with the question every dog owner Googles at midnight: is this normal?"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Nobody can answer it, because nobody has the baseline. A dog’s records live in a vet portal, an email thread and a paper folder, and the small changes that matter most, eating a little less, sleeping a little more, never get written down anywhere. So owners either panic or wait.</p>
+        <p class="pasted">Snoot is a bet that the baseline is the product. If the app knows what’s normal for this one dog, it can say when something isn’t, and everyone who looks after her, the sitter, the vet, the groomer, can work from the same page. It’s a personal concept, started October 9, 2026. I did all of it: the research and positioning, the name, the brand and mascot, the wireframes, the UI, and a working React prototype.</p></div>
+    </div>
+    <div class="group screens" id="app">
+    <div class="slot screen sub paste" data-name="08 · Welcome">
+      <div class="tag">08 · Welcome</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/A1-Welcome.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="09 · Home">
+      <div class="tag">09 · Home</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/1-Main.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="10 · Something’s off">
+      <div class="tag">10 · Something’s off</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/2-SomethingOff.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="11 · Next step">
+      <div class="tag">11 · Next step</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/3-NextStep.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="12 · Profile">
+      <div class="tag">12 · Profile</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/4-Profile.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="13 · Share">
+      <div class="tag">13 · Share</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/6-Share.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="14 · Sitter guide">
+      <div class="tag">14 · Sitter guide</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/7-SitterLink.png" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose quote" data-name="15 · Her normal">
+      <div class="tag">15 · Her normal</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">One profile that knows her normal.</span><span class="typed"><span class="t" data-text="One profile that knows her normal."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">“Her” is Pixel, my red longhaired mini dachshund. She’s the mascot and the dog in every screen, because a real dog keeps the writing honest.</p></div>
+    </div>
+    <div class="features group">
+    <div class="slot feature sub paste" data-name="16 · Something’s off">
+      <div class="tag">16 · Something’s off</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="apps/snoot/assets/color-acting-different.svg" alt=""><p>Something seems off? Tell Snoot what you’re seeing and get one clear next step.</p></div>
+    </div>
+    <div class="slot feature sub paste" data-name="17 · Share">
+      <div class="tag">17 · Share</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="apps/snoot/assets/color-share.svg" alt=""><p>One profile, with a different link for the sitter, the vet, and the groomer.</p></div>
+    </div>
+    <div class="slot feature sub paste" data-name="18 · Reminders">
+      <div class="tag">18 · Reminders</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="apps/snoot/assets/color-reminders.svg" alt=""><p>Vaccines and meds, each on its own schedule. Snoot only nudges you when something’s due.</p></div>
+    </div>
+    <div class="slot feature sub paste" data-name="19 · Paperwork">
+      <div class="tag">19 · Paperwork</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="apps/snoot/assets/color-scan-papers.svg" alt=""><p>Snap a photo of vet papers and Snoot pulls out the vaccines and meds for you to check.</p></div>
+    </div>
+    <div class="slot feature sub paste" data-name="20 · Sitter guide">
+      <div class="tag">20 · Sitter guide</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="apps/snoot/assets/color-sitter-todos.svg" alt=""><p>A sitter guide with her routine, quirks, and a to-do list they can check off.</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="21 · Standing apart" id="apart">
+      <div class="tag">21 · Standing apart</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Where the market leaves room</span><span class="typed"><span class="t" data-text="Where the market leaves room"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I started with the shelf, not the screens. Pet apps are crowded and leaderless: dozens of small apps, most with a handful of reviews. They split into two kinds, and neither owns the moment that actually scares people.</p>
+        <div class="moods pasted">
+          <div class="mh">Kind of app</div><div class="mh">What it does</div><div class="mh">What’s missing</div>
+          <div class="mc wob" data-h="Kind of app">Records + symptom checker</div><div class="mc wob" data-h="What it does">Stores vaccines, looks up symptoms</div><div class="mc wob" data-h="What’s missing">Generic lists, not your dog</div>
+          <div class="mc wob r2" data-h="Kind of app">Sharing apps</div><div class="mc wob r2" data-h="What it does">Invite sitters and family</div><div class="mc wob r2" data-h="What’s missing">Built for the owner, not the sitter</div>
+        </div></div>
+    </div>
+    <div class="slot prose quote butter" data-name="22 · The gap">
+      <div class="tag">22 · The gap</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Most pet apps are built for the owner. Snoot is built for everyone who looks after the dog.</span><span class="typed"><span class="t" data-text="Most pet apps are built for the owner. Snoot is built for everyone who looks after the dog."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="choices zig group">
+    <div class="slot choice has-ex ex-tall sub paste" data-name="23 · Her normal">
+      <div class="tag">23 · Her normal</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">1</div><h3>Her normal, not a symptom list.</h3><p>The decision that shaped everything else. Snoot never shows a list of possible causes; it compares what you’re seeing with her own history. “Third tummy issue this month” is useful. Twelve scary diagnoses at midnight is not.</p><img class="ex" src="image/snoot/screens/2-SomethingOff.png" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-tall sub paste" data-name="24 · Context">
+      <div class="tag">24 · Context</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">2</div><h3>Three next steps, never a diagnosis.</h3><p>Every worry ends in one of three outcomes: keep watching, call your vet, or go now. Snoot says plainly that it isn’t a vet and that your gut counts. Drawing that line early kept the product honest and the scope sane.</p><img class="ex" src="image/snoot/screens/3-NextStep.png" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-tall sub paste" data-name="25 · Sitter">
+      <div class="tag">25 · Sitter</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">3</div><h3>The sitter never installs anything.</h3><p>A sitter gets a link, not an app: routine, meds, quirks, emergency contacts, a to-do list. When breakfast gets checked off, you see it from the beach. Asking a sitter to download and sign up would have killed the feature on day one.</p><img class="ex" src="image/snoot/screens/7-SitterLink.png" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-tall sub paste" data-name="26 · Quiet">
+      <div class="tag">26 · Quiet</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">4</div><h3>Quiet by default.</h3><p>Reminders exist only for things you set up: vaccines, meds, checkups. No daily pings, no streaks. An app about a living animal has no business manufacturing urgency.</p><img class="ex" src="image/snoot/screens/A7-Reminders.png" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-tall sub paste" data-name="27 · Color">
+      <div class="tag">27 · Color</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">5</div><h3>One red, and it means act.</h3><p>Pixel is drawn in black line on cream, with no color at all. That keeps tomato red free for the moments you should act on, so “Something seems off?” is the only loud thing on the home screen.</p><img class="ex" src="image/snoot/screens/1-Main.png" alt="" loading="lazy"></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="28 · Building it">
+      <div class="tag">28 · Building it</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">How it was built</span><span class="typed"><span class="t" data-text="How it was built"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I storyboarded Pixel’s life with the app before drawing a single screen: one moment at a time, from setup to the sitter’s check-offs. The storyboard decided which screens earned a place and which were just features. Then the flows, then the UI, then a working prototype in React, so the logic could be felt instead of described.</p></div>
+    </div>
+    <div class="sn-journey group">
+    <div class="slot sn-step sub paste" data-name="29 · Meet Pixel">
+      <div class="tag">29 · Meet Pixel</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/storyboard--1-meet-pixel.jpg" alt="Storyboard: Meet Pixel" loading="lazy"><div class="cap"><span class="n">1</span><h4>Meet Pixel</h4><p>You set up her profile: name, breed, age, vet and meds.</p></div></div>
+    </div>
+    <div class="slot sn-step sub paste" data-name="30 · Add her paperwork">
+      <div class="tag">30 · Add her paperwork</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/storyboard--2-add-paperwork.jpg" alt="Storyboard: Add her paperwork" loading="lazy"><div class="cap"><span class="n">2</span><h4>Add her paperwork</h4><p>Snap a photo of her vet papers. Snoot pulls out the vaccines and meds, and you check them.</p></div></div>
+    </div>
+    <div class="slot sn-step sub paste" data-name="31 · Gentle reminders">
+      <div class="tag">31 · Gentle reminders</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/storyboard--3-gentle-reminders.jpg" alt="Storyboard: Gentle reminders" loading="lazy"><div class="cap"><span class="n">3</span><h4>Gentle reminders</h4><p>It only nudges you about the things you set up, like vaccines or meds.</p></div></div>
+    </div>
+    <div class="slot sn-step sub paste" data-name="32 · Something’s off">
+      <div class="tag">32 · Something’s off</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/storyboard--4-somethings-off.jpg" alt="Storyboard: Something’s off" loading="lazy"><div class="cap"><span class="n">4</span><h4>Something’s off</h4><p>You notice she’s not herself, and tell Snoot what you’re seeing.</p></div></div>
+    </div>
+    <div class="slot sn-step sub paste" data-name="33 · What to do next">
+      <div class="tag">33 · What to do next</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/storyboard--5-what-to-do-next.jpg" alt="Storyboard: What to do next" loading="lazy"><div class="cap"><span class="n">5</span><h4>What to do next</h4><p>A clear next step, compared to her normal. Here, that’s calling the vet.</p></div></div>
+    </div>
+    <div class="slot sn-step sub paste" data-name="34 · At the vet">
+      <div class="tag">34 · At the vet</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/storyboard--6-at-the-vet.jpg" alt="Storyboard: At the vet" loading="lazy"><div class="cap"><span class="n">6</span><h4>At the vet</h4><p>You share Pixel’s summary with the vet in one tap.</p></div></div>
+    </div>
+    <div class="slot sn-step sub paste" data-name="35 · Sitter handoff">
+      <div class="tag">35 · Sitter handoff</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/storyboard--7-sitter-handoff.jpg" alt="Storyboard: Sitter handoff" loading="lazy"><div class="cap"><span class="n">7</span><h4>Sitter handoff</h4><p>One web link with her routine, meds and a to-do list. No app needed.</p></div></div>
+    </div>
+    <div class="slot sn-step sub paste" data-name="36 · Peace of mind">
+      <div class="tag">36 · Peace of mind</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/storyboard--8-peace-of-mind.jpg" alt="Storyboard: Peace of mind" loading="lazy"><div class="cap"><span class="n">8</span><h4>Peace of mind</h4><p>You see the sitter’s check-offs while you’re away. Pixel’s back to herself.</p></div></div>
+    </div>
+    </div>
+        <div class="side">
+        </div>
+    <div class="slot prose" data-name="41 · Flows" id="flows">
+      <div class="tag">41 · Flows</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Five flows, one dog</span><span class="typed"><span class="t" data-text="Five flows, one dog"></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">Set up her profile, scan the paperwork, say something’s off, make a sitter link, set reminders. Each flow is laid out start to finish, every screen in order, because a flow you can’t walk end to end isn’t designed yet.</p>
+        <div class="sn-ctas"><a class="cta pasted" href="snoot-flows.html">See every screen as a flow <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a><a class="cta pasted" href="snoot-prototype.html">Try the prototype <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a></div></div>
+    </div>
+    <div class="group screens small">
+    <div class="slot screen sub paste" data-name="42 · Who’s your dog?">
+      <div class="tag">42 · Who’s your dog?</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/A3-DogName.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="43 · Her records">
+      <div class="tag">43 · Her records</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/A6-Records.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="44 · Camera">
+      <div class="tag">44 · Camera</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/B2-Camera.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="45 · Reading">
+      <div class="tag">45 · Reading</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/B3-Reading-progress.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="46 · Saved">
+      <div class="tag">46 · Saved</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/B4-Saved.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="47 · Link type">
+      <div class="tag">47 · Link type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/D1-LinkType.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="48 · Link options">
+      <div class="tag">48 · Link options</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/D2-LinkOptions.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="49 · Link ready">
+      <div class="tag">49 · Link ready</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/D3-LinkReady.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="50 · Reminders">
+      <div class="tag">50 · Reminders</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/E1-Reminders.png" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="51 · When it goes wrong">
+      <div class="tag">51 · When it goes wrong</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">When it goes wrong</span><span class="typed"><span class="t" data-text="When it goes wrong"></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">People mistype things, and an app should help, not scold. The error states got the same care as the happy path, because the first time Snoot talks back to someone is usually the moment they got something wrong.</p><div class="bullets pasted"><div class="b wob"><b>Specific email messages.</b>“That’s missing an @, like you@email.com.” instead of “Invalid email.”</div><div class="b wob"><b>A password checklist.</b>Each rule checks off as you type, so nobody has to guess.</div><div class="b wob"><b>Show and hide.</b>One tap to see what you typed.</div><div class="b wob"><b>A way around the camera.</b>No paperwork? Type it in by hand.</div><div class="b wob"><b>Basic mobile rules.</b>44px tap targets, readable contrast, and room for the notch and the home bar.</div></div></div>
+    </div>
+    <div class="group screens small">
+    <div class="slot screen sub paste" data-name="52 · Account">
+      <div class="tag">52 · Account</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/A2-Account.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="53 · Email error">
+      <div class="tag">53 · Email error</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/A2-Account-errors.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="54 · Ready">
+      <div class="tag">54 · Ready</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/A2-Account-ready.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="55 · By hand">
+      <div class="tag">55 · By hand</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/screens/B5-ByHand.png" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose quote blush" data-name="56 · The brand" id="brand">
+      <div class="tag">56 · The brand</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Your dog’s whole life, in one place. Snacks not included.</span><span class="typed"><span class="t" data-text="Your dog’s whole life, in one place. Snacks not included."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">That’s the tagline on the welcome screen, and it sets the terms: warm, a little silly, and plain-spoken the moment it matters. The welcome animation makes the same promise. Cream goo fills the dog-shaped S, the S slides left, and N, O, O, T pop in one by one.</p>
+        <p class="pasted">Why it looks like this: the product is about one specific dog, so the brand is a dog, not a logotype. Pixel in black line on cream keeps the whole app calm and leaves tomato as the one colour that means act. The type does the same split: DynaPuff for warmth and the big moments, Nunito for the words you read in a hurry at midnight.</p>
+        <div class="voice pasted"><span class="v wob">warm</span><span class="v wob">plain</span><span class="v wob">calm</span><span class="v wob">a little silly</span></div>
+        <div class="lines pasted"><span class="note-ish">“Something seems off?”</span><span class="note-ish">“Good girl, 7 days in a row”</span><span class="note-ish">“Snoot isn’t a vet.”</span></div></div>
+    </div>
+    <div class="slot typeframe sn-type paste" data-name="93 · Type">
+      <div class="tag">93 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sn-spec">
+          <div class="sn-face puff"><span class="aa">Aa</span><b>DynaPuff</b><span class="sample">Something seems off?</span><span class="abc">ABCDEFGHIJKLMNOPQRSTUVWXYZ</span></div>
+          <div class="sn-face nun"><span class="aa">Aa</span><b>Nunito</b><span class="sample">Your dog’s whole life, in one place.</span><span class="abc">abcdefghijklmnopqrstuvwxyz 0123456789</span></div>
+        </div>
+        <div class="tcap"><h4>DynaPuff for fun, Nunito for everything else.</h4><p>DynaPuff is puffy like the logo letters, for big headlines and celebrations. Nunito is round but calm, and easy to read at small sizes.</p></div></div>
+    </div>
+                                <div class="side">
+    <div class="slot prose" data-name="86 · The dog S">
+      <div class="tag">86 · The dog S</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">The dog-shaped S</span><span class="typed"><span class="t" data-text="The dog-shaped S"></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">One shape does the whole job: Pixel as the S, cream on tomato, with N, O, O, T in the same puffy weight. The S stands on its own, so it doubles as the app icon with no second mark to maintain.</p></div>
+    </div>
+    <div class="slot polaroid-wrap paste" data-name="87 · Logo">
+      <div class="tag">87 · Logo</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/snoot/brand/logo-vector--snoot-logo-cream-on-tomato.jpg" alt="The Snoot logo, cream on tomato"><div class="sn-logo-icons"><img src="image/snoot/brand/dog-s-icon--app-icon-tomato.png" alt="App icon, tomato"><img src="image/snoot/brand/dog-s-icon--app-icon-light.png" alt="App icon, light"><img src="image/snoot/brand/dog-s-icon--app-icon-dark.png" alt="App icon, dark"></div><div class="cap">snoot! (and the app icon in three moods)</div></div>
+    </div>
+    </div>
+        <div class="slot typeframe sn-icons paste" data-name="94 · Icons">
+      <div class="tag">94 · Icons</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sn-icgrid"><figure class="sn-ic" style="--i:0"><img src="apps/snoot/assets/color-pixel.svg" alt=""><figcaption>Pixel</figcaption></figure><figure class="sn-ic" style="--i:1"><img src="apps/snoot/assets/color-eating.svg" alt=""><figcaption>Eating</figcaption></figure><figure class="sn-ic" style="--i:2"><img src="apps/snoot/assets/color-walking.svg" alt=""><figcaption>Walking</figcaption></figure><figure class="sn-ic" style="--i:3"><img src="apps/snoot/assets/color-energy.svg" alt=""><figcaption>Energy</figcaption></figure><figure class="sn-ic" style="--i:4"><img src="apps/snoot/assets/color-tummy-potty.svg" alt=""><figcaption>Tummy & potty</figcaption></figure><figure class="sn-ic" style="--i:5"><img src="apps/snoot/assets/color-skin-coat.svg" alt=""><figcaption>Skin & coat</figcaption></figure><figure class="sn-ic" style="--i:6"><img src="apps/snoot/assets/color-breathing.svg" alt=""><figcaption>Breathing</figcaption></figure><figure class="sn-ic" style="--i:7"><img src="apps/snoot/assets/color-acting-different.svg" alt=""><figcaption>Acting different</figcaption></figure><figure class="sn-ic" style="--i:8"><img src="apps/snoot/assets/color-something-else.svg" alt=""><figcaption>Something else</figcaption></figure><figure class="sn-ic" style="--i:9"><img src="apps/snoot/assets/color-vet.svg" alt=""><figcaption>Vet</figcaption></figure><figure class="sn-ic" style="--i:10"><img src="apps/snoot/assets/color-call.svg" alt=""><figcaption>Call</figcaption></figure><figure class="sn-ic" style="--i:11"><img src="apps/snoot/assets/color-meds.svg" alt=""><figcaption>Meds</figcaption></figure><figure class="sn-ic" style="--i:12"><img src="apps/snoot/assets/color-vaccine.svg" alt=""><figcaption>Vaccine</figcaption></figure><figure class="sn-ic" style="--i:13"><img src="apps/snoot/assets/color-vaccine-proof.svg" alt=""><figcaption>Vaccine proof</figcaption></figure><figure class="sn-ic" style="--i:14"><img src="apps/snoot/assets/color-appointments.svg" alt=""><figcaption>Appointments</figcaption></figure><figure class="sn-ic" style="--i:15"><img src="apps/snoot/assets/color-reminders.svg" alt=""><figcaption>Reminders</figcaption></figure><figure class="sn-ic" style="--i:16"><img src="apps/snoot/assets/color-scan-papers.svg" alt=""><figcaption>Scan papers</figcaption></figure><figure class="sn-ic" style="--i:17"><img src="apps/snoot/assets/color-share.svg" alt=""><figcaption>Share</figcaption></figure><figure class="sn-ic" style="--i:18"><img src="apps/snoot/assets/color-sitter-todos.svg" alt=""><figcaption>Sitter to-dos</figcaption></figure><figure class="sn-ic" style="--i:19"><img src="apps/snoot/assets/color-home.svg" alt=""><figcaption>Home</figcaption></figure></div>
+        <div class="tcap"><h4>Doodles, not clip art.</h4><p>Twenty icons in the same wobbly line as Pixel, each with a pop of tomato on the bit that matters. They do the heavy lifting on every screen.</p></div></div>
+    </div>
+<div class="slot prose bare" data-name="94a · Go to market" id="market">
+      <div class="tag">94a · Go to market</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">How Snoot would reach people</span><span class="typed"><span class="t" data-text="How Snoot would reach people"></span><span class="caret"></span></span></span></h2><p class="pasted">It’s a concept, but I planned the launch the way I’d plan the product: who first, what the wedge is, how it pays for itself, and what I’d refuse to do. The short version: the sitter link is the growth loop, vets are the channel, and the owner is the only one who ever pays.</p></div>
+    </div>
+    <div class="next6 group">
+    <div class="slot nxt sub paste" data-name="94b · Positioning">
+      <div class="tag">94b · Positioning</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Positioning</h4><p>Not another pet-records app. Snoot is the app that knows your dog’s normal. Everything else, records, reminders, the sitter guide, is in service of that one claim.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="94c · Who first">
+      <div class="tag">94c · Who first</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Who first</h4><p>First-year owners and owners of dogs with a chronic thing: allergies, seniors, the nervous ones. They’re the midnight-Googlers, and they already keep notes somewhere worse.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="94d · The wedge">
+      <div class="tag">94d · The wedge</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>The wedge</h4><p>Every sitter link puts Snoot in front of someone who doesn’t have it, with nothing to install. A trip is an invitation. That loop is why the sitter guide never requires an account.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="94e · Channels">
+      <div class="tag">94e · Channels</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Channels</h4><p>Vets and groomers first: the vet summary saves them time, so a counter card earns its place. Then breed communities (dachshunds, obviously) and honest answers in the “is this normal?” threads.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="94f · How it pays">
+      <div class="tag">94f · How it pays</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>How it pays</h4><p>Free forever: profile, check-ins, reminders, the sitter link. Snoot Plus for the things that cost money to run, paperwork scanning and vet summaries: $19 a year per household, or $49 once. No ads, no selling data. In a health app, trust is the product.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="94g · What I’d measure">
+      <div class="tag">94g · What I’d measure</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>What I’d measure</h4><p>Dogs with a 30-day baseline, weekly check-ins, sitter links opened, and whether a vet summary was used at a visit. Not downloads. A download isn’t a dog that’s better looked after.</p></div>
+    </div>
+    </div>
+    <div class="slot prose bare" data-name="95 · What’s next">
+      <div class="tag">95 · What’s next</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I’d build next</span><span class="typed"><span class="t" data-text="What I’d build next"></span><span class="caret"></span></span></span></h2><p class="pasted">It’s a concept, so the roadmap is honest about what’s missing. In the order I’d build it:</p></div>
+    </div>
+    <div class="next6 group">
+    <div class="slot nxt sub paste" data-name="96 · Check-in">
+      <div class="tag">96 · Check-in</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>A 10-second daily check-in</h4><p>Tap energy, appetite, potty, and mood, plus weight once a week. That’s what builds her baseline.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="97 · Vet summary">
+      <div class="tag">97 · Vet summary</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Vet-ready summaries</h4><p>Recent changes, weight trend, meds, and vaccines on one page, shared in one tap.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="98 · More dogs">
+      <div class="tag">98 · More dogs</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Busy dog homes</h4><p>You can already switch between dogs. Next is making walks and meals work for the whole pack.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="99 · Scanning">
+      <div class="tag">99 · Scanning</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Smarter scanning</h4><p>Better photo scanning for older, messier records, so getting her history in takes minutes.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="100 · Android">
+      <div class="tag">100 · Android</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Android</h4><p>Snoot started as an iOS concept. Plenty of sitters carry Android phones.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="101 · Sitter link">
+      <div class="tag">101 · Sitter link</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>A real sitter web link</h4><p>The sitter guide as a live web page, with no app and no login.</p></div>
+    </div>
+    </div>
+    <div class="slot prose quote" data-name="102 · North star">
+      <div class="tag">102 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Less panic-Googling. More walks.</span><span class="typed"><span class="t" data-text="Less panic-Googling. More walks."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    
+    <div class="slot prose tools" data-name="103 · Tools" id="tools">
+      <div class="tag">103 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Brand, screens and a working React prototype, with AI in the loop as a build partner, not a designer.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/figma.svg" alt=""><b>Figma</b><small>Wireframes, screens and the brand</small></div><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude</b><small>The working prototype</small></div><div class="tlc"><img src="image/tools/html5.svg" alt=""><b>HTML</b><small>Structure</small></div><div class="tlc"><img src="image/tools/css.svg" alt=""><b>CSS</b><small>Layout, styling and motion</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>React, for the clickable app</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="snoot-flows.html">See every screen as a flow →</a><a class="wob" href="snoot-prototype.html">Try the prototype →</a><a class="wob" href="app.html#work">← Back to work</a><a class="wob" href="app.html#hi">Say hi</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

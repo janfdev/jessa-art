@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Harbor · Jessa Wolfe</title>
+<meta name="description" content="Harbor, a mobile-first banking concept designed end to end by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page harbor" data-zoom>
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Harbor</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Harbor">
+      <div class="tag">01 · Harbor</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Harbor, a banking app</span><span class="typed"><span class="t" data-text="Harbor, a banking app"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#about">About the project</a><a class="wob" href="#app">The app</a><a class="wob" href="#apart">What sets it apart</a><a class="wob" href="harbor-prototype.html">Prototype</a><a class="wob" href="harbor-flows.html">Flows</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/cover.jpg" alt="Harbor on a phone, held in a kitchen"></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Lead UX Designer</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Mobile &amp; web app</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Platform">
+      <div class="tag">05 · Platform</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Platform</div><div class="v">Web, iOS &amp; Android</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Year">
+      <div class="tag">06 · Year</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Year</div><div class="v">2026</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="07 · The question" id="about">
+      <div class="tag">07 · The question</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Harbor started with a simple question: what if your bank felt like coming home instead?</span><span class="typed"><span class="t" data-text="Harbor started with a simple question: what if your bank felt like coming home instead?"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Harbor is a mobile-first bank for everyday people in the US. It’s a design concept I built end to end, from the first wireframe to a clickable prototype, a marketing site, and a full set of brand assets.</p></div>
+    </div>
+    <div class="group screens" id="app">
+    <div class="slot screen sub paste" data-name="08 · Welcome">
+      <div class="tag">08 · Welcome</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/01-landing-entry--onboarding-slides.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="09 · Home">
+      <div class="tag">09 · Home</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/44-in-the-app--home.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="10 · Cards">
+      <div class="tag">10 · Cards</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/46-in-the-app--cards.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="11 · Insights">
+      <div class="tag">11 · Insights</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/48-in-the-app--insights.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="12 · Send money">
+      <div class="tag">12 · Send money</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/62-send-money--review.png" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose quote" data-name="13 · Why a harbor">
+      <div class="tag">13 · Why a harbor</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A harbor is where boats go to be safe, rest, and get ready for the next trip. That’s the job I wanted the app to do for people’s money.</span><span class="typed"><span class="t" data-text="A harbor is where boats go to be safe, rest, and get ready for the next trip. That’s the job I wanted the app to do for people’s money."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="features group">
+    <div class="slot feature sub paste" data-name="14 · Cards">
+      <div class="tag">14 · Cards</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/card.png" alt=""><p>Spend with a physical card and a virtual card, both easy to freeze in one tap.</p></div>
+    </div>
+    <div class="slot feature sub paste" data-name="15 · Send">
+      <div class="tag">15 · Send</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/send.png" alt=""><p>Send money to friends, split bills, and pay people who aren’t on Harbor yet.</p></div>
+    </div>
+    <div class="slot feature sub paste" data-name="16 · Save">
+      <div class="tag">16 · Save</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/save.png" alt=""><p>Save toward named goals, with round-ups that tuck spare change away.</p></div>
+    </div>
+    <div class="slot feature sub paste" data-name="17 · Insights">
+      <div class="tag">17 · Insights</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/insights.png" alt=""><p>Understand where the money goes, with simple insights instead of spreadsheets.</p></div>
+    </div>
+    <div class="slot feature sub paste" data-name="18 · Bills">
+      <div class="tag">18 · Bills</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/coin.png" alt=""><p>Pay bills now, later, or on repeat.</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="19 · Standing apart" id="apart">
+      <div class="tag">19 · Standing apart</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">How Harbor stands apart</span><span class="typed"><span class="t" data-text="How Harbor stands apart"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Before designing anything, I looked at how dozens of banking apps greet new people, from big banks to newer apps like Chime, Monzo, Wise, and Cleo. A pattern jumped out. Almost every app picks one of two moods.</p>
+        <div class="moods pasted">
+          <div class="mh">Mood</div><div class="mh">How it sounds</div><div class="mh">What it costs</div>
+          <div class="mc wob" data-h="Mood">Safe and serious</div><div class="mc wob" data-h="How it sounds">Clear, steady, a bit corporate</div><div class="mc wob" data-h="What it costs">Feels cold, like paperwork</div>
+          <div class="mc wob r2" data-h="Mood">Loud &amp; cheeky</div><div class="mc wob r2" data-h="How it sounds">All caps, jokes, attitude</div><div class="mc wob r2" data-h="What it costs">Fun, but hard to trust with your rent</div>
+        </div></div>
+    </div>
+    <div class="slot prose quote butter" data-name="20 · The gap">
+      <div class="tag">20 · The gap</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Very few apps feel safe and warm at the same time. That gap is where Harbor lives.</span><span class="typed"><span class="t" data-text="Very few apps feel safe and warm at the same time. That gap is where Harbor lives."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="choices zig group">
+    <div class="slot choice has-ex ex-wide sub paste" data-name="21 · Calm over hype">
+      <div class="tag">21 · Calm over hype</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">1</div><h3>Calm over hype.</h3><p>No confetti for moving $20. Harbor celebrates reaching a savings goal and stays quiet the rest of the time.</p><img class="ex" src="image/harbor/web/20-savings-goals-web--goal-detail.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-wide sub paste" data-name="22 · Honest">
+      <div class="tag">22 · Honest</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">2</div><h3>Honest about money.</h3><p>No monthly fees, no minimum balance, no overdraft surprises. The site even runs a side-by-side “tiny gray text” comparison with a big bank.</p><img class="ex" src="image/harbor/web/02-marketing-site--checking.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-wide sub paste" data-name="23 · Human">
+      <div class="tag">23 · Human</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">3</div><h3>Human when it counts.</h3><p>Every sensitive question comes with a plain reason why. Real people answer in the app, and the lounges give Harbor a friendly face.</p><img class="ex" src="image/harbor/brand/lounge.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-sq sub paste" data-name="24 · Characters">
+      <div class="tag">24 · Characters</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">4</div><h3>Characters, not stock icons.</h3><p>A cast of little low-poly characters shows up at key moments. Instantly recognizable, a lot less intimidating.</p><video class="ex" src="image/harbor/brand/slide-3-save-turtle.mp4" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot choice has-ex ex-wide sub paste" data-name="25 · Never guilt">
+      <div class="tag">25 · Never guilt</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">5</div><h3>Never guilt.</h3><p>Insights give gentle nudges, never lectures. Coffee counts as coffee, and nobody judges.</p><img class="ex" src="image/harbor/web/32-more-web--insights.jpg" alt="" loading="lazy"></div>
+    </div>
+    </div>
+    <div class="side">
+    <div class="slot prose" data-name="26 · Building it">
+      <div class="tag">26 · Building it</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What went into building it</span><span class="typed"><span class="t" data-text="What went into building it"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Banking is one of those products where the unhappy paths matter as much as the happy ones. So I started with low-fidelity wireframes to lock the structure and flows before any color or characters showed up. Grey boxes first, personality second.</p>
+        <a class="cta pasted" href="harbor-flows.html">Open every screen as a flow <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a></div>
+    </div>
+    <div class="slot polaroid-wrap paste" data-name="27 · Wires">
+      <div class="tag">27 · Wires</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/brand/wires-onboarding.jpg" alt="Low-fidelity wireframes for onboarding"><div class="cap">grey boxes first</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="28 · Registration" id="flows">
+      <div class="tag">28 · Registration</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Opening an account without the dread</span><span class="typed"><span class="t" data-text="Opening an account without the dread"></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">US banks are required to confirm who you are before opening an account: legal name, birthday, address, Social Security number, and a photo of your ID. None of it can be skipped, so the goal was to make it feel lighter.</p><div class="bullets pasted"><div class="b wob"><b>One question per screen.</b>“What’s your phone number?” beats a wall of fields.</div><div class="b wob"><b>Four clear sections.</b>About you, Your details, Verify it’s you, Set up your account, with a progress bar.</div><div class="b wob"><b>A heads-up before it starts.</b>What to have ready, about five minutes, and progress saves.</div><div class="b wob"><b>A reason next to every sensitive ask.</b>The SSN screen says it plainly: the law requires it, it won’t touch your credit score, and it’s encrypted.</div></div></div>
+    </div>
+    <div class="group screens small">
+    <div class="slot screen sub paste" data-name="29 · Welcome">
+      <div class="tag">29 · Welcome</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/01-landing-entry--onboarding-slides.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="30 · Goals">
+      <div class="tag">30 · Goals</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/08-before-we-start--goals.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="31 · What you’ll need">
+      <div class="tag">31 · What you’ll need</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/09-before-we-start--what-you-ll-need.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="32 · Email">
+      <div class="tag">32 · Email</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/10-about-you--email.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="33 · Phone">
+      <div class="tag">33 · Phone</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/14-about-you--phone.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="34 · Legal name">
+      <div class="tag">34 · Legal name</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/17-your-details--legal-name.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="35 · SSN">
+      <div class="tag">35 · SSN</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/24-your-details--ssn.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="36 · Scan ID">
+      <div class="tag">36 · Scan ID</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/30-verify-it-s-you--scan-id.png" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="37 · When it goes wrong">
+      <div class="tag">37 · When it goes wrong</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Four outcomes, not one</span><span class="typed"><span class="t" data-text="Four outcomes, not one"></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">Identity checks don’t always pass on the first try. Approved, try again, under review, and couldn’t verify each get their own tone and next step, so nobody hits a dead end. The same thinking went into money.</p><div class="bullets pasted"><div class="b wob"><b>Not enough money?</b>You find out on the amount screen, not after you hit confirm.</div><div class="b wob"><b>Paying someone new</b>triggers a quick code, to stop scams before they happen.</div><div class="b wob"><b>Unclaimed money</b>stays in your account until they claim it, and comes back after 14 days.</div><div class="b wob"><b>A failing scheduled bill</b>warns you a couple of days early, and the schedule stays active.</div></div></div>
+    </div>
+    <div class="group screens small">
+    <div class="slot screen sub paste" data-name="38 · Email error">
+      <div class="tag">38 · Email error</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/11-about-you--email-error.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="39 · Verifying">
+      <div class="tag">39 · Verifying</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/32-verify-it-s-you--verifying-identity.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="40 · Verified">
+      <div class="tag">40 · Verified</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/33-verify-it-s-you--verified.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="41 · Frozen card">
+      <div class="tag">41 · Frozen card</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/51-card-management--frozen-card.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="42 · Sending">
+      <div class="tag">42 · Sending</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/63-send-money--sending-money.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="43 · Scheduled">
+      <div class="tag">43 · Scheduled</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/flow/68-pay-a-bill--scheduled.png" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="44 · Small details">
+      <div class="tag">44 · Small details</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Trust in the small details</span><span class="typed"><span class="t" data-text="Trust in the small details"></span><span class="caret"></span></span></span></h3><div class="bullets pasted"><div class="b wob"><b>Card controls one tap away.</b>Freeze, view details, set limits, or report a card lost. Numbers show only after Face ID, then hide again on their own.</div><div class="b wob"><b>Loading screens that tell you what’s happening.</b>Instead of a spinner, a little character shows the step.</div><div class="b wob"><b>Friendly errors.</b>“That code didn’t match. Give it another try.” instead of “Error 401.”</div><div class="b wob"><b>Quick, familiar login.</b>Face ID first, a passcode as backup, and a calm “no worries” screen if you forget your password.</div></div></div>
+    </div>
+    <div class="chars group">
+    <div class="slot char sub paste" data-name="45 · ID card">
+      <div class="tag">45 · ID card</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/brand/loading-verifying-identity-id-card.png" alt=""><div class="cap">verifying your identity</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="46 · Safe">
+      <div class="tag">46 · Safe</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/brand/loading-securing-account-safe.png" alt=""><div class="cap">securing your account</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="47 · Card">
+      <div class="tag">47 · Card</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/brand/loading-creating-card-credit-card.png" alt=""><div class="cap">creating your card</div></div>
+    </div>
+    </div>
+    <div class="slot prose quote blush" data-name="48 · The brand">
+      <div class="tag">48 · The brand</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A brand that feels like a deep breath.</span><span class="typed"><span class="t" data-text="A brand that feels like a deep breath."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Money is emotional. People open a banking app when they’re excited, stressed, or just checking that everything’s okay. Every part of the brand is there to lower the heart rate a little. The voice is short sentences, plain words, and more “you” than “we.” Sea words show up now and then, never on every screen, so it stays charming instead of cheesy.</p>
+        <div class="voice pasted"><span class="v wob">steady</span><span class="v wob">warm</span><span class="v wob">simple</span><span class="v wob">lightly playful</span></div>
+        <div class="lines pasted"><span class="note-ish">“Welcome home, money.”</span><span class="note-ish">“Safely docked.”</span><span class="note-ish">“No worries.”</span></div></div>
+    </div>
+    <div class="slot prose" data-name="49 · The cast">
+      <div class="tag">49 · The cast</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">A cast, not a mascot</span><span class="typed"><span class="t" data-text="A cast, not a mascot"></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">I tried puffy, blob, and low-poly before picking low-poly. It looked friendly without looking like a kids’ app, and the facets matched the card backgrounds. My first pass had a boat on every slide, which got old fast. So each moment got its own character instead, and suddenly it felt like a little world.</p></div>
+    </div>
+    <div class="cast group">
+    <div class="slot member sub paste" data-name="50 · Lighthouse">
+      <div class="tag">50 · Lighthouse</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/harbor/brand/slide-1-welcome-lighthouse.mp4" autoplay muted loop playsinline></video><h4>Lighthouse</h4><p>Welcome and “you’re all set.” It guides you in.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="51 · Seagulls">
+      <div class="tag">51 · Seagulls</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/harbor/brand/slide-2-send-seagulls.mp4" autoplay muted loop playsinline></video><h4>Seagulls</h4><p>Sending money. Delivering something to a friend.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="52 · Sea turtle">
+      <div class="tag">52 · Sea turtle</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/harbor/brand/slide-3-save-turtle.mp4" autoplay muted loop playsinline></video><h4>Sea turtle</h4><p>Savings. Slow and steady wins.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="53 · Anchor">
+      <div class="tag">53 · Anchor</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/harbor/brand/slide-4-secure-anchor.mp4" autoplay muted loop playsinline></video><h4>Anchor</h4><p>Security and the SSN screen. Steady and safe.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="54 · Ship">
+      <div class="tag">54 · Ship</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/harbor/brand/slide-5-insights-ship.mp4" autoplay muted loop playsinline></video><h4>Ship</h4><p>Insights. Smooth sailing ahead.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="55 · Life ring">
+      <div class="tag">55 · Life ring</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/harbor/brand/forgot-password-key-life-ring.mp4" autoplay muted loop playsinline></video><h4>Key in a life ring</h4><p>Forgot password. “We’ve got you.”</p></div>
+    </div>
+    </div>
+    <div class="brandgrid group">
+    <div class="slot bcard sub paste" data-name="56 · Color">
+      <div class="tag">56 · Color</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="swatches"><i style="background:#1E2E56"></i><i style="background:#49A1A3"></i><i style="background:#9FD9C4"></i><i style="background:#FDFCF9;outline:1px solid #eee"></i><i style="background:#F28C6B"></i></div><h4>Cool enough to trust, warm enough to feel human.</h4><p>Deep navy, ocean teal, seafoam, cream, and a warm coral.</p></div>
+    </div>
+    <div class="slot bcard sub paste" data-name="57 · Motion">
+      <div class="tag">57 · Motion</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/harbor/brand/harbor-card-bg-ocean.mp4" autoplay muted loop playsinline></video><h4>Calm water, on a card.</h4><p>The card backgrounds drift like a slow tide. Freeze the card and the motion stops. Paused, without a single word.</p></div>
+    </div>
+    <div class="slot bcard sub paste" data-name="58 · Photography">
+      <div class="tag">58 · Photography</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/brand/photo-coffee.jpg" alt="Morning coffee, phone turned away"><h4>People, not products.</h4><p>Real-life moments: morning coffee, splitting dinner, saving for a first home. Phone screens are turned away so the focus stays on the person.</p></div>
+    </div>
+    <div class="slot bcard sub paste" data-name="59 · The lounges">
+      <div class="tag">59 · The lounges</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/harbor/brand/lounge.jpg" alt="A Harbor lounge, more café than bank"><h4>A bank you’d hang out in.</h4><p>The lounges look more like a coastal café than a bank lobby, with no teller windows between you and the person helping you.</p></div>
+    </div>
+    </div>
+    <div class="slot prose bare" data-name="60 · What’s next">
+      <div class="tag">60 · What’s next</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Where Harbor goes next</span><span class="typed"><span class="t" data-text="Where Harbor goes next"></span><span class="caret"></span></span></span></h2><p class="pasted">The foundation is built to grow.</p></div>
+    </div>
+    <div class="next6 group">
+    <div class="slot nxt sub paste" data-name="61 · Shared money">
+      <div class="tag">61 · Shared money</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Shared money</h4><p>Joint accounts and shared goals for couples, roommates, and families.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="62 · Young savers">
+      <div class="tag">62 · Young savers</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Harbor for kids</h4><p>A teen account with parent controls, where the turtle teaches saving and the anchor teaches staying safe.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="63 · Business">
+      <div class="tag">63 · Business</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Small business</h4><p>Invoices, simple bookkeeping, and business goals, built for the café owners already in the lounges.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="64 · Kinder insights">
+      <div class="tag">64 · Kinder insights</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Heads-ups, not autopsies</h4><p>“Rent’s due Friday and you might be short,” with a fix right there instead of a warning after the fact.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="65 · Access">
+      <div class="tag">65 · Access</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>Accessibility as a feature</h4><p>Larger text, calm-motion settings, and screen-reader-friendly characters, so the warmth reaches everyone.</p></div>
+    </div>
+    <div class="slot nxt sub paste" data-name="66 · Beyond">
+      <div class="tag">66 · Beyond</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h4>The brand beyond the app</h4><p>Animated characters for social and email, a living design system, and a lounge playbook.</p></div>
+    </div>
+    </div>
+    <div class="slot prose quote" data-name="67 · North star">
+      <div class="tag">67 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Wherever Harbor goes, it should still feel like coming home.</span><span class="typed"><span class="t" data-text="Wherever Harbor goes, it should still feel like coming home."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot prose tools" id="tools" data-name="68 · Tools">
+      <div class="tag">68 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Design in Figma, with AI in the loop for the imagery and the working prototype.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/figma.svg" alt=""><b>Figma</b><small>Flows, screens and the design system</small></div><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude</b><small>The working prototype</small></div><div class="tlc"><img src="image/tools/higgsfield.png" alt=""><b>Higgsfield</b><small>Imagery and illustration</small></div><div class="tlc"><img src="image/tools/html5.svg" alt=""><b>HTML</b><small>Structure, built by hand</small></div><div class="tlc"><img src="image/tools/css.svg" alt=""><b>CSS</b><small>Layout, styling and motion</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>Interactions and the working prototype</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="harbor-flows.html">See every screen as a flow →</a><a class="wob" href="app.html#work">← Back to work</a><a class="wob" href="app.html#hi">Say hi</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

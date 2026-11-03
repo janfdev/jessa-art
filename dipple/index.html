@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dipple</title>
+<link rel="preload" href="fonts/Dipple-Rough.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face { font-family: "Dipple"; src: url(fonts/Dipple-Rough.woff2) format("woff2"); font-display: block; }
+  :root { --red: #e2583e; --yellow: #ffcf4a; --cream: #fff3e3; --ink: #2a1d14; --butter: #ffe08a; --pink: #ff9ec4; }
+  * { margin: 0; box-sizing: border-box; }
+  html, body { background: var(--red); }
+  body { color: var(--ink); font-family: "Dipple", sans-serif; overflow-x: hidden; }
+  #spacer { width: 1px; }
+  html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; }
+  /* ===== the Dipple star cursor (desktop only) ===== */
+  @media (hover: hover) and (pointer: fine) { body.has-cur, body.has-cur * { cursor: none !important; } }
+  #cur { position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; will-change: transform; }
+  #cur > * { position: absolute; transition: transform .25s cubic-bezier(.3, 1.7, .5, 1); }
+  .c-star { left: -30px; top: -30px; font: 400 60px/1 "Dipple"; color: #ffd23f; animation: spin 6s linear infinite; }
+  @keyframes spin { to { rotate: 360deg; } }
+  #cur.on-yellow .c-star { color: #e2583e; } #cur.on-red .c-star, #cur.on-blue .c-star { color: #ffd23f; }   /* over the blue water: butter */
+  #cur.hot .c-star { transform: scale(1.35); } #cur.down .c-star { transform: scale(.8, .7); }
+  .trail { position: fixed; z-index: 99; pointer-events: none; width: 26px; height: 26px; margin: -13px; animation: fade .9s ease-out forwards; }
+  @keyframes fade { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(.3) translateY(18px); } }
+  @media (prefers-reduced-motion: reduce) { .c-star { animation: none; } }
+  /* ===== scroll bars (one is on, set by SCROLLBAR) ===== */
+  .sb { position: fixed; right: 14px; top: 12vh; height: 76vh; z-index: 90; display: none; }
+  .sb.on { display: block; }
+  .sb.goop { width: 22px; border-radius: 999px; background: #fff3e6; box-shadow: inset 0 0 0 3px #2a1d14; overflow: hidden; }
+  .sb.goop svg { position: absolute; left: 3px; right: 3px; bottom: 3px; width: 16px; height: calc(100% - 6px); overflow: visible; }
+  .sb.rail { width: 40px; }
+  .sb.rail .line { position: absolute; left: 50%; top: 0; bottom: 0; width: 0; border-left: 3px dashed rgba(42, 29, 20, .55); }
+  .sb.rail .moonh { position: absolute; left: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; background: url(art/layers/moon.webp) center / contain no-repeat; filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .25)); }
+  .sb.rail .stop { position: absolute; left: 50%; transform: translate(-50%, -50%); font: 400 20px/1 "Dipple"; color: #2a1d14; background: none; border: 0; padding: 4px; }
+  .sb.rail .stop span { position: absolute; right: 30px; top: 50%; transform: translateY(-50%); white-space: nowrap; background: #2a1d14; color: #fff3e6; border-radius: 999px; padding: 6px 10px; font: 700 12px/1 -apple-system, sans-serif; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .sb.rail .stop:hover span { opacity: 1; }
+  .sb.stalk { width: 36px; }
+  .sb.stalk svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 1px rgba(42, 29, 20, .7)) drop-shadow(0 2px 3px rgba(42, 29, 20, .25)); }   /* a thin ink edge so the mint reads on yellow and sky too */
+  .sb.stalk { cursor: pointer; } .sb.stalk::before { content: ""; position: absolute; inset: -6px -8px; }   /* a comfy hit area */
+  .sb.stalk .bud { position: absolute; left: 50%; font: 400 34px/1 "Dipple"; color: #ff9ec4; -webkit-text-stroke: 2.5px #2a1d14; paint-order: stroke fill; transform: translate(-50%, -50%) scale(var(--b, .5)) rotate(var(--rot, 0deg)); }
+  @media (max-width: 760px), (hover: none), (pointer: coarse) { .sb { display: none !important; } }
+  /* one fixed stage for every scene, so scenes never leave a gap between them */
+  .stage { position: fixed; inset: 0; overflow: hidden; background: #f6c7a6; }
+  .scene { position: absolute; inset: 0; overflow: hidden; }
+  .stage img { position: absolute; display: block; user-select: none; -webkit-user-drag: none; pointer-events: none; }
+  .grain { position: absolute; inset: 0; pointer-events: none; z-index: 50; opacity: .32; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .25 0 0 0 0 .15 0 0 0 .3 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  /* ===== scene 1: the alien world ===== */
+  #world { z-index: 1; }
+  .sky { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .strip { position: absolute; left: 50%; bottom: 0; will-change: transform; }
+  .strip img { position: relative; width: 100%; }
+  .strip::after { content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 3px); height: 120vh; background: var(--fill); }
+  .cloud { top: 0; left: 0; transform-origin: 50% 0; will-change: transform; }
+  .moon, .plant, .twi { left: 0; top: 0; will-change: transform; }
+  .plant { transform-origin: 50% 100%; }
+  .river { left: 50%; bottom: 0; }
+  .title { position: absolute; left: 0; right: 0; top: 0; text-align: center; font-size: 30vw; line-height: 1; white-space: nowrap; color: var(--cream); font-weight: 400;
+    will-change: transform, opacity; pointer-events: none; }   /* flat letters, no shadow; size and centre set from the measured word in layout() */
+
+  /* ===== the goop: red, then yellow, rising with a gooey edge (one svg, one filter per colour) ===== */
+  #goop { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; z-index: 30; pointer-events: none; }
+
+  /* ===== scene 2: the giant alphabet parade, on red ===== */
+  #parade { z-index: 20; background: var(--red); display: none; }
+  #grid { z-index: 21; display: none; }
+  #grid .G { position: absolute; left: 0; top: 0; line-height: 1; transform-origin: 50% 58%; }
+  #parade .L { position: absolute; left: 0; top: 0; line-height: 1; white-space: nowrap; transform-origin: 50% 58%; }
+
+  /* ===== scene 3: the crab builds the wordmark, on yellow ===== */
+  #crabScene { z-index: 40; background: var(--yellow); display: none; }
+  #crabScene .W { position: absolute; left: 0; top: 0; line-height: 1; color: var(--red); transform-origin: 50% 70%; }   /* flat letters, no shadow */
+  .crab { position: absolute; left: 0; top: 0; will-change: transform; }
+  /* ===== scene 4: the crab splashes into the water ===== */
+  #sea { z-index: 45; display: none; pointer-events: none; }
+  #sea.full { background: linear-gradient(180deg, #0062ff 0%, #0062ff 50%, #0056e6 100%); }   /* Jessa's blue, a touch deeper at the bottom */
+  #seaSvg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  #seaCrab { position: absolute; inset: 0; }
+  #seaBub { position: absolute; inset: 0; pointer-events: none; }
+  #seaBub img { position: absolute; left: 0; top: 0; will-change: transform; }
+  #dlTitle .tl { display: inline-block; transform-origin: 50% 80%; transform: scale(0); }
+  .plip { position: absolute; pointer-events: none; z-index: 2; animation: plip .5s cubic-bezier(.2, .9, .3, 1) forwards; }
+  @keyframes plip { 0% { transform: scale(.3) rotate(0deg); opacity: 1; } 60% { transform: scale(1.15) rotate(25deg); opacity: 1; } 100% { transform: scale(.6) rotate(40deg); opacity: 0; } }
+  #dlSvg { transform-origin: 50% 50%; will-change: transform; }
+  .seaText { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5vh; text-align: center; }
+  .seaText h2 { font: 400 100px/.92 "Dipple"; color: #fff8ee; margin: 0; white-space: nowrap; }   /* flat, no shadow; size set to fill the width */
+  .dl { pointer-events: auto; display: block; line-height: 0; border-radius: 999px; transition: transform .35s cubic-bezier(.3, 1.8, .5, 1); will-change: transform, opacity; }
+  .dl svg { display: block; overflow: visible; }
+  .dl:hover, .dl:focus-visible { transform: scale(1.08) rotate(-2deg); outline: none; }
+  .dl:focus-visible { box-shadow: 0 0 0 4px #ffd23f; }
+  .dl:active { transform: scale(.94, .88); }
+  /* the little link under the button: cream Dipple, pops in last, wiggles on hover */
+  .more { pointer-events: auto; margin-top: -2vh; font: 400 clamp(20px, 2.2vw, 30px)/1 "Dipple"; color: #fff8ee; text-decoration: none; visibility: hidden; will-change: transform; transition: color .2s; }
+  .more b { font-weight: 400; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; text-decoration-color: #ffd23f; }
+  .more:hover { color: #ffd23f; animation: moreWiggle .5s ease-in-out; } .more:focus-visible { outline: 3px solid #ffd23f; outline-offset: 6px; border-radius: 8px; }
+  @keyframes moreWiggle { 25% { rotate: -3deg; } 75% { rotate: 3deg; } }
+  .crab img { position: absolute; will-change: transform; }
+  #wordRef { position: absolute; visibility: hidden; white-space: nowrap; line-height: 1; }
+  #wordRef span { display: inline-block; }
+</style></head>
+<body>
+<div id="spacer"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="fuzz"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4"/></filter></svg>
+<div class="sb goop" id="sbGoop"><svg viewBox="0 0 16 100" preserveAspectRatio="none"><path id="goopPath" fill="#e2583e"/></svg></div>
+<div class="sb rail" id="sbRail"><div class="line"></div><div class="moonh" id="moonh"></div></div>
+<div class="sb stalk" id="sbStalk"><svg viewBox="0 0 36 100" preserveAspectRatio="none"><path id="stalkPath" fill="none" stroke="#8fd9b6" stroke-width="7" stroke-linecap="round" filter="url(#fuzz)" vector-effect="non-scaling-stroke"/></svg><span class="bud" id="bud">✶</span></div>
+<div class="stage" id="stage">
+
+  <section class="scene" id="world">
+    <img class="sky" src="art/layers/sky.jpg" alt="">
+    <img class="cloud" src="art/layers/cloud1.webp" alt="">
+    <img class="cloud" src="art/layers/cloud3.webp" alt="">
+    <img class="cloud" src="art/layers/cloud2.webp" alt="">
+    <img class="moon" id="moon" src="art/layers/moon.webp" alt="">
+    <div class="strip" id="far" style="--fill:#ef8183"><img src="art/layers/far.webp" alt=""></div>
+    <div class="strip" id="mid" style="--fill:#c91d08"><img src="art/layers/mid.webp" alt=""></div>
+    <img class="river" id="river" src="art/layers/river.webp" alt="" style="filter:url(#flow)">
+    <img class="plant" src="art/layers/p2.webp" alt="">
+    <img class="plant" src="art/layers/p3.webp" alt="">
+    <img class="plant" src="art/layers/p1.webp" alt="">
+    <img class="plant" src="art/layers/p4.webp" alt="">
+    <img class="plant" src="art/layers/p3.webp" alt="">
+    <img class="plant" src="art/layers/p1.webp" alt="">
+    <div class="strip" id="near" style="--fill:#a8401c"><img src="art/layers/near.webp" alt=""></div>
+    <h1 class="title" id="title">Dipple</h1>
+    <div id="skyStars"></div>
+  </section>
+
+  <section class="scene" id="parade" aria-label="The Dipple alphabet"><div id="paradeStars"></div></section>
+  <section class="scene" id="grid" aria-label="Every Dipple character"></section>
+
+  <svg id="goop" aria-hidden="true">
+    <defs><filter id="goo" x="-30%" y="-60%" width="160%" height="220%" color-interpolation-filters="sRGB">
+      <feGaussianBlur id="gooBlur" stdDeviation="16"/><feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 34 -14"/></filter>
+      <filter id="flow" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence id="flowT" type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="2" seed="3" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter></defs>
+    <g id="gooRed" filter="url(#goo)" fill="#e2583e"></g>
+    <g id="gooYellow" filter="url(#goo)" fill="#ffcf4a"></g>
+  </svg>
+
+  <section class="scene" id="crabScene">
+    <div id="crabStars"></div>
+    <div class="crab" id="crab">
+      <img id="legsL" src="art/crab/legsL.webp" alt="">
+      <img id="legsR" src="art/crab/legsR.webp" alt="">
+      <img id="eyes" src="art/crab/eyes.webp" alt="">
+      <img id="clawL" src="art/crab/clawL.webp" alt="">
+      <img id="clawR" src="art/crab/clawR.webp" alt="">
+      <img id="shell" src="art/crab/shell.webp" alt="">
+    </div>
+    
+  </section>
+
+  <section class="scene" id="sea" aria-label="Download Dipple">
+    <svg id="seaSvg" aria-hidden="true">
+      <defs><linearGradient id="seaFill" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="900"><stop offset="0" stop-color="#0062ff"/><stop offset=".5" stop-color="#0062ff"/><stop offset="1" stop-color="#0056e6"/></linearGradient></defs>
+      <g id="waterHi" filter="url(#goo)" fill="#66a3ff"></g>
+      <g id="waterMain" filter="url(#goo)" fill="url(#seaFill)"></g>
+    </svg>
+    <div id="seaBub" aria-hidden="true"></div>
+    <div class="seaText" id="seaText"><h2 id="dlTitle" aria-label="Download Dipple today"></h2><a class="dl" id="dlBtn" href="download/Dipple.zip" download="Dipple.zip" aria-label="Download Dipple (zip with the fonts)"><svg id="dlSvg" aria-hidden="true"><defs><mask id="dlMask" maskUnits="userSpaceOnUse"><rect id="dlMR" fill="#fff"/><g id="dlLetters" fill="#000" font-family="Dipple"></g></mask></defs><path id="dlPill" fill="#fff" mask="url(#dlMask)"/></svg></a><a class="more" id="moreLink" href="https://jessa.art" target="_blank" rel="noopener">Visit <b>jessa.art</b> for more ✦</a></div>
+    <div id="seaCrab"></div>
+  </section>
+
+  <div class="grain"></div>
+</div>
+
+<script>
+(() => {
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+  const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), lerp = (a, b, k) => a + (b - a) * k;
+  const seg = (p, a, b) => clamp((p - a) / (b - a));
+  const out = k => 1 - Math.pow(1 - clamp(k), 3), inout = k => { k = clamp(k); return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
+  const back = k => { k = clamp(k); const c = 1.6; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
+  const pop = k => k <= 0 ? 0 : k >= 1 ? 1 : 1 - Math.exp(-6 * k) * Math.cos(k * 11);
+  const SVGNS = 'http://www.w3.org/2000/svg';
+
+  // ---- the timeline, in screen-heights of scroll ----
+  const T = { world: [0, 4.2], red: [4.2, 5.9], parade: [5.9, 14.4], grid: [14.4, 17.6], yellow: [17.6, 18.9], crab: [18.9, 22.9], water: [22.9, 24.7], sea: [24.7, 27.6] }, SMAX = 27.6;   // grid: pulled into the page, every character at once
+  const stage = $('#stage'), world = $('#world'), parade = $('#parade'), crabScene = $('#crabScene');
+  const far = $('#far'), mid = $('#mid'), near = $('#near'), river = $('#river'), moon = $('#moon'), title = $('#title');
+  const plants = $$('.plant'), clouds = $$('.cloud');
+  let W, H, SW, sz = {};
+
+  // ---- stars (the animated Dipple stars from art/stars/) ----
+  const starImg = (src, x, y, s, parent) => { const e = document.createElement('img'); e.className = 'twi'; e.src = 'art/stars/' + src; e.alt = ''; e.dataset.x = x; e.dataset.y = y; e.dataset.s = s; parent.appendChild(e); return e; };
+  const skyStars = [['sparkle-cream-96.webp', .12, .2, .045], ['star-butter-96.webp', .24, .1, .03], ['sparkle-cream-96.webp', .38, .27, .024], ['star-cream-96.webp', .54, .08, .034],
+    ['sparkle-butter-96.webp', .62, .3, .026], ['star-cream-96.webp', .78, .13, .04], ['sparkle-cream-96.webp', .9, .25, .026], ['star-butter-96.webp', .46, .35, .02]].map(a => starImg(a[0], a[1], a[2], a[3], $('#skyStars')));
+  const paradeStars = [['sparkle-cream-192.webp', .07, .14, .07], ['star-butter-192.webp', .9, .12, .06], ['sparkle-pink-96.webp', .22, .86, .045], ['star-cream-96.webp', .78, .88, .05], ['six-butter-96.webp', .5, .07, .04], ['sparkle-butter-96.webp', .95, .55, .04], ['star-pink-96.webp', .04, .5, .04]].map(a => starImg(a[0], a[1], a[2], a[3], $('#paradeStars')));
+  const crabStars = [['sparkle-coral-192.webp', .12, .18, .06], ['star-cream-192.webp', .86, .14, .06], ['sparkle-pink-96.webp', .2, .55, .04], ['star-coral-96.webp', .82, .5, .045], ['six-cream-96.webp', .5, .06, .04], ['sparkle-cream-96.webp', .93, .78, .035]].map(a => starImg(a[0], a[1], a[2], a[3], $('#crabStars')));
+  const placeStars = arr => arr.forEach(e => { const s = Math.min(W, H) * +e.dataset.s * 1.6; e.style.width = s + 'px'; e.dataset.px = W * e.dataset.x - s / 2; e.dataset.py = H * e.dataset.y - s / 2; });
+
+  // ---- world layout ----
+  const PL = [{ x: .13, h: .50, t: .38, amp: 3.2, sp: 1.10, ph: 0.0, soft: 1 }, { x: .27, h: .40, t: .44, amp: 1.6, sp: .70, ph: 1.7, soft: 0 }, { x: .70, h: .52, t: .41, amp: 1.4, sp: .62, ph: .9, soft: 0 },
+    { x: .82, h: .56, t: .47, amp: 2.8, sp: .95, ph: 2.6, soft: 1 }, { x: .90, h: .34, t: .52, amp: 1.7, sp: .80, ph: 4.1, soft: 0 }, { x: .05, h: .32, t: .55, amp: 1.3, sp: .66, ph: 3.3, soft: 0 }];
+  const CL = [{ s: .30, y: -.02, sp: 9, x0: .15 }, { s: .24, y: -.06, sp: 6, x0: .62 }, { s: .19, y: -.10, sp: 4.2, x0: .40 }];
+
+  // ---- the parade: the alphabet rides a wave and loops the loop ----
+  const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''), PCOL = ['#fff3e3', '#2a1d14', '#ffe08a', '#ff9ec4'];
+  const letters = ABC.map((c, i) => { const e = document.createElement('div'); e.className = 'L'; e.textContent = c; e.style.color = PCOL[i % 4]; e.dataset.k = (.92 + ((i * 37) % 11) / 11 * .2).toFixed(3); parade.appendChild(e); return e; });
+  const mctx = document.createElement('canvas').getContext('2d');
+  const meas = (txt, fs) => { mctx.font = `${fs}px Dipple`; return mctx.measureText(txt).width; };
+  let FS, R, Y0, SPAN, MARG, DU;
+    // the parade: each letter glides across the middle of the screen and does one springy hop on the way
+  const HOP = [.38, .56];
+  function pathAt(u) {
+    const x = -MARG + u * SPAN, k = (u - HOP[0]) / (HOP[1] - HOP[0]);
+    const up = k > 0 && k < 1 ? Math.sin(Math.PI * k) : 0;
+    const settle = k >= 1 && k < 1.35 ? Math.sin((k - 1) / .35 * Math.PI) * Math.exp(-(k - 1) * 6) : 0;   // a little overshoot after landing
+    return [x, Y0 - FS * .18 * up + FS * .03 * settle];
+  }
+  function hopScale(u) {
+    const k = (u - HOP[0]) / (HOP[1] - HOP[0]);
+    if (k > 0 && k < .5) { const s = Math.sin(Math.PI * k); return [1 - .05 * s, 1 + .08 * s]; }            // stretch going up
+    if (k >= .85 && k < 1.25) { const s = Math.sin((k - .85) / .4 * Math.PI); return [1 + .1 * s, 1 - .13 * s]; }   // squash as it lands
+    return [1, 1];
+  }
+
+
+  // ---- the grid: every character at once, pulled out of the page ----
+  const ALL = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:;!?\'"-–()&@#$%/*+=✦★✶✷✧'.split('');
+  const NARROW = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.split('');
+  const gridScene = $('#grid'), GCOL = i => i % 13 === 6 ? '#2a1d14' : i % 11 === 4 ? '#ff9ec4' : i % 7 === 2 ? '#ffe08a' : '#fff3e3';
+  let cells = [], hoverI = -1, hoverK = [];
+  function layoutGrid() {
+    const chars = W < 700 ? NARROW : ALL, n = chars.length;
+    const padL = W * .04, padR = W < 700 ? W * .04 : Math.max(W * .04, 70), padT = H * .06, padB = H * .06, aw = W - padL - padR, ah = H - padT - padB;
+    let best = null;   // the column count whose cells are closest to a glyph's shape (a little taller than wide), with the fewest empty cells
+    for (let c = 4; c <= 20; c++) { const r = Math.ceil(n / c), cw = aw / c, ch = ah / r, fs = Math.min(ch * .82, cw * 1.05), score = fs - (c * r - n) * .6; if (!best || score > best.score) best = { c, r, cw, ch, fs, score }; }
+    gridScene.innerHTML = ''; hoverK = [];
+    cells = chars.map((ch, i) => { const e = document.createElement('div'); e.className = 'G'; e.textContent = ch; e.style.color = GCOL(i); e.style.fontSize = best.fs + 'px'; gridScene.appendChild(e);
+      const c = i % best.c, r = (i / best.c) | 0, cx = padL + (c + .5) * best.cw, cy = padT + (r + .5) * best.ch;
+      const d = Math.hypot((cx - W / 2) / W, (cy - H / 2) / H) / .71; hoverK.push(0);   // 0 at the centre, 1 at the corners: the middle arrives first
+      return { e, cx, cy, w: meas(ch, best.fs), h: best.fs, d, cw: best.cw, ch: best.ch, cols: best.c, padL, padT }; });
+  }
+  gridScene.addEventListener('pointermove', e => { if (!cells.length) return; const c0 = cells[0], c = Math.floor((e.clientX - c0.padL) / c0.cw), r = Math.floor((e.clientY - c0.padT) / c0.ch), i = r * c0.cols + c; hoverI = c >= 0 && c < c0.cols && i >= 0 && i < cells.length ? i : -1; });
+  gridScene.addEventListener('pointerleave', () => { hoverI = -1; });
+
+  // ---- the goop: a liquid edge made of blobs, merged by the filter ----
+  function goopKit(g) {
+    const blobs = [], strands = [], bubbles = [], rect = document.createElementNS(SVGNS, 'rect'); g.appendChild(rect);
+    for (let i = 0; i < 40; i++) { const c = document.createElementNS(SVGNS, 'circle'); g.appendChild(c); blobs.push(c); }
+    for (let i = 0; i < 5; i++) { const e = document.createElementNS(SVGNS, 'ellipse'); g.appendChild(e); strands.push(e); }
+    for (let i = 0; i < 8; i++) { const c = document.createElementNS(SVGNS, 'circle'); g.appendChild(c); bubbles.push(c); }
+    return { g, rect, blobs, strands, bubbles };
+  }
+  const gooR = goopKit($('#gooRed')), gooY = goopKit($('#gooYellow'));
+  function goop(K, k, t, seed) {
+    if (k <= 0 || k >= 1) { K.g.style.display = 'none'; K.edge = k >= 1 ? -1e9 : 1e9; return; }
+    K.g.style.display = '';
+    const u = Math.min(W, H), live = Math.sin(Math.PI * clamp(k * 1.08)), lvl = lerp(H + u * .42, -u * .34, k);
+    K.edge = lvl - u * .06;   // roughly where the goop's surface is (the cursor reads this)
+    K.rect.setAttribute('x', -300); K.rect.setAttribute('y', lvl); K.rect.setAttribute('width', W + 600); K.rect.setAttribute('height', H + u + 600);
+    const n = Math.min(40, Math.ceil(W / (u * .085)) + 3);
+    K.blobs.forEach((c, i) => {
+      if (i >= n) { c.setAttribute('r', 0); return; }
+      const x = (i / (n - 1)) * (W + u * .2) - u * .1, r = u * (.065 + .045 * (.5 + .5 * Math.sin(i * 2.3 + seed)));
+      const bulge = u * (.03 + .09 * live * (.5 + .5 * Math.sin(t * (.9 + (i % 5) * .17) + i * 1.9 + seed)) + .07 * live * Math.max(0, Math.sin(i * .9 + k * 11 + seed)));
+      c.setAttribute('cx', x); c.setAttribute('cy', lvl - bulge + r * .4); c.setAttribute('r', r);
+    });
+    K.strands.forEach((e, i) => {   // thick jam pulling upward
+      const x = W * (.12 + i * .19 + .03 * Math.sin(seed + i)), st = u * .34 * live * (.4 + .6 * Math.max(0, Math.sin(t * .8 + i * 2.1 + seed)));
+      e.setAttribute('cx', x); e.setAttribute('cy', lvl - st * .55); e.setAttribute('rx', u * .028); e.setAttribute('ry', st * .55 + u * .03);
+    });
+    K.bubbles.forEach((c, i) => {   // little blobs that break free, rise, shrink and pop
+      const b = ((k * 3.2 + i / 8 + seed * .1) % 1), x = W * ((i * .137 + seed * .21) % 1);
+      const alive = k > .05 && k < .9 && b > .18;
+      c.setAttribute('cx', x + Math.sin(t * 2 + i) * u * .01); c.setAttribute('cy', lvl - u * .1 - (b - .18) * u * .55); c.setAttribute('r', alive ? u * .026 * Math.pow(1 - b, .55) : 0);
+    });
+  }
+
+  // ---- the water: blue rises with a glossy, goopy edge; a lighter band rides the waterline ----
+  const wHi = goopKit($('#waterHi')), wMain = goopKit($('#waterMain'));
+  wHi.bubbles.concat(wMain.bubbles).forEach(c => c.remove()); wHi.bubbles = wMain.bubbles = [];   // no round bubbles in the water
+  function water(k, t) {
+    const u = Math.min(W, H);
+    if (k <= 0 || k >= 1) { wHi.g.style.display = wMain.g.style.display = 'none'; return k >= 1 ? -1e9 : 1e9; }
+    wHi.g.style.display = wMain.g.style.display = '';
+    goop(wHi, k, t, 6.1); goop(wMain, k, t, 6.1);
+    const band = u * .035 * Math.sin(Math.PI * clamp(k * 1.05));   // the light band sits just above the deep blue
+    $('#waterMain').setAttribute('transform', `translate(0, ${band})`);
+    return wHi.edge;
+  }
+  // ---- hand-inked bubbles: only a handful, rising slowly, each pops at its own height (never over the words) ----
+  // the title's letters, each its own piece, laid out by the font itself (inline, so advances are the real ones)
+  const titleLetters = [];
+  'Download\nDipple today'.split('').forEach(ch => {
+    if (ch === '\n') { $('#dlTitle').appendChild(document.createElement('br')); return; }
+    const e = document.createElement('span'); e.setAttribute('aria-hidden', 'true');
+    if (ch === ' ') { e.textContent = ' '; $('#dlTitle').appendChild(e); return; }
+    e.className = 'tl'; e.textContent = ch; e.dataset.tilt = (Math.random() - .5) * 40; $('#dlTitle').appendChild(e); titleLetters.push({ e, prev: 0 });
+  });
+  let btnLetters = [];
+  const popS = k => k <= 0 ? 0 : k < .55 ? 1.25 * out(k / .55) : k < 1 ? 1.25 - .25 * out((k - .55) / .45) : 1;
+  const landSq = k => k > .5 && k < .95 ? Math.sin((k - .5) / .45 * Math.PI) : 0;
+  function plip(x, y, size) { const im = document.createElement('img'); im.className = 'plip'; im.alt = ''; im.src = 'art/stars/sparkle-cream-96.webp';
+    Object.assign(im.style, { left: (x - size / 2) + 'px', top: (y - size / 2) + 'px', width: size + 'px' }); sea.appendChild(im); setTimeout(() => im.remove(), 520); }
+  const BUB = [], seaBub = $('#seaBub'); let popN = 0, lastT = 0;
+  const bubSrc = (kind, col, px) => `art/bubbles/${kind}-${col}-${px <= 40 ? 48 : px <= 90 ? 96 : 192}.webp`;
+  for (let i = 0; i < 8; i++) { const im = document.createElement('img'); im.alt = ''; im.style.display = 'none'; seaBub.appendChild(im); BUB.push({ im, state: 'wait', wait: Math.random() * 3, crab: i >= 6 }); }
+  function spawn(b, lvl) {
+    const u = Math.min(W, H), big = !b.crab && Math.random() < .2;
+    b.size = u * (b.crab ? .04 + Math.random() * .02 : big ? .11 + Math.random() * .03 : .05 + Math.random() * .03);
+    b.col = Math.random() < .7 ? 'cream' : 'blue'; b.kind = !b.crab && !big && Math.random() < .15 ? 'cluster' : 'bubble';
+    const side = Math.random() < .92;   // nearly all go up the sides, clear of the button
+    b.x = side ? (Math.random() < .5 ? W * (.03 + Math.random() * .2) : W * (.77 + Math.random() * .17)) : W * (.3 + Math.random() * .4);
+    b.y = H + b.size; b.sp = H * (.08 + Math.random() * .05) * (big ? .8 : 1); b.ph = Math.random() * 6; b.popY = Math.random() < .35 ? H * (.15 + Math.random() * .7) : H * (.02 + Math.random() * .06);   // most reach the top; a third pop partway, anywhere up the screen
+    b.im.src = bubSrc(b.kind, b.col, b.size); b.im.style.width = b.size + 'px'; b.state = 'rise';
+  }
+  function bubbles(dt, lvl, crabAt, falling, textBox) {
+    for (const b of BUB) {
+      if (b.state === 'wait') { b.im.style.display = 'none'; b.wait -= dt;
+        if (b.wait <= 0) { if (b.crab) { if (!falling) { b.wait = .5; continue; } spawn(b, lvl); b.x = crabAt[0] + (Math.random() - .5) * CB * .4; b.y = crabAt[1]; b.popY = b.y - H * (.08 + Math.random() * .12); } else spawn(b, lvl); }
+        continue; }
+      if (b.state === 'rise') {
+        b.y -= b.sp * (1 + .3 * Math.sin(b.y * .006 + b.ph)) * dt; const x = b.x + Math.sin(b.y * .012 + b.ph) * b.size * .5; b.cx = x;
+        const inText = textBox && x + b.size / 2 > textBox.left && x - b.size / 2 < textBox.right && b.y - b.size / 2 < textBox.bottom && b.y + b.size / 2 > textBox.top;
+        if (b.y < b.popY || inText || b.y < lvl + b.size) { b.state = 'pop'; b.t = 0; b.im.src = bubSrc('pop', b.col, b.size) + '?p=' + (++popN); }
+        b.im.style.display = b.y > lvl + b.size * .3 ? 'block' : 'none';
+        b.im.style.transform = `translate3d(${x - b.size / 2}px, ${b.y - b.size / 2}px, 0)`;
+      } else { b.t += dt; if (b.t > 1.4) { b.state = 'wait'; b.wait = b.crab ? .8 + Math.random() * 1.2 : 1 + Math.random() * 3.5; } }
+    }
+  }
+  // click (or tap) a bubble and it pops right there
+  function popAt(px, py) {
+    let hit = null, best = 1e9;
+    for (const b of BUB) { if (b.state !== 'rise' || b.im.style.display === 'none' || b.cx == null) continue;
+      const d = Math.hypot(px - b.cx, py - b.y), r = b.size * .62 + 10;   // a little forgiving, so small ones are easy to catch
+      if (d < r && d < best) { best = d; hit = b; } }
+    if (!hit) return false;
+    hit.state = 'pop'; hit.t = 0; hit.im.src = bubSrc('pop', hit.col, hit.size) + '?p=' + (++popN);
+    plip(hit.cx, hit.y, hit.size * 1.1);
+    return true;
+  }
+  addEventListener('pointerdown', e => { if (!e.target.closest('a, button, #mp')) popAt(e.clientX, e.clientY); }, true);
+  window.__popAt = popAt;
+  const waterLevel = k => { const u = Math.min(W, H); return lerp(H + u * .42, -u * .34, k); };
+
+  // ---- the crab ----
+  const sea = $('#sea'), seaCrab = $('#seaCrab'), dlTitle = $('#dlTitle'), dlBtn = $('#dlBtn'); let waterEdge = 1e9;
+
+  const crab = $('#crab'), shell = $('#shell'), eyes = $('#eyes'), clawL = $('#clawL'), clawR = $('#clawR'), legsL = $('#legsL'), legsR = $('#legsR');
+  const WORD = 'Dipple'.split(''), wordEls = WORD.map(c => { const e = document.createElement('div'); e.className = 'W'; e.textContent = c; crabScene.insertBefore(e, $('#crab')); return e; });
+  const SCATTER = [[-.12, .16, -38, 1.15], [.86, .1, 24, .8], [1.12, .42, 50, 1.05], [.08, .56, -20, .9], [.58, -.16, 70, 1.1], [.92, .64, -32, .85]];   // x, y, angle, size
+  const GRAB = [.30, .40, .50, .60, .70, .80], PULL = .085;
+  let CB, CBH, CX, CY, slots = [], WFS;
+  const CLAW_REST = Math.atan2(-437, -333);   // the drawn claw already points up-left; reaching rotates it from there
+  function layoutCrab() {
+    CB = Math.min(W * (W < 700 ? .74 : .46), H * .4); CBH = CB * 719 / 900;
+    crab.style.width = CB + 'px'; crab.style.height = CBH + 'px';
+    const put = (el, w, ax, ay, bx, by) => { const h = w * el.naturalHeight / el.naturalWidth; Object.assign(el.style, { width: w + 'px', left: (bx * CB - ax * w) + 'px', top: (by * CBH - ay * h) + 'px', transformOrigin: `${ax * 100}% ${ay * 100}%` }); };
+    put(shell, CB, .5, .5, .5, .5); put(eyes, CB, .5, .5, .5, .5); eyes.style.transformOrigin = '50% 50%';
+    put(clawL, CB * .62, .875, .908, .2, .58); put(clawR, CB * .62, .125, .908, .8, .58);
+    put(legsL, CB * .66, .904, .361, .22, .74); put(legsR, CB * .66, .071, .441, .78, .74);
+    CX = W / 2 - CB / 2; CY = H - CBH * 1.02;
+    // where each letter of the wordmark ends up: measured from a hidden copy of the word
+    WFS = Math.min(H * .36, W * .9 / (meas('Dipple', 100) / 100));
+    const word = 'Dipple', rw = meas(word, WFS), ox = (W - rw) / 2, base = H * .58;
+    slots = word.split('').map((ch, i) => { const a = meas(word.slice(0, i), WFS), b = meas(word.slice(0, i + 1), WFS); return [ox + (a + b) / 2, base - WFS * .33]; });
+    wordEls.forEach((e, i) => { const f = WFS * SCATTER[i][3]; e.style.fontSize = f + 'px'; e.dataset.w = meas(e.textContent, f); e.dataset.h = f; });
+  }
+
+  // ---- layout everything for this screen ----
+  function layout() {
+    W = stage.clientWidth; H = stage.clientHeight;
+    { const fs = Math.min(W * (W < 700 ? .88 : .76) / (meas('Dipple', 100) / 100), H * .62); title.style.fontSize = fs + 'px';
+      mctx.font = `${fs}px Dipple`; const m = mctx.measureText('Dipple'), cap = mctx.measureText('D').actualBoundingBoxAscent;
+      const baseInBox = (fs - (m.fontBoundingBoxAscent + m.fontBoundingBoxDescent)) / 2 + m.fontBoundingBoxAscent;   // where the baseline sits in a line-height:1 box
+      title.style.top = (H / 2 + cap / 2 - baseInBox) + 'px'; }   // the cap-to-baseline ink is centred on the screen
+    $('#spacer').style.height = (SMAX + 1) * innerHeight + 'px';
+    $('#goop').setAttribute('viewBox', `0 0 ${W} ${H}`); $('#gooBlur').setAttribute('stdDeviation', Math.max(9, Math.min(W, H) * .02));
+    SW = Math.max(W * 1.04, H * 1.3);
+    const set = (el, w) => { el.style.width = w + 'px'; el.style.marginLeft = (-w / 2) + 'px'; };
+    set(far, SW); set(mid, SW); set(near, SW);
+    sz.far = SW * 837 / 2560; sz.mid = SW * 911 / 2560; sz.near = SW * 270 / 2560;
+    const rh = Math.min(H * .44, SW * .5 * 1322 / 2400), rw = rh * 2400 / 1322; set(river, rw); river.style.height = rh + 'px';
+    sz.moon = Math.min(W, H) * .17; moon.style.width = sz.moon + 'px';
+    plants.forEach((el, i) => { el.style.height = H * PL[i].h + 'px'; el.style.width = 'auto'; });
+    clouds.forEach((el, i) => { el.style.height = Math.min(W, H) * CL[i].s * 1.6 + 'px'; el.style.width = 'auto'; });
+    // parade: huge letters (about half the screen height), a loop that spans most of the screen
+    FS = Math.min(H * .36, W * .5); Y0 = H * .55;   // ring version: big, but a little smaller so a stretch of the ring shows at once
+    MARG = FS * .75; SPAN = W + MARG * 2; DU = Math.max(.3, FS * 1.25 / SPAN);
+    letters.forEach(e => { const f = FS * e.dataset.k; e.style.fontSize = f + 'px'; e.dataset.w = meas(e.textContent, f); e.dataset.h = f; });
+    placeStars(skyStars); placeStars(paradeStars); placeStars(crabStars); $('#seaFill').setAttribute('y2', H);
+    { const lw = Math.max(meas('Download', 100), meas('Dipple today', 100)) / 100, fs = Math.min(W * .88 / lw, H * .3); $('#dlTitle').style.fontSize = fs + 'px';
+      const bf = Math.max(30, fs * .36), bw = meas('Download ✦', bf) + bf * 1.6, bh = bf * 1.7, sv = $('#dlSvg');
+      sv.setAttribute('width', bw); sv.setAttribute('height', bh); sv.setAttribute('viewBox', `0 0 ${bw} ${bh}`);
+      const mr = $('#dlMR'); mr.setAttribute('x', -bw); mr.setAttribute('y', -bh); mr.setAttribute('width', bw * 3); mr.setAttribute('height', bh * 3);
+      // the pill, inked with the same pen as the letters: a capsule whose edge wobbles with seeded low noise, leaning like the type
+      const r = bh / 2, straight = bw - bh, per = 2 * straight + 2 * Math.PI * r, n = Math.round(per / 3), amp = bf * .042, lean = Math.tan(-7 * Math.PI / 180);
+      const k = 40 / bf, noise = d => Math.sin(d * .05 * k + 1.3) * .5 + Math.sin(d * .12 * k + 4.1) * .32 + Math.sin(d * .23 * k + .7) * .14 + Math.sin(d * .55 * k + 2.2) * .1 + Math.sin(d * 1.1 * k + 5.3) * .05;   // soft, wide bumps like the letters' edges
+      let path = '';
+      for (let i = 0; i < n; i++) {
+        let d = i / n * per, x, y, nx, ny;
+        if (d < straight) { x = r + d; y = 0; nx = 0; ny = -1; }
+        else if ((d -= straight) < Math.PI * r) { const a = -Math.PI / 2 + d / r; x = bw - r + Math.cos(a) * r; y = r + Math.sin(a) * r; nx = Math.cos(a); ny = Math.sin(a); }
+        else if ((d -= Math.PI * r) < straight) { x = bw - r - d; y = bh; nx = 0; ny = 1; }
+        else { d -= straight; const a = Math.PI / 2 + d / r; x = r + Math.cos(a) * r; y = r + Math.sin(a) * r; nx = Math.cos(a); ny = Math.sin(a); }
+        const o = noise(i / n * per) * amp; x += nx * o; y += ny * o; x += (y - bh / 2) * lean;
+        path += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
+      }
+      $('#dlPill').setAttribute('d', path + 'Z');
+      const word = 'Download ✦', x0 = (bw - meas(word, bf)) / 2, base = bh / 2 + bf * .34, g = $('#dlLetters'); g.innerHTML = ''; btnLetters = [];
+      word.split('').forEach((ch, i) => { if (ch === ' ') return; const a = meas(word.slice(0, i), bf), w = meas(ch, bf), te = document.createElementNS(SVGNS, 'text');
+        te.setAttribute('x', x0 + a); te.setAttribute('y', base); te.setAttribute('font-size', bf); te.textContent = ch; g.appendChild(te);
+        btnLetters.push({ te, cx: x0 + a + w / 2, cy: base - bf * .35, tilt: (Math.random() - .5) * 30 }); }); }
+    layoutGrid();
+    layoutCrab();
+  }
+
+  // ---- scroll, smoothed ----
+  let S = 0, St = 0;
+  const target = () => { St = clamp(scrollY / innerHeight, 0, SMAX); };
+  addEventListener('scroll', target, { passive: true }); addEventListener('resize', () => { layout(); target(); });
+
+  const T0 = performance.now();
+  function frame(now) {
+    const t = RM ? 0 : (now - T0) / 1000;
+    S = RM ? St : lerp(S, St, .085);
+    if (Math.abs(S - St) < .0005) S = St;
+    // reduced motion: each scene jumps to its finished frame
+    const fin = (a, b) => RM ? (S >= a ? 1 : 0) : seg(S, a, b);
+
+    // ===== scene 1 · the world =====
+    const p = RM ? (S < T.red[0] ? 1 : 1) : seg(S, T.world[0], T.world[1]);
+    const showWorld = S < T.red[1]; world.style.display = showWorld ? '' : 'none';
+    if (showWorld) {
+      const fk = back(seg(p, .08, .24)), mk = back(seg(p, .13, .30)), nk = back(seg(p, .18, .33));
+      far.style.transform = `translate3d(${(1 - fk) * -6}vw, ${(1 - fk) * (sz.far + H * .3) - H * .2}px, 0)`; far.style.opacity = clamp(fk * 3);
+      mid.style.transform = `translate3d(${(1 - mk) * 5}vw, ${(1 - mk) * (sz.mid + H * .1) + H * .02}px, 0)`; mid.style.opacity = clamp(mk * 3);
+      near.style.transform = `translate3d(0, ${(1 - nk) * (sz.near + 40)}px, 0)`;
+      const rk = seg(p, .26, .46); river.style.clipPath = `inset(0 0 ${(1 - out(rk)) * 100}% 0)`; river.style.transform = `translate3d(0, ${H * .015}px, 0)`; river.style.opacity = rk > 0 ? 1 : 0;
+      if (!RM && rk > 0) document.getElementById('flowT').setAttribute('baseFrequency', `${(.012 + Math.sin(t * .35) * .002).toFixed(4)} ${(.05 + Math.sin(t * .5 + 1) * .008).toFixed(4)}`);
+      plants.forEach((el, i) => {
+        const P = PL[i], g = seg(p, P.t, P.t + .14), gk = g >= 1 ? 1 : g <= 0 ? 0 : 1 - Math.exp(-5 * g) * Math.cos(g * 8);
+        const x = W / 2 + (P.x - .5) * Math.min(SW, W * 1.04) - el.offsetWidth / 2, y = H - el.offsetHeight - H * .035;
+        const sway = (P.amp * Math.sin(t * P.sp + P.ph) + (P.soft ? P.amp * .35 * Math.sin(t * P.sp * 2.3 + P.ph) : 0)) * clamp(g * 1.5);
+        const wob = g > 0 && g < 1 ? (1 - g) * Math.sin(g * 18) * 5 : 0;
+        el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${sway + wob}deg) scale(${.9 + .1 * gk}, ${Math.max(.001, gk)})`; el.style.opacity = g > 0 ? 1 : 0;
+      });
+      const mo = out(seg(p, .56, .76)), farTop = H - (sz.far - H * .2) * .55;
+      moon.style.transform = `translate3d(${W - sz.moon - W * .06}px, ${lerp(farTop + sz.moon * .4, W < 700 ? H * .27 : H * .12, mo)}px, 0) rotate(${(1 - mo) * -18}deg)`; moon.style.opacity = mo > 0 ? 1 : 0;
+      skyStars.forEach((e, i) => { const k = seg(p, .7 + i * .018, .76 + i * .018), s = pop(k);
+        e.style.transform = `translate3d(${e.dataset.px}px, ${e.dataset.py}px, 0) scale(${s}) rotate(${(1 - s) * 40 + Math.sin(t * .4 + i) * 6}deg)`; e.style.opacity = clamp(k * 3); });
+      const ck = out(seg(p, .1, .3));
+      clouds.forEach((el, i) => { const C = CL[i], span = W + el.offsetWidth * 2, x = ((C.x0 * W + t * C.sp) % span + span) % span - el.offsetWidth;
+        el.style.transform = `translate3d(${x}px, ${C.y * H + Math.sin(t * (.6 + i * .17) + i) * 6 - (1 - ck) * 200}px, 0) rotate(${Math.sin(t * (.5 + i * .13) + i * 2) * 2}deg)`; el.style.opacity = ck; });
+      const tk = seg(p, .84, .98); title.style.opacity = out(tk); title.style.transform = `translate3d(0, ${(1 - back(tk)) * 40}px, 0) scale(${lerp(.92, 1, out(tk))})`;
+    }
+
+    // ===== the red goop rises and takes the whole page =====
+    const kr = RM ? 0 : seg(S, T.red[0], T.red[1]);
+    goop(gooR, kr, t, 0);
+
+    // ===== scene 2 · the parade =====
+    const showParade = S >= T.red[1] && S < T.yellow[1]; parade.style.display = showParade ? 'block' : 'none';
+    if (showParade) {
+      // RING VERSION: the whole alphabet is strung on one giant wheel whose top arc crosses the screen;
+      // scrolling turns the wheel, so the letters travel together as one string instead of one by one
+      const q = RM ? .4 : seg(S, T.parade[0], T.parade[1]);
+      const R = Math.max(W * .8, H * 1.15), cx = W / 2, cy = H * .56 + R;                  // centre far below the screen
+      const sp = (FS * .82) / R, amax = Math.asin(Math.min(1, (W / 2 + FS) / R)) + .05;   // angle between letters; how far round is off-screen
+      const a0 = amax - q * (2 * amax + (letters.length - 1) * sp);                      // the lead letter enters on the right and the last leaves on the left
+      letters.forEach((e, i) => {
+        const a = a0 + i * sp; if (a > amax || a < -amax) { e.style.visibility = 'hidden'; return; } e.style.visibility = 'visible';
+        const x = cx + R * Math.sin(a), y = cy - R * Math.cos(a);
+        const tilt = a * 180 / Math.PI * .6;   // leans gently with the curve of the wheel, not fully, so it stays calm
+        // a slow, soft rise as each letter passes over the top of the wheel, then it settles back (tied to the scroll, so it's never sudden)
+        const near = Math.cos(Math.min(Math.PI, Math.abs(a) / (amax * .55) * Math.PI)) * .5 + .5, lift = near * near * (3 - 2 * near);
+        const centre = Math.pow(Math.max(0, Math.cos(Math.min(Math.PI / 2, Math.abs(a) / (amax * .3) * Math.PI / 2))), 1.5);   // 1 right at the centre, fading out quickly to either side
+        const up = lift * FS * .16, edge = Math.min(1, Math.abs(a) / amax), grow = (1 + lift * .07 + centre * .22) * (1 - edge * edge * .18);   // grows into the centre, then shrinks a little smaller than normal as it heads out
+        e.style.transform = `translate3d(${x - e.dataset.w / 2}px, ${y - e.dataset.h * .58 - up}px, 0) rotate(${tilt}deg) scale(${grow})`;
+      });
+      const push = RM ? (S >= T.grid[0] ? 1 : 0) : out(seg(S, T.grid[0], T.grid[0] + .9));   // the camera pushes forward into the page
+      paradeStars.forEach((e, i) => { const px = +e.dataset.px, py = +e.dataset.py, zx = (px - W / 2) * push * 2.4, zy = (py - H / 2) * push * 2.4;
+        e.style.transform = `translate3d(${px + zx}px, ${py + zy}px, 0) rotate(${Math.sin(t * .5 + i) * 14}deg) scale(${(.9 + .1 * Math.sin(t * 1.3 + i * 2)) * (1 + push * 3)})`; e.style.opacity = 1 - push; });
+    }
+
+    // ===== the grid: pulled into the page =====
+    const showGrid = S >= T.grid[0] && S < T.yellow[1]; gridScene.style.display = showGrid ? 'block' : 'none';
+    if (showGrid) {
+      const gz = RM ? 1 : seg(S, T.grid[0] + .15, T.grid[0] + 1.5);
+      cells.forEach((c, i) => {
+        const k = clamp((gz - c.d * .5) / .5), kk = back(k), land = k > .75 && k < 1 ? Math.sin((k - .75) / .25 * Math.PI) : 0;
+        hoverK[i] = lerp(hoverK[i], i === hoverI && k >= 1 ? 1 : 0, .2);
+        const x = lerp(W / 2 + (c.cx - W / 2) * .12, c.cx, kk), y = lerp(H / 2 + (c.cy - H / 2) * .12, c.cy, kk) - hoverK[i] * c.h * .14;
+        const sc = lerp(.12, 1, kk) * (1 + hoverK[i] * .22);
+        c.e.style.opacity = clamp(k * 2.5);
+        c.e.style.transform = `translate3d(${x - c.w / 2}px, ${y - c.h * .58}px, 0) scale(${sc * (1 + .1 * land)}, ${sc * (1 - .14 * land)})`;
+      });
+    }
+
+    // ===== the yellow goop rises over the parade =====
+    goop(gooY, RM ? 0 : seg(S, T.yellow[0], T.yellow[1]), t, 3.7);
+
+    // ===== scene 3 · the crab builds the wordmark =====
+    const showCrab = S >= T.yellow[1]; crabScene.style.display = showCrab ? 'block' : 'none';
+    if (showCrab) {
+      const c = RM ? 1 : seg(S, T.crab[0], T.crab[1]);
+      const arrive = out(seg(c, 0, .22)), walking = c < .22 ? 1 : 0;
+      const bob = Math.sin(c * 90) * 6 * (1 - arrive) + Math.sin(t * 1.6) * 3;
+      crab.style.transform = `translate3d(${CX}px, ${CY + (1 - arrive) * (H - CY + CBH * 1.3) + bob}px, 0)`;
+      const step = Math.sin(c * 110) * 9 * (1 - arrive) + Math.sin(t * 2.2) * 1.5;
+      legsL.style.transform = `rotate(${step}deg)`; legsR.style.transform = `rotate(${-step}deg)`;
+      eyes.style.transform = `rotate(${Math.sin(t * 1.3) * 3}deg) translateY(${Math.sin(t * 2.1) * 2}px)`;
+      // claws: each one reaches for its letters, pinches, and pulls them home
+      const reach = { L: 0, R: 0 }, pinch = { L: 0, R: 0 };
+      wordEls.forEach((e, i) => {
+        const g0 = GRAB[i], side = i < 3 ? 'L' : 'R', sc = SCATTER[i];
+        const sxp = W * sc[0], syp = H * sc[1], drift = c < g0 ? 1 : 0;
+        // first they tumble in from off-screen, each from the edge nearest its spot, landing where the claw will find it
+        const ent = RM ? 1 : out(seg(c, .02 + i * .035, .2 + i * .035)), dxe = sxp - W / 2, dye = syp - H * .45, dl = Math.hypot(dxe, dye) || 1, far = Math.max(W, H) * .9 * (1 - ent);
+        const hx = sxp + dxe / dl * far + Math.sin(t * .6 + i * 1.7) * 12 * drift, hy = syp + dye / dl * far + Math.sin((1 - ent) * Math.PI) * -H * .12 + Math.cos(t * .5 + i) * 10 * drift;
+        const spinIn = (1 - ent) * (i % 2 ? 1 : -1) * 220;
+        const k = seg(c, g0, g0 + PULL), kk = back(k), [tx, ty] = slots[i];
+        const x = lerp(hx, tx, kk), y = lerp(hy, ty, kk), rot = lerp(sc[2] + spinIn + Math.sin(t * .4 + i) * 6 * drift, 0, out(k)), size = lerp(sc[3], 1, out(k));
+        const land = k > .7 && k < 1 ? Math.sin((k - .7) / .3 * Math.PI) : 0;
+        e.style.transform = `translate3d(${x - e.dataset.w / 2}px, ${y - e.dataset.h * .58}px, 0) rotate(${rot}deg) scale(${size / sc[3] * sc[3] * (1 + .1 * land) / sc[3]}, ${size / sc[3] * (1 - .14 * land)})`;
+        // the claw leans toward the letter it's about to grab, then swings back as it pulls
+        const pre = seg(c, g0 - .06, g0), post = 1 - seg(c, g0, g0 + PULL);
+        const amt = c < g0 ? out(pre) : post; if (amt > reach[side]) { reach[side] = amt;
+          const bx = CX + (side === 'L' ? .2 : .8) * CB, by = CY + .58 * CBH, want = Math.atan2(hy - by, hx - bx);
+          reach[side + 'a'] = side === 'L' ? want - CLAW_REST : want - (Math.PI - CLAW_REST); }
+        if (c >= g0 && c < g0 + .03) pinch[side] = Math.sin((c - g0) / .03 * Math.PI);
+      });
+      const idleL = Math.max(0, Math.sin(t * 1.1)) ** 8 * 7, idleR = Math.max(0, Math.sin(t * 1.1 + 2)) ** 8 * 7;
+      const angL = clamp((reach.La || 0) * 180 / Math.PI, -50, 50) * reach.L, angR = clamp((reach.Ra || 0) * 180 / Math.PI, -50, 50) * reach.R;
+      clawL.style.transform = `rotate(${angL + pinch.L * 7 - idleL}deg) scale(${1 - pinch.L * .06})`;
+      clawR.style.transform = `rotate(${angR - pinch.R * 7 + idleR}deg) scale(${1 - pinch.R * .06})`;
+      crabStars.forEach((e, i) => { const k = seg(c, .82 + i * .025, .88 + i * .025), s = RM ? 1 : pop(k);
+        e.style.transform = `translate3d(${e.dataset.px}px, ${e.dataset.py}px, 0) scale(${s}) rotate(${Math.sin(t * .5 + i) * 14}deg)`; e.style.opacity = RM ? 1 : clamp(k * 3); });
+    }
+
+    // ===== scene 4 · splash! the crab sinks through the blue =====
+    const inSea = RM ? S >= T.water[1] : S >= T.water[0];
+    sea.style.display = inSea ? 'block' : 'none';
+    if (inSea) {
+      const u = Math.min(W, H), wk = RM ? 1 : seg(S, T.water[0], T.water[1]), sk = RM ? 1 : seg(S, T.sea[0], T.sea[1]);
+      if (crab.parentElement !== seaCrab) seaCrab.appendChild(crab);
+      sea.classList.toggle('full', wk >= 1); crabScene.style.visibility = wk >= 1 ? 'hidden' : 'visible';
+      waterEdge = water(wk, t);
+      const lvl = wk >= 1 ? -1e9 : waterLevel(wk);
+      // he's lifted a little as the water takes him, then drifts and falls slowly out of the bottom
+      const liftY = Math.max(H * .2, Math.min(CY, lvl - CBH * .55)), under = clamp((CY - liftY) / (H * .25));
+      const fall = RM ? 1 : (S < T.sea[0] ? 0 : seg(sk, 0, .62)), fe = fall * fall * (3 - 2 * fall);
+      const cy = lerp(S < T.sea[0] ? liftY : H * .2, H + CBH * .4, fe), drift = RM ? 0 : Math.sin(t * .7) * W * .03 * Math.max(under, fall) + Math.sin(fall * 5) * W * .06;
+      const sc = lerp(1, W < 700 ? .78 : .84, Math.max(under, fall)), act = Math.max(under, fall);
+      const rock = (RM ? 0 : Math.sin(t * .9) * 7 + Math.sin(fall * 6) * 6) * act, bobY = RM ? 0 : Math.sin(t * 1.2) * 10 * act;
+      crab.style.transformOrigin = '50% 50%'; crab.style.visibility = fall >= 1 ? 'hidden' : 'visible';
+      crab.style.transform = `translate3d(${CX + drift}px, ${cy + bobY}px, 0) rotate(${rock}deg) scale(${sc})`;
+      if (!RM) { const pad = Math.sin(t * 2.2) * 12 * act; legsL.style.transform = `rotate(${pad}deg)`; legsR.style.transform = `rotate(${-pad}deg)`;
+        eyes.style.transform = `rotate(${Math.sin(t * 1.7) * 7}deg) translateY(${Math.sin(t * 2.6) * 3}px)`;
+        clawL.style.transform = `rotate(${Math.sin(t * 1.1) * 8 - 6}deg)`; clawR.style.transform = `rotate(${-Math.sin(t * 1.1 + 1) * 8 + 6}deg)`; }
+      // the words and the button appear once the crab has sunk below them
+      const tk = RM ? 1 : seg(sk, .4, .74), bk = RM ? 1 : seg(sk, .76, .97);
+      const nT = titleLetters.length;
+      titleLetters.forEach((L, i) => {
+        const st = i / nT * .82, k = RM ? 1 : clamp((tk - st) / .18), s = popS(k), q = landSq(k), rot = +L.e.dataset.tilt * (1 - out(clamp(k)));
+        L.e.style.transform = `rotate(${rot}deg) scale(${s * (1 + .1 * q)}, ${s * (1 - .13 * q)})`;
+        if (!RM && L.prev < .55 && k >= .55) { const r = L.e.getBoundingClientRect(); plip(r.right - r.width * .1, r.top + r.height * .15, Math.min(W, H) * .06); }
+        L.prev = k;
+      });
+      // the pill springs up from a blob, then its letters cut through one at a time
+      const pk = RM ? 1 : clamp(bk / .35), ps = popS(pk), pq = landSq(pk);
+      dlBtn.style.visibility = pk > 0 ? 'visible' : 'hidden'; dlBtn.style.pointerEvents = pk > .6 ? 'auto' : 'none'; dlBtn.dataset.on = pk > .6 ? 1 : 0;
+      $('#dlSvg').style.transform = `scale(${ps * lerp(.3, 1, out(pk)) * (1 + .12 * pq)}, ${ps * (1 - .15 * pq)})`;
+      btnLetters.forEach((L, j) => {
+        const st = .32 + j / btnLetters.length * .5, k = RM ? 1 : clamp((bk - st) / .16), s = popS(k), q = landSq(k), rot = L.tilt * (1 - out(k));
+        L.te.setAttribute('transform', `translate(${L.cx} ${L.cy}) rotate(${rot}) scale(${s * (1 + .1 * q)} ${s * (1 - .13 * q)}) translate(${-L.cx} ${-L.cy})`);
+      });
+      // "Visit jessa.art for more" pops in last, once the button's letters are through
+      { const mk = RM ? 1 : clamp((bk - .86) / .14), ms = popS(mk), mq = landSq(mk), ml = $('#moreLink');
+        ml.style.visibility = mk > 0 ? 'visible' : 'hidden'; ml.style.pointerEvents = mk > .6 ? 'auto' : 'none';
+        ml.style.transform = `scale(${ms * (1 + .1 * mq)}, ${ms * (1 - .13 * mq)}) rotate(${-4 * (1 - out(mk))}deg)`; }
+      if (!RM && wk > .12) {
+        let box = null; if (bk > 0) { const c = dlBtn.getBoundingClientRect(), m = Math.min(W, H) * .03; box = { left: c.left - m, right: c.right + m, top: c.top - m, bottom: c.bottom + m }; }   // they rise behind the words; only the button pops them
+        bubbles(Math.min(.1, Math.max(0, t - lastT)), lvl, [CX + drift + CB / 2, cy + bobY + CBH * .25], fall > 0 && fall < .9, box);
+      } else seaBub.style.display = 'none';
+      if (!RM && wk > .12) seaBub.style.display = '';
+      lastT = t;
+    } else {
+      waterEdge = 1e9; crabScene.style.visibility = 'visible';
+      if (crab.parentElement !== crabScene) crabScene.appendChild(crab);
+      crab.style.visibility = '';
+      crab.style.transformOrigin = '';
+    }
+    requestAnimationFrame(frame);
+  }
+  document.fonts.load('40px Dipple').then(() => Promise.all($$('#crab img').map(i => i.decode().catch(() => {})))).then(() => { layout(); target(); S = St; requestAnimationFrame(frame); });
+  // what the scene shows at a point on screen: 'red', 'yellow' or 'other' (the cursor never wears the same colour)
+  const inRect = (el, x, y) => { const r = el.getBoundingClientRect(); return x > r.left && x < r.right && y > r.top && y < r.bottom; };
+  const colourAt = (x, y) => {
+    if (S < T.red[0]) return 'other';
+    if (S < T.red[1]) return y > gooR.edge ? 'red' : 'other';
+    if (S < T.yellow[0]) return 'red';
+    if (S < T.yellow[1]) return y > gooY.edge ? 'yellow' : 'red';
+    if (S >= T.water[0] && (S >= T.water[1] || y > waterEdge)) {
+      if (inRect(dlBtn, x, y) && dlBtn.dataset.on === '1') return 'cream';
+      { const m = document.getElementById('miniDl'); if (m && m.classList.contains('show') && inRect(m, x, y)) return 'cream'; }   // the little corner button is cream too   // white pill: a red star
+      if (inRect($('#shell'), x, y) || inRect($('#clawL'), x, y) || inRect($('#clawR'), x, y)) return 'red';
+      return 'blue';
+    }
+    if (inRect($('#shell'), x, y) || inRect($('#clawL'), x, y) || inRect($('#clawR'), x, y) || wordEls.some(e => { const rg = document.createRange(); rg.selectNodeContents(e); const r = rg.getBoundingClientRect(); return x > r.left && x < r.right && y > r.top && y < r.bottom; })) return 'red';
+    return 'yellow';
+  };
+  window.__dip = { T, SMAX, colourAt, S: () => S };
+})();
+</script>
+<script>
+/* ===== the Dipple star cursor and the scroll bar (ported from cursor-lab.html) ===== */
+(() => {
+  const SCROLLBAR = 'stalk';   // 'goop' | 'rail' | 'stalk'  (Jessa picked the fuzzy stalk)
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches, FINE = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const $ = s => document.querySelector(s);
+  // --- cursor: desktop only; on touch screens there is none ---
+  if (FINE) {
+    document.body.classList.add('has-cur');
+    const cur = document.createElement('div'); cur.id = 'cur'; cur.innerHTML = '<span class="c-star">★</span>'; document.body.appendChild(cur);
+    let mx = innerWidth / 2, my = innerHeight / 2, x = mx, y = my, last = 0, hasMoved = false; cur.style.opacity = 0;
+    const tint = () => { const c = window.__dip && window.__dip.colourAt ? window.__dip.colourAt(mx, my) : 'other'; cur.classList.toggle('on-yellow', c === 'yellow' || c === 'cream'); cur.classList.toggle('on-red', c === 'red'); cur.classList.toggle('on-blue', c === 'blue'); };
+    const trailSet = () => cur.classList.contains('on-blue') ? ['butter', 'cream', 'pink'] : cur.classList.contains('on-yellow') ? ['coral', 'pink', 'cream'] : cur.classList.contains('on-red') ? ['butter', 'cream', 'pink'] : ['butter', 'pink', 'cream', 'mint'];
+    const spark = (src, px, py) => { const t = document.createElement('img'); t.className = 'trail'; t.src = src; t.style.left = px + 'px'; t.style.top = py + 'px'; document.body.appendChild(t); setTimeout(() => t.remove(), 900); };
+    addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; mx = e.clientX; my = e.clientY; if (!hasMoved) { hasMoved = true; x = mx; y = my; cur.style.opacity = 1; }
+      cur.classList.toggle('hot', !!e.target.closest('a, button, .moonh, .stop, .sb')); tint();
+      if (!RM && performance.now() - last > 70) { last = performance.now(); const s = trailSet(); spark(`art/stars/twinkle-${s[Math.floor(Math.random() * s.length)]}-96.webp`, mx, my); } });
+    addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; cur.classList.add('down');
+      if (!RM) for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2; spark(`art/stars/sparkle-${cur.classList.contains('on-yellow') ? 'coral' : 'butter'}-96.webp`, mx + Math.cos(a) * 30, my + Math.sin(a) * 30); } });
+    addEventListener('pointerup', () => cur.classList.remove('down'));
+    document.addEventListener('mouseleave', () => { cur.style.opacity = 0; }); document.addEventListener('mouseenter', () => { if (hasMoved) cur.style.opacity = 1; });
+    addEventListener('scroll', tint, { passive: true });   // the scene changes under a still pointer as you scroll
+    (function loop() { x += (mx - x) * .35; y += (my - y) * .35; cur.style.transform = `translate(${x}px, ${y}px)`; if (performance.now() % 200 < 17) tint(); requestAnimationFrame(loop); })();
+  }
+  // --- scroll bar ---
+  ({ goop: '#sbGoop', rail: '#sbRail', stalk: '#sbStalk' })[SCROLLBAR] && $(({ goop: '#sbGoop', rail: '#sbRail', stalk: '#sbStalk' })[SCROLLBAR]).classList.add('on');
+  const maxY = () => document.documentElement.scrollHeight - innerHeight, prog = () => scrollY / Math.max(1, maxY());
+  // moon-rail stops point at the real scenes (in screen-heights of scroll, from the page's timeline)
+  const T = () => window.__dip.T;
+  const STOPS = [['the sky', () => 0], ['the world', () => T().world[1] * .62], ['the goop', () => T().red[0] + (T().red[1] - T().red[0]) * .5], ['the parade', () => T().parade[0] + 1], ['the crab', () => T().crab[1]], ['the water', () => T().sea[1]]];
+  STOPS.forEach(([n, at], i) => { const b = document.createElement('button'); b.className = 'stop'; b.innerHTML = `✦<span>${n}</span>`; b.onclick = () => scrollTo({ top: at() * innerHeight, behavior: 'smooth' }); b.dataset.i = i; $('#sbRail').appendChild(b); });
+  const placeStops = () => document.querySelectorAll('#sbRail .stop').forEach(b => { b.style.top = Math.min(100, STOPS[b.dataset.i][1]() * innerHeight / Math.max(1, maxY()) * 100) + '%'; });
+  const dragFrom = el => el.addEventListener('pointerdown', e => { e.preventDefault(); const r = el.parentElement.getBoundingClientRect();
+    const mv = ev => scrollTo(0, Math.max(0, Math.min(1, (ev.clientY - r.top) / r.height)) * maxY());
+    addEventListener('pointermove', mv); addEventListener('pointerup', () => removeEventListener('pointermove', mv), { once: true }); mv(e); });
+  dragFrom($('#moonh'));
+  $('#sbGoop').addEventListener('pointerdown', e => { const r = $('#sbGoop').getBoundingClientRect(); scrollTo({ top: (e.clientY - r.top) / r.height * maxY(), behavior: 'smooth' }); });
+  // the stalk: click to jump, or drag along it
+  $('#sbStalk').addEventListener('pointerdown', e => { e.preventDefault(); const r = $('#sbStalk').getBoundingClientRect(), to = ev => Math.max(0, Math.min(1, (ev.clientY - r.top) / r.height)) * maxY();
+    scrollTo({ top: to(e), behavior: 'smooth' }); const mv = ev => scrollTo(0, to(ev)); addEventListener('pointermove', mv); addEventListener('pointerup', () => removeEventListener('pointermove', mv), { once: true }); });
+  let p = 0, placed = 0;
+  (function draw(t) {
+    if (!placed && window.__dip) { placeStops(); placed = 1; addEventListener('resize', placeStops); }
+    p += (prog() - p) * .18;
+    const top = 100 - p * 100, w = 2.4, s = t / 600; let d = `M0 100 L0 ${top}`;
+    for (let k = 0; k <= 8; k++) d += ` L${k * 2} ${(top + Math.sin(s + k * 1.3) * w * (p > .01 && p < .99 && !RM ? 1 : 0)).toFixed(2)}`;
+    $('#goopPath').setAttribute('d', d + ' L16 100 Z');
+    $('#moonh').style.top = (p * 100) + '%';
+    const len = p * 100; let sp = 'M18 0'; for (let k = 1; k <= 20; k++) sp += ` L${(18 + Math.sin(k * 1.1 + s) * 3).toFixed(2)} ${(len * k / 20).toFixed(2)}`;
+    $('#stalkPath').setAttribute('d', sp); const bud = $('#bud'); bud.style.top = Math.max(2, len) + '%'; bud.style.setProperty('--b', (.55 + p * .65).toFixed(2)); bud.style.setProperty('--rot', (t / 30 % 360) + 'deg');
+    requestAnimationFrame(draw);
+  })(0);
+})();
+</script>
+
+<!-- ===== the music player: one big Dipple star that pulses with the music; hover and the song's name slides out like a sticker ===== -->
+<style>
+  #mp { position: fixed; left: 16px; bottom: 14px; z-index: 60; display: flex; align-items: center; cursor: pointer; }
+  #mp .big span { display: block; line-height: 1; }
+  #mp .big { position: relative; z-index: 2; width: 78px; height: 78px; display: grid; place-items: center; font: 400 78px/1 "Dipple"; color: #ffd23f; transition: color .3s; }
+  #mp .big::after { content: ""; position: absolute; left: 50%; top: 52%; transform: translate(-40%, -50%); border-left: 15px solid #2a1d14; border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
+  #mp.on .big::after { transform: translate(-50%, -50%); width: 13px; height: 16px; border: 0; background: linear-gradient(90deg, #2a1d14 0 4.5px, transparent 4.5px 8.5px, #2a1d14 8.5px 13px); }
+  #mp.on-yellow .big { color: #e2583e; } #mp.on-red .big { color: #ffd23f; }
+  #mp .tag { position: relative; isolation: isolate; margin-left: -22px; padding: 11px 18px 11px 30px; font: 400 17px/1 "Dipple"; color: #2a1d14; white-space: nowrap; transform-origin: left center; transition: transform .45s cubic-bezier(.3, 1.6, .5, 1), opacity .3s; }
+  #mp .tag::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 0 999px 999px 0; background: #fff3e6; box-shadow: 0 0 0 3px #2a1d14, 0 8px 18px rgba(0, 0, 0, .2); filter: url(#mpInk); }
+  #mp .tag small { display: block; margin-top: 4px; font: 700 10px/1 -apple-system, "Helvetica Neue", sans-serif; letter-spacing: .06em; text-transform: uppercase; color: #9a7a6a; }
+  #mp:not(:hover):not(:focus-visible) .tag { transform: scaleX(.2); opacity: 0; }
+  #mp:focus-visible { outline: none; } #mp:focus-visible .big { filter: drop-shadow(0 0 0 #2a1d14) drop-shadow(0 0 3px #2a1d14); }
+  @media (hover: none) { #mp .tag { display: none; } }
+  @media (max-width: 760px) { #mp { left: 8px; bottom: 6px; } #mp .big { width: 62px; height: 62px; font-size: 62px; } }
+</style>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="mpInk" x="-5%" y="-20%" width="110%" height="140%"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<div id="mp" role="button" tabindex="0" aria-label="Play Tiny Planet Playroom" aria-pressed="false">
+  <div class="big"><span id="mpStar">★</span></div>
+  <div class="tag">Tiny Planet Playroom<small id="mpSub">press play</small></div>
+</div>
+<audio id="mpAudio" src="music/tiny-planet-playroom.mp3" loop preload="none"></audio>
+<script>
+(() => {
+  const mp = document.getElementById('mp'), star = document.getElementById('mpStar'), au = document.getElementById('mpAudio'), sub = document.getElementById('mpSub');
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let ctx, an, gain, data, on = false, rot = 0, beat = 0;
+  function audio() { if (ctx) return; ctx = new (window.AudioContext || window.webkitAudioContext)(); const src = ctx.createMediaElementSource(au); an = ctx.createAnalyser(); an.fftSize = 256; an.smoothingTimeConstant = .6; gain = ctx.createGain(); gain.gain.value = 0; data = new Uint8Array(an.frequencyBinCount); src.connect(an); an.connect(gain); gain.connect(ctx.destination); }
+  function set(v) { on = v; mp.classList.toggle('on', v); mp.setAttribute('aria-pressed', v); mp.setAttribute('aria-label', (v ? 'Pause' : 'Play') + ' Tiny Planet Playroom'); sub.textContent = v ? 'now playing ✦' : 'press play'; }
+  function toggle() { audio(); ctx.resume(); const t = ctx.currentTime;
+    if (au.paused) { au.play().then(() => { set(true); gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(.55, t + .9); }).catch(() => {}); }
+    else { set(false); gain.gain.cancelScheduledValues(t); gain.gain.setValueAtTime(gain.gain.value, t); gain.gain.linearRampToValueAtTime(0, t + .35); setTimeout(() => { if (!on) au.pause(); }, 380); } }
+  mp.addEventListener('click', toggle);
+  mp.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  addEventListener('keydown', e => { if (e.key === 'm' && !e.target.closest('input, textarea')) toggle(); });
+  (function draw() {
+    let bass = 0;
+    if (an && on) { an.getByteFrequencyData(data); for (let i = 1; i < 7; i++) bass += data[i]; bass /= 6 * 255; }
+    beat += ((on ? Math.pow(bass, 1.6) : 0) - beat) * (bass > beat ? .55 : .2);
+    if (!RM) { rot += on ? .5 + beat * 6 : 0; star.style.transform = `scale(${1 + beat * .38}) rotate(${rot}deg)`; }
+    // never the same colour as what's under it, like the cursor
+    const d = window.__dip; if (d && d.colourAt) { const r = star.getBoundingClientRect(), c = d.colourAt(r.left + r.width / 2, r.top + r.height / 2);
+      mp.classList.toggle('on-yellow', c === 'yellow'); mp.classList.toggle('on-red', c === 'red'); }
+    requestAnimationFrame(draw);
+  })();
+})();
+</script>
+<!-- ===== a little download button in the bottom-right corner, on every scene after the first (it bows out when the big one arrives) ===== -->
+<style>
+  #miniDl { position: fixed; right: 22px; bottom: 20px; z-index: 60; display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px 11px; color: #2a1d14; text-decoration: none; font: 400 20px/1 "Dipple"; isolation: isolate;
+    transform: rotate(3deg) scale(0); transform-origin: 70% 70%; transition: transform .45s cubic-bezier(.3, 1.8, .5, 1); pointer-events: none; }
+  #miniDl::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: #fff3e6; box-shadow: 0 0 0 3px #2a1d14, 0 8px 18px rgba(0, 0, 0, .2); filter: url(#mpInk); }
+  #miniDl.show { transform: rotate(3deg) scale(1); pointer-events: auto; }
+  #miniDl.show:hover { transform: rotate(-2deg) scale(1.1); } #miniDl.show:active { transform: rotate(0deg) scale(.94, .88); }
+  #miniDl i { font-style: normal; display: inline-block; transition: transform .4s cubic-bezier(.3, 1.8, .5, 1); } #miniDl:hover i { transform: rotate(90deg) scale(1.25); }
+  #miniDl:focus-visible { outline: 3px solid #ffd23f; outline-offset: 5px; border-radius: 999px; }
+  @media (max-width: 760px) { #miniDl { right: 12px; bottom: 12px; padding: 10px 15px 9px; font-size: 17px; } }
+  @media (prefers-reduced-motion: reduce) { #miniDl { transition: none; } }
+</style>
+<a id="miniDl" href="download/Dipple.zip" download="Dipple.zip" aria-label="Download Dipple (zip with the fonts)">Download <i>✦</i></a>
+<script>
+(() => {
+  const m = document.getElementById('miniDl');
+  (function check() {
+    const d = window.__dip; if (d) { const S = d.S(), T = d.T, on = S > T.world[1] - .05 && S < T.sea[0] + .15;   // after the first scene, until the big download takes over
+      if (m.classList.contains('show') !== on) m.classList.toggle('show', on); }
+    requestAnimationFrame(check);
+  })();
+})();
+</script>
+<!-- ===== scene 1 only: a huge "Scroll down to explore" on the empty sky; letters pop in one by one on load,
+     then pop away one by one as the world starts popping up ===== -->
+<style>
+  #scrollHint { position: fixed; inset: 0; z-index: 30; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; }
+  #scrollHint .ln { display: block; white-space: nowrap; font: 400 1px/.8 "Dipple"; color: #fff; text-align: center; }
+  #scrollHint .hl { display: inline-block; transform-origin: 50% 80%; transform: scale(0); }
+  #scrollHint .hl.sp { width: .28em; }
+  #scrollHint .hl.st { color: #ffd23f; }
+  /* three Dipple stars, like the cursor and the player, twinkling in turn from top to bottom so the eye travels down */
+  #scrollHint .hintStars { display: flex; flex-direction: column; align-items: center; margin-top: 7vh; transform: scale(0); }
+  #scrollHint .hintStars span { display: block; font: 400 clamp(40px, 4.4vw, 68px)/.8 "Dipple"; color: #ffd23f; }
+  #scrollHint .hintStars span:nth-child(2) { font-size: clamp(31px, 3.4vw, 52px); } #scrollHint .hintStars span:nth-child(3) { font-size: clamp(23px, 2.5vw, 38px); }
+  #scrollHint .hintStars.go span { animation: twk 1.5s ease-in-out infinite; } #scrollHint .hintStars.go span:nth-child(2) { animation-delay: .18s; } #scrollHint .hintStars.go span:nth-child(3) { animation-delay: .36s; }
+  @keyframes twk { 0%, 55%, 100% { transform: scale(.85) rotate(0deg); } 22% { transform: scale(1.35) rotate(20deg) translateY(4px); } }
+  @media (prefers-reduced-motion: reduce) { #scrollHint .hintStars.go span { animation: none; } }
+</style>
+<div id="scrollHint" aria-hidden="true">
+  <span class="ln" data-t="Scroll down"></span>
+  <span class="ln" data-t="to explore"></span>
+  <div class="hintStars"><span>★</span><span>★</span><span>★</span></div>
+</div>
+<script>
+(() => {
+  const box = document.getElementById('scrollHint'), arrow = box.querySelector('.hintStars'), lines = [...box.querySelectorAll('.ln')];
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = v => Math.max(0, Math.min(1, v)), out = k => 1 - Math.pow(1 - k, 3);
+  const popS = k => k <= 0 ? 0 : k < .55 ? 1.25 * out(k / .55) : k < 1 ? 1.25 - .25 * out((k - .55) / .45) : 1;   // springs past full size, settles
+  const L = [];
+  lines.forEach(ln => [...ln.dataset.t].forEach(ch => { const e = document.createElement('span'); e.className = 'hl' + (ch === ' ' ? ' sp' : '') + (ch === '✦' ? ' st' : ''); e.textContent = ch === ' ' ? '' : ch;
+    e.dataset.tilt = (Math.random() * 16 - 8).toFixed(1); ln.appendChild(e); L.push(e); }));
+  function size() { const W = innerWidth, H = innerHeight; lines.forEach(ln => ln.style.fontSize = '100px');
+    const w = Math.max(...lines.map(ln => ln.scrollWidth)) / 100, fs = Math.min(W * (W < 700 ? .95 : .97) / w, H * .32); lines.forEach(ln => ln.style.fontSize = fs + 'px'); }
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(size); addEventListener('resize', size); size();
+  const born = performance.now(), n = L.length;
+  (function frame() {
+    const d = window.__dip, S = d ? d.S() : 0, t = (performance.now() - born) / 1000;
+    L.forEach((e, i) => {
+      const kin = RM ? 1 : clamp((t - .5 - i * .055) / .38);                      // pops in, letter by letter, as the page loads
+      const kout = RM ? (S > .2 ? 1 : 0) : clamp((S - .03 - i * .016) / .09);      // pops away, letter by letter, as the scroll begins
+      const sIn = popS(kin), sOut = kout <= 0 ? 1 : kout < .35 ? 1 + .25 * out(kout / .35) : Math.max(0, 1.25 * (1 - out((kout - .35) / .65)));
+      const sc = sIn * sOut, rot = +e.dataset.tilt * (1 - out(kin)) + kout * e.dataset.tilt * 3;
+      e.style.transform = `scale(${sc}) rotate(${rot}deg)`;
+    });
+    const ka = RM ? 1 : clamp((t - .5 - n * .055) / .38), kao = RM ? (S > .2 ? 1 : 0) : clamp((S - .03 - n * .016) / .09);
+    const sa = popS(ka) * (kao <= 0 ? 1 : Math.max(0, 1 - out(kao)));
+    arrow.style.transform = `scale(${sa})`; if (ka >= 1 && !RM) arrow.classList.add('go');
+    box.style.visibility = S > .6 ? 'hidden' : 'visible';
+    requestAnimationFrame(frame);
+  })();
+})();
+</script>
+</body><script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

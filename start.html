@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Start a project · Jessa Wolfe</title>
+<meta name="description" content="Tell Jessa Wolfe about your website, app or branding project. A few quick questions so she can send you a proposal." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<style>
+  /* Start a project: a short questionnaire so Jessa can quote a website. One step at a time. */
+  .pdf-alt { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; font-size: 13.5px; font-weight: 600; color: var(--ink-soft); }
+  .pdf-alt a { display: inline-flex; align-items: center; gap: 7px; text-decoration: none; color: var(--ink); font-weight: 700; font-size: 14px; padding: 9px 15px; border-radius: 100px; --wb: var(--butter); transition: transform .45s var(--spring); }
+  .pdf-alt a:hover { transform: translateY(-2px) scale(1.04); }
+  .pdf-alt .ico { width: 17px; height: 17px; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .cs-title .lead { font-size: 18px; line-height: 1.5; font-weight: 500; margin: 0 auto; max-width: 560px; }
+  .q-frame { --fill: #fff; width: min(880px, 100%); justify-self: center; padding: 30px 34px 28px; scroll-margin-top: 96px; }
+  .q-top { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+  .q-steps { display: flex; gap: 6px; flex: 1; }
+  .q-steps i { flex: 1; height: 8px; border-radius: 8px; background: var(--dot); transition: background .3s; }
+  .q-steps i.on { background: var(--pink); } .q-steps i.done { background: var(--mint-deep); }
+  .q-count { font-size: 13px; font-weight: 700; color: var(--ink-soft); white-space: nowrap; }
+  .q-step { display: none; } .q-step.on { display: block; animation: qIn .45s var(--soft) both; }
+  @keyframes qIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .q-step h2 { font-size: clamp(26px, 3.4vw, 36px); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 6px; }
+  .q-step .q-hint { font-size: 15.5px; font-weight: 500; color: var(--ink-soft); margin: 0 0 22px; }
+  .q { margin: 0 0 22px; } .q:last-child { margin-bottom: 6px; }
+  .q > .ql { display: block; font-size: 15px; font-weight: 700; margin: 0 0 10px; }
+  .q > .ql b { color: var(--pink-deep); } .q > .ql i { font-style: normal; font-weight: 500; color: var(--ink-soft); }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opt { appearance: none; border: 0; cursor: pointer; font: 700 14.5px/1 var(--font); color: var(--ink); padding: 11px 16px; border-radius: 100px; --wb: var(--blush); display: inline-flex; align-items: center; gap: 7px; transition: transform .45s var(--spring); }
+  .opt:hover { transform: translateY(-2px) scale(1.04); }
+  .opt[aria-pressed="true"] { --wb: var(--mint); }
+  .opt[aria-pressed="true"]::after { content: "✓"; font-size: 13px; color: #2f8a5c; }
+  .opt:focus-visible { outline: 2.5px solid var(--pink); outline-offset: 3px; }
+  .kcards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .opt.kcard { flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px 18px 18px; border-radius: 26px; --wb: var(--kc); text-align: left; line-height: 1.2; min-height: 176px; }
+  .opt.kcard::after { position: absolute; top: 14px; right: 16px; width: 24px; height: 24px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; }
+  .opt.kcard[aria-pressed="true"]::before { box-shadow: inset 0 0 0 3.5px #4fbf86; }   /* picked: a hand-drawn green ring */
+  .opt.kcard b { font-size: 19px; } .opt.kcard .kd { font-size: 13.5px; font-weight: 500; line-height: 1.4; opacity: .8; }
+  .kic { width: 44px; height: 44px; border-radius: 14px; background: #fff; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
+  .kic svg { width: 24px; height: 24px; fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .fld { display: grid; gap: 6px; } .fld.wide { grid-column: 1 / -1; }
+  .fld > span { font-size: 13px; font-weight: 700; } .fld > span b { color: var(--pink-deep); } .fld > span i { font-style: normal; font-weight: 500; opacity: .6; }
+  .fld .in { position: relative; isolation: isolate; }
+  .fld .in::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 16px; background: var(--paper); box-shadow: inset 0 0 0 2.5px var(--dot); filter: url(#wobs); transition: box-shadow .25s; }
+  .fld:focus-within .in::before { box-shadow: inset 0 0 0 2.5px var(--pink); }
+  .fld.bad .in::before { box-shadow: inset 0 0 0 2.5px var(--coral); }
+  .fld input, .fld textarea { font: 500 15px/1.4 var(--font); color: var(--ink); background: transparent; border: 0; border-radius: 16px; padding: 12px 14px; outline: 0; width: 100%; resize: vertical; display: block; }
+  .fld input::placeholder, .fld textarea::placeholder { color: var(--ink-faint); }
+  .fld em { display: none; font-style: normal; font-size: 12.5px; font-weight: 600; color: #d4663f; } .fld.bad em { display: block; }
+  .have { display: grid; gap: 10px; }
+  .have-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border-radius: 18px; background: #fbf8fd; }
+  .have-row > span { font-weight: 700; font-size: 15px; min-width: 170px; }
+  .have-row .opts { gap: 6px; } .have-row .opt { padding: 9px 13px; font-size: 13.5px; }
+  .q-nav { display: flex; align-items: center; gap: 12px; margin-top: 26px; padding-top: 20px; border-top: 2px dashed var(--dot); }
+  .q-nav .grow { flex: 1; }
+  .q-back { appearance: none; border: 0; background: none; cursor: pointer; font: 700 15px/1 var(--font); color: var(--ink-soft); padding: 12px 6px; }
+  .q-back:hover { color: var(--ink); }
+  .q-next { appearance: none; border: 0; cursor: pointer; font: 700 16px/1 var(--font); color: var(--ink); background: transparent; padding: 15px 24px; border-radius: 100px; position: relative; isolation: isolate; transition: transform .45s var(--spring); }
+  .q-next::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--mint); filter: url(#wobs) drop-shadow(0 8px 18px rgba(130,95,140,.14)); transition: background .25s; }
+  .q-next:hover::before { background: var(--mint-deep); } .q-next:hover { transform: translateY(-2px) scale(1.04); }
+  .q-next:disabled { opacity: .5; transform: none; cursor: default; }
+  .q-saved { font-size: 13px; font-weight: 600; color: var(--ink-faint); }
+  .q-status { margin: 10px 0 0; font-size: 13.5px; font-weight: 600; color: #d4663f; }
+  .rv { display: grid; gap: 12px; }
+  .rv-sec { padding: 14px 18px; border-radius: 18px; background: #fbf8fd; }
+  .rv-sec h3 { display: flex; align-items: center; justify-content: space-between; font-size: 15px; margin: 0 0 8px; }
+  .rv-sec h3 button { appearance: none; border: 0; background: none; cursor: pointer; font: 700 13px/1 var(--font); color: var(--pink-deep); }
+  .rv-sec dl { display: grid; grid-template-columns: 190px 1fr; gap: 6px 14px; margin: 0; font-size: 14.5px; }
+  .rv-sec dt { color: var(--ink-soft); font-weight: 600; } .rv-sec dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+  .rv-sec .none { color: var(--ink-faint); }
+  .q-done { text-align: center; padding: 10px 0 6px; animation: qIn .6s var(--spring) both; }
+  .q-done video { width: 180px; height: 180px; object-fit: cover; border-radius: 46% 54% 50% 50% / 55% 45% 55% 45%; display: block; margin: 0 auto 14px; }
+  .q-done h2 { font-size: 34px; margin: 0 0 8px; } .q-done .q-done-p { font-size: 17px; font-weight: 500; margin: 0 auto; max-width: 480px; line-height: 1.5; }
+  .q-done .q-again { margin-top: 18px; display: inline-flex; text-decoration: none; color: var(--ink); font-weight: 700; font-size: 14.5px; padding: 10px 16px; border-radius: 100px; --wb: var(--blush); }
+  .honey { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  @media (max-width: 900px) { .kcards { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 700px) {
+    .q-frame { padding: 22px 18px 20px; } .grid2 { grid-template-columns: 1fr; }
+    .have-row > span { min-width: 0; width: 100%; } .rv-sec dl { grid-template-columns: 1fr; gap: 2px; } .rv-sec dd { margin-bottom: 6px; }
+    .q-count { display: none; }
+  }
+  html.night .rv-sec, html.night .have-row { background: rgba(255,255,255,.06); }
+</style>
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page start">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob active" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Start a project</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+  <main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Start a project">
+      <div class="tag">01 · Start a project</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Let’s create something together</span><span class="typed"><span class="t" data-text="Let’s create something together"></span><span class="caret"></span></span></span></h1><p class="lead pasted">A website, an app, a brand, or something else. A few quick questions so I can send you a proposal. Most are a tap, it takes about three minutes, and “not sure yet” is always a fine answer.</p><div class="pdf-alt pasted"><a class="wob" href="Jessa-Wolfe-Project-Questionnaire.pdf" download><svg class="ico" viewBox="0 0 24 24"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>Rather fill in a PDF? Download it</a><span>then email it to hello@jessa.art</span></div></div>
+    </div>
+    <div class="slot q-frame paste" data-name="02 · Your project">
+      <div class="tag">02 · Your project</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content">
+        <form id="qform" novalidate>
+          <div class="q-top"><div class="q-steps" id="qsteps" aria-hidden="true"></div><span class="q-count" id="qcount"></span></div>
+          <div id="qbody"></div>
+          <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" class="honey" />
+          <div class="q-nav"><button type="button" class="q-back" id="qback">← Back</button><span class="q-saved" id="qsaved"></span><span class="grow"></span><button type="submit" class="q-next" id="qnext">Next →</button></div>
+          <div class="q-status" id="qstatus" role="status" aria-live="polite"></div>
+        </form>
+        <div class="q-done" id="qdone" hidden>
+          <video src="image/celebration.mp4" muted playsinline loop preload="none" aria-hidden="true"></video>
+          <h2>Got it, thank you!</h2>
+          <div class="q-done-p">I’ll read through everything and get back to you with a proposal. If anything’s unclear, I’ll email you a question or two first.</div>
+          <a class="q-again wob" href="app.html">Back to my site →</a>
+        </div>
+      </div>
+    </div>
+  </article>
+</main>
+
+<script>
+(() => {
+  /* Questionnaire: steps are described here and drawn into #qbody. Answers save to this browser as you go
+     (so a refresh loses nothing), then go to Jessa twice: an email (FormSubmit, same as the contact form)
+     and a private list in Firebase (proposals/pending), which only she can read in guestbook-admin.html. */
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const ENDPOINT = 'https://formsubmit.co/ajax/jessawolfedesign@gmail.com';
+  const KEY = 'jw-start-v2';
+  // the private list in Firebase is parked until the proposals rule is published; email only for now
+  const SAVE_TO_LIST = false;
+  // local copies and automated browsers never send (same rule as presence.js)
+  const quiet = navigator.webdriver || /^(localhost|127\.|192\.168\.|10\.|\[::1\])/.test(location.hostname) || location.protocol === 'file:';
+  const HAVE = ['Have it', 'Need it', 'Not sure'];
+  const is = k => A => (A.kind || []).includes(k);
+  const STEPS = [
+    { id: 'you', label: 'About you', title: 'First, a little about you.', hint: 'So I know who I’m talking to.', items: [
+      { type: 'fields', fields: [
+        { k: 'name', label: 'Your name', req: true, ph: 'Your name', ac: 'name' },
+        { k: 'email', label: 'Email', req: true, ph: 'you@email.com', ac: 'email', kind: 'email' },
+        { k: 'business', label: 'Business name', opt: true, ph: 'Your business', ac: 'organization' },
+        { k: 'website', label: 'Current website', opt: true, ph: 'yoursite.com', ac: 'url' },
+        { k: 'about', label: 'What does your business do?', opt: true, ph: 'One or two lines is perfect.', area: 2, wide: true } ] } ] },
+    { id: 'kind', label: 'What we’re making', title: 'What are we making?', hint: 'Pick one or more. I’ll only ask about what you choose.', items: [
+      { type: 'cards', k: 'kind', req: true, opts: [['A website', 'A new site, a redesign, a store or a landing page.', 'site', 'sky'], ['An app', 'iPhone, Android or the web, from idea to design.', 'app', 'lilac'], ['Branding', 'A logo, colors, fonts and how it all fits together.', 'brand', 'butter'], ['Something else', 'A UX review, a design system, a deck…', 'more', 'mint']] } ] },
+    { id: 'site', label: 'Website', when: is('A website'), title: 'Tell me about the website.', hint: 'Pick everything that fits.', items: [
+      { type: 'multi', k: 'need', label: 'The site', opts: ['A new website', 'Redesign my current site', 'A landing page', 'An online store', 'A portfolio', 'A booking site', 'Not sure yet'] },
+      { type: 'multi', k: 'goals', label: 'What should the site do for you?', max: 3, opts: ['Get leads or bookings', 'Sell products', 'Show my work', 'Build trust', 'Share information', 'Grow an email list'] },
+      { type: 'single', k: 'size', label: 'About how big?', opts: ['1 page', '2–5 pages', '6–10 pages', '10+ pages', 'Not sure'] },
+      { type: 'multi', k: 'features', label: 'What should it be able to do?', opts: ['Contact form', 'Booking or scheduling', 'Online store', 'Blog or news', 'Email signup', 'Photo gallery', 'Member logins', 'Events', 'More than one language', 'Not sure'] },
+      { type: 'single', k: 'products', label: 'About how many products?', when: A => (A.features || []).includes('Online store') || (A.need || []).includes('An online store'), opts: ['Under 10', '10–50', '50–200', '200+'] },
+      { type: 'single', k: 'platform', label: 'Is your current site on a platform?', opt: true, opts: ['Squarespace', 'Wix', 'WordPress', 'Shopify', 'Webflow', 'Something else', 'No site yet'] } ] },
+    { id: 'app', label: 'App', when: is('An app'), title: 'Tell me about the app.', hint: 'Rough answers are perfect. We’ll figure out the details together.', items: [
+      { type: 'multi', k: 'appPlatform', label: 'Where should it live?', opts: ['iPhone', 'Android', 'On the web', 'iPad or tablet', 'Not sure'] },
+      { type: 'single', k: 'appStage', label: 'Where is it now?', opts: ['Just an idea', 'Sketches or wireframes', 'Designs are ready', 'It’s live and needs work'] },
+      { type: 'multi', k: 'appNeed', label: 'What do you need from me?', opts: ['Product strategy', 'UX and wireframes', 'Visual design', 'A clickable prototype', 'Design and build', 'A redesign'] },
+      { type: 'single', k: 'appScreens', label: 'About how many screens?', opts: ['Under 10', '10–25', '25–50', '50+', 'Not sure'] },
+      { type: 'multi', k: 'appFeatures', label: 'Key features', opt: true, opts: ['Accounts and logins', 'Payments', 'Notifications', 'Chat or messaging', 'Maps or location', 'Booking', 'Photos or video', 'An admin dashboard', 'Works offline', 'AI features'] },
+      { type: 'fields', fields: [{ k: 'appIdea', label: 'The idea in a sentence or two', opt: true, ph: 'Who it’s for and what it helps them do.', area: 2, wide: true }] } ] },
+    { id: 'brand', label: 'Branding', when: is('Branding'), title: 'Tell me about the brand.', hint: 'Pick what you need. I can help you figure out the rest.', items: [
+      { type: 'single', k: 'brandStage', label: 'Where are you starting?', opts: ['A brand-new brand', 'Refreshing my current one', 'Not sure'] },
+      { type: 'multi', k: 'brandNeed', label: 'What do you need?', opts: ['Logo', 'Colors and fonts', 'Brand guidelines', 'A name', 'Packaging', 'Social media templates', 'Business cards and print', 'Illustrations or icons'] },
+      { type: 'multi', k: 'brandWhere', label: 'Where will it show up most?', opt: true, opts: ['Website', 'App', 'Social media', 'Packaging', 'Signs or a storefront', 'Print'] } ] },
+    { id: 'other', label: 'Something else', when: is('Something else'), title: 'What do you have in mind?', hint: 'Pick anything close, or just describe it.', items: [
+      { type: 'multi', k: 'otherKind', label: 'Close to any of these?', opt: true, opts: ['A UX review of my product', 'A design system', 'A pitch deck', 'Product strategy', 'Illustration', 'Motion or video', 'A workshop for my team'] },
+      { type: 'fields', fields: [{ k: 'otherWhat', label: 'Tell me about it', opt: true, ph: 'What you need and what it’s for.', area: 3, wide: true }] } ] },
+    { id: 'have', label: 'What you have', title: 'What do you already have?', hint: 'Anything you need, I can help with.', items: [
+      { type: 'have', k: 'have', rows: ['Logo', 'Brand colors and fonts', 'Photos or images', 'Written words', 'Domain name', 'Hosting'], rowsWhen: { 'Domain name': is('A website'), 'Hosting': is('A website') } },
+      { type: 'fields', fields: [{ k: 'tools', label: 'Tools it should work with', opt: true, ph: 'e.g. Calendly, Shopify, Stripe, Mailchimp, Instagram', wide: true },
+        { k: 'links', label: 'Links to anything helpful', opt: true, ph: 'A Google Drive or Dropbox folder, a brand guide, sketches…', area: 2, wide: true }] } ] },
+    { id: 'style', label: 'Style', title: 'What should it feel like?', hint: 'A few examples you like help more than anything else.', items: [
+      { type: 'fields', fields: [
+        { k: 'like1', label: 'Something you like (a site, app or brand)', opt: true, ph: 'Paste a link', wide: true },
+        { k: 'like2', label: 'Another one', opt: true, ph: 'Paste a link', wide: true },
+        { k: 'like3', label: 'One more', opt: true, ph: 'Paste a link', wide: true } ] },
+      { type: 'multi', k: 'vibe', label: 'Words that fit', opt: true, opts: ['Clean', 'Playful', 'Bold', 'Luxe', 'Warm', 'Techy', 'Earthy', 'Minimal', 'Colorful'] },
+      { type: 'fields', fields: [{ k: 'avoid', label: 'Anything you don’t want?', opt: true, ph: 'Colors, styles, things you don’t like…', wide: true }] } ] },
+    { id: 'timing', label: 'Timing and budget', title: 'Timing and budget.', hint: 'Ranges are fine. This just helps me suggest the right size of project.', items: [
+      { type: 'single', k: 'timing', label: 'When would you like it ready?', opts: ['As soon as possible', 'Within a month', '1–3 months', '3+ months', 'I’m flexible'] },
+      { type: 'single', k: 'budget', label: 'Budget', opts: ['Under $2k', '$2–5k', '$5–10k', '$10–25k', '$25k+', 'Not sure yet'] },
+      { type: 'single', k: 'after', label: 'After launch, who keeps it updated?', when: A => is('A website')(A) || is('An app')(A), opts: ['I will', 'I’d like you to', 'Not sure'] },
+      { type: 'single', k: 'heard', label: 'How did you find me?', opt: true, opts: ['Instagram', 'LinkedIn', 'A friend', 'Google', 'I saw your work', 'Somewhere else'] },
+      { type: 'fields', fields: [{ k: 'else', label: 'Anything else I should know?', opt: true, ph: 'Deadlines, ideas, questions…', area: 3, wide: true }] } ] },
+    { id: 'review', label: 'Review', title: 'Look good?', hint: 'Check your answers, then send. You can tap Edit to change anything.', items: [] },
+  ];
+  let A = {}; try { A = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (_) {}
+  // only the steps that apply to what they're making
+  const V = () => STEPS.filter(s => !s.when || s.when(A));
+  let at = Math.max(0, V().findIndex(s => s.id === A._step));
+  const rowsOf = it => it.rows.filter(r => !(it.rowsWhen || {})[r] || it.rowsWhen[r](A));
+  const save = () => { A._step = (V()[at] || {}).id; try { localStorage.setItem(KEY, JSON.stringify(A)); $('#qsaved').textContent = 'Saved as you go'; } catch (_) {} };
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  const labelOf = it => it.label || 'The project';
+  const field = f => `<label class="fld${f.wide ? ' wide' : ''}" data-k="${f.k}"><span>${f.label}${f.req ? ' <b>*</b>' : f.opt ? ' <i>(optional)</i>' : ''}</span><span class="in">${f.area
+      ? `<textarea name="${f.k}" rows="${f.area}" placeholder="${esc(f.ph || '')}">${esc(A[f.k] || '')}</textarea>`
+      : `<input name="${f.k}" type="${f.kind || 'text'}" ${f.ac ? `autocomplete="${f.ac}"` : ''} ${f.req ? 'required' : ''} placeholder="${esc(f.ph || '')}" value="${esc(A[f.k] || '')}">`}</span>${f.req ? `<em>${f.kind === 'email' ? 'Please enter a valid email.' : 'Please fill this in.'}</em>` : ''}</label>`;
+  const chips = (k, opts, multi, max) => `<div class="opts" role="group">${opts.map(o => { const on = multi ? (A[k] || []).includes(o) : A[k] === o;
+      return `<button type="button" class="opt wob" data-k="${k}" data-v="${esc(o)}" data-multi="${multi ? 1 : ''}" data-max="${max || ''}" aria-pressed="${on}">${esc(o)}</button>`; }).join('')}</div>`;
+  const ICONS = {
+    site: '<svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="15" rx="3"/><path d="M3 9h18M6.5 6.8h.01M9 6.8h.01"/></svg>',
+    app: '<svg viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.6"/><path d="M11 18.5h2"/></svg>',
+    brand: '<svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 5.1 5.6.7-4.1 3.9 1 5.5L12 16l-4.9 2.7 1-5.5L4 9.3l5.6-.7z"/></svg>',
+    more: '<svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg>' };
+  const label = it => `<span class="ql">${it.label}${it.max ? ` <i>(pick up to ${it.max})</i>` : it.opt ? ' <i>(optional)</i>' : ''}</span>`;
+  const review = () => `<div class="rv">${V().slice(0, -1).map((s, i) => {
+      const rows = [];
+      s.items.forEach(it => {
+        if (it.when && !it.when(A)) return;
+        if (it.type === 'fields') it.fields.forEach(f => rows.push([f.label, A[f.k]]));
+        else if (it.type === 'have') rowsOf(it).forEach(r => rows.push([r, (A.have || {})[r]]));
+        else rows.push([labelOf(it), Array.isArray(A[it.k]) ? A[it.k].join(', ') : A[it.k]]);
+      });
+      return `<div class="rv-sec"><h3>${s.label}<button type="button" data-edit="${i}">Edit</button></h3><dl>${rows.map(([l, v]) => `<dt>${esc(l)}</dt><dd>${v ? esc(v) : '<span class="none">—</span>'}</dd>`).join('')}</dl></div>`;
+    }).join('')}</div>`;
+
+  const draw = () => {
+    const vs = V(); if (at >= vs.length) at = vs.length - 1; const s = vs[at];
+    $('#qsteps').innerHTML = vs.map((_, i) => `<i class="${i < at ? 'done' : i === at ? 'on' : ''}"></i>`).join('');
+    $('#qcount').textContent = `Step ${at + 1} of ${vs.length} · ${s.label}`;
+    $('#qbody').innerHTML = `<section class="q-step on"><h2>${s.title}</h2><div class="q-hint">${s.hint}</div>${s.id === 'review' ? review() : s.items.map(it => {
+      if (it.when && !it.when(A)) return '';
+      if (it.type === 'fields') return `<div class="q"><div class="grid2">${it.fields.map(field).join('')}</div></div>`;
+      if (it.type === 'have') return `<div class="q have">${rowsOf(it).map(r => `<div class="have-row"><span>${r}</span>${chips('have:' + r, HAVE, false)}</div>`).join('')}</div>`;
+      if (it.type === 'cards') return `<div class="q kcards" role="group" aria-label="What are we making">${it.opts.map(([v, d, ic, c]) => `<button type="button" class="opt kcard wob" data-k="${it.k}" data-v="${esc(v)}" data-multi="1" aria-pressed="${(A[it.k] || []).includes(v)}" style="--kc: var(--${c})"><span class="kic">${ICONS[ic]}</span><b>${esc(v)}</b><span class="kd">${esc(d)}</span></button>`).join('')}</div>`;
+      return `<div class="q">${label(it)}${chips(it.k, it.opts, it.type === 'multi', it.max)}</div>`;
+    }).join('')}</section>`;
+    $('#qback').style.visibility = at ? 'visible' : 'hidden';
+    $('#qnext').textContent = s.id === 'review' ? 'Send my request →' : 'Next →';
+    $('#qstatus').textContent = '';
+    // "have" answers live in A.have; show them as pressed
+    $$('.have-row .opt').forEach(b => { const r = b.dataset.k.slice(5); b.setAttribute('aria-pressed', String((A.have || {})[r] === b.dataset.v)); });
+  };
+  const readFields = () => $$('#qbody input, #qbody textarea').forEach(i => { A[i.name] = i.value.trim(); });
+  const valid = () => {
+    let ok = true;
+    const need = V()[at].items.find(it => it.req && (it.type === 'multi' || it.type === 'cards') && !(A[it.k] || []).length);
+    if (need) { $('#qstatus').textContent = 'Pick at least one so I know what we’re making.'; return false; }
+    $$('#qbody .fld').forEach(l => { const i = $('input, textarea', l); if (!i.required) return; const v = i.value.trim(); const bad = !v || (i.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)); l.classList.toggle('bad', bad); if (bad && ok) { i.focus(); ok = false; } });
+    return ok;
+  };
+  const go = i => { at = i; save(); draw(); $('.q-frame').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+
+  const form = $('#qform');
+  form.addEventListener('click', e => {
+    const b = e.target.closest('.opt');
+    if (b) {
+      const k = b.dataset.k, v = b.dataset.v;
+      if (k.startsWith('have:')) { const r = k.slice(5); A.have = A.have || {}; A.have[r] = A.have[r] === v ? '' : v; }
+      else if (b.dataset.multi) {
+        const list = A[k] || [], max = +b.dataset.max || 0;
+        if (list.includes(v)) A[k] = list.filter(x => x !== v);
+        else if (!max || list.length < max) A[k] = [...list, v];
+        else { $('#qstatus').textContent = `Pick up to ${max}. Tap one to swap it out.`; return; }
+      } else A[k] = A[k] === v ? '' : v;
+      readFields(); save(); draw(); return;
+    }
+    const ed = e.target.closest('[data-edit]'); if (ed) go(+ed.dataset.edit);
+  });
+  form.addEventListener('input', e => { if (e.target.name) { A[e.target.name] = e.target.value; e.target.closest('.fld')?.classList.remove('bad'); save(); } });
+  // the canvas has its own drag / keyboard tools; keep typing inside the form
+  form.addEventListener('pointerdown', e => { if (e.target.closest('input, textarea')) e.stopPropagation(); });
+  form.addEventListener('keydown', e => { if (e.target.closest('input, textarea')) e.stopPropagation(); });
+  $('#qback').addEventListener('click', () => { readFields(); go(Math.max(0, at - 1)); });
+  form.addEventListener('submit', async e => {
+    e.preventDefault(); readFields();
+    if (V()[at].id !== 'review') { if (!valid()) return; return go(Math.min(at + 1, V().length - 1)); }
+    if (!A.name || !A.email) return go(0);
+    if (form._honey.value) return;
+    const btn = $('#qnext'); btn.disabled = true; $('#qstatus').style.color = ''; $('#qstatus').textContent = 'Sending…';
+    // one flat, readable copy of every answer
+    const out = {};
+    V().slice(0, -1).forEach(s => s.items.forEach(it => {
+      if (it.when && !it.when(A)) return;
+      if (it.type === 'fields') it.fields.forEach(f => { if (A[f.k]) out[f.label] = A[f.k]; });
+      else if (it.type === 'have') rowsOf(it).forEach(r => { if ((A.have || {})[r]) out['Has: ' + r] = A.have[r]; });
+      else { const v = Array.isArray(A[it.k]) ? A[it.k].join(', ') : A[it.k]; if (v) out[labelOf(it)] = v; }
+    }));
+    const who = A.business || A.name;
+    try {
+      if (quiet) { console.log('[start] test mode, not sent:', out); await new Promise(r => setTimeout(r, 600)); }
+      else {
+        const fd = new FormData();
+        fd.append('_subject', `New project request (${(A.kind || []).join(', ')}): ${who}`); fd.append('_template', 'table'); fd.append('_captcha', 'false'); fd.append('_replyto', A.email);
+        Object.entries(out).forEach(([k, v]) => fd.append(k, v));
+        const mail = fetch(ENDPOINT, { method: 'POST', headers: { Accept: 'application/json' }, body: fd }).then(r => r.json()).then(j => j && (j.success === true || j.success === 'true'));
+        // private copy for the admin page; the email is what counts if Firebase is slow or blocked
+        const list = !SAVE_TO_LIST ? Promise.resolve(false) : (window.__fbReady ? Promise.race([window.__fbReady, new Promise((_, no) => setTimeout(no, 6000))]) : Promise.reject())
+          .then(db => db.ref('proposals/pending').push({ name: A.name.slice(0, 80), email: A.email.slice(0, 120), business: (A.business || '').slice(0, 120), kind: (A.kind || []).join(', ').slice(0, 120), t: Date.now(), data: JSON.stringify(out).slice(0, 12000) }))
+          .then(() => true, () => false);
+        const [mailed, listed] = await Promise.all([mail.catch(() => false), list]);
+        if (!mailed && !(SAVE_TO_LIST && listed)) throw new Error('not sent');
+      }
+      try { localStorage.removeItem(KEY); } catch (_) {}
+      form.hidden = true; const done = $('#qdone'); done.hidden = false; const v = $('video', done); if (v) v.play().catch(() => {});
+    } catch (_) {
+      $('#qstatus').style.color = '#d4663f';
+      $('#qstatus').innerHTML = 'Sorry, that didn’t go through. Your answers are saved here, so you can try again, or email me at <a href="mailto:hello@jessa.art" style="color:inherit">hello@jessa.art</a>.';
+    }
+    btn.disabled = false;
+  });
+  draw(); if (Object.keys(A).length > 1) $('#qsaved').textContent = 'Picked up where you left off';
+})();
+</script>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

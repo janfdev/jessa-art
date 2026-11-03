@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Mochi · Jessa Wolfe</title>
+<meta name="description" content="Mochi, a tiny pixel pet that floats on your Mac and talks to Claude Code for you. Designed and built by Jessa Wolfe. Free to download." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<style>
+  /* Mochi only: the cover is night navy like her app icon; screenshots are pixel art, so they stay crisp when scaled */
+  body.mochi .cs-cover { --fill: #081537; }
+  body.mochi .cs-cover .content { background: #081537; }   /* the navy the video actually comes out as, so the sides blend in */
+  body.mochi .cs-cover video { width: 100%; height: 100%; object-fit: contain; display: block; }   /* the whole 4:3 loop, navy fills the sides */
+  body.mochi .mo-px { image-rendering: pixelated; }
+
+  /* what she does: each screenshot on its own soft pastel card, loose and a little tilted */
+  body.mochi .mo-shots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; width: 100%; }
+  body.mochi .mo-shot { padding: 22px 22px 18px; }
+  body.mochi .mo-shot:nth-child(1) { --fill: var(--sky); transform: rotate(-.6deg); }
+  body.mochi .mo-shot:nth-child(2) { --fill: var(--blush); transform: rotate(.5deg); }
+  body.mochi .mo-shot:nth-child(3) { --fill: var(--mint); transform: rotate(.4deg); }
+  body.mochi .mo-shot:nth-child(4) { --fill: var(--butter); transform: rotate(-.5deg); }
+  body.mochi .mo-shot .pic { min-height: 210px; border-radius: 18px; background: #fff; display: grid; place-items: center; padding: 18px; }
+  body.mochi .mo-shot .pic img { max-width: 100%; height: auto; display: block; }
+  body.mochi .mo-shot h4 { margin: 14px 4px 4px; font-size: 18px; letter-spacing: -.01em; }
+  body.mochi .mo-shot p { margin: 0 4px; font-size: 15px; line-height: 1.45; font-weight: 500; color: #4a4552; }
+
+  /* her moods and colors: a long strip each */
+  body.mochi .mo-strip { padding: 22px; }
+  body.mochi .mo-strip .pic { border-radius: 18px; background: #fff; padding: 22px 18px; display: grid; place-items: center; }
+  body.mochi .mo-strip .pic img { width: 100%; max-width: 900px; height: auto; display: block; }
+  body.mochi .mo-strip .cap { font: 700 22px/1.2 'Caveat', cursive; margin: 12px 6px 0; color: #4a4552; }
+  body.mochi .mo-strip.lilac { --fill: var(--lilac); } body.mochi .mo-strip.peach { --fill: var(--peach); }
+
+  /* the download block */
+  body.mochi .mo-dl { --fill: #0d1430; color: #fff; }
+  body.mochi .mo-dl .content { display: grid; grid-template-columns: auto 1fr; gap: 30px; align-items: center; padding: 34px; }
+  body.mochi .mo-dl .icon { width: 150px; height: 150px; }
+  body.mochi .mo-dl h2 { color: #fff; margin: 0 0 8px; }
+  body.mochi .mo-dl p { color: rgba(255, 255, 255, .78); margin: 0 0 18px; }
+  body.mochi .mo-dl .get { display: inline-flex; align-items: center; gap: 10px; padding: 16px 28px; border-radius: 999px; background: #33c7ff; color: #0d1430; font-weight: 700; font-size: 19px; text-decoration: none; --wb: #33c7ff; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  body.mochi .mo-dl .get:hover { transform: rotate(-2deg) scale(1.05); }
+  body.mochi .mo-dl .get svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  body.mochi .mo-dl pre { margin: 20px 0 10px; padding: 16px 18px; border-radius: 16px; background: rgba(255, 255, 255, .08); color: #cfeeff; font: 500 14.5px/1.7 ui-monospace, 'SF Mono', Menlo, monospace; overflow-x: auto; white-space: pre; }
+  body.mochi .mo-dl small { color: rgba(255, 255, 255, .6); font-size: 13.5px; }
+  @media (max-width: 860px) {
+    body.mochi .mo-shots { grid-template-columns: 1fr; }
+    body.mochi .mo-dl .content { grid-template-columns: 1fr; padding: 24px; gap: 18px; }
+    body.mochi .mo-dl .icon { width: 110px; height: 110px; }
+    body.mochi .mo-dl pre { white-space: pre-wrap; word-break: break-all; font-size: 13px; }
+  }
+</style>
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page mochi" data-zoom>
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Mochi</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Mochi">
+      <div class="tag">01 · Mochi</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Mochi, a tiny pet for Claude Code</span><span class="typed"><span class="t" data-text="Mochi, a tiny pet for Claude Code"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#why">Why I made her</a><a class="wob" href="#what">What she does</a><a class="wob" href="#share">Sharing her</a><a class="wob" href="#download">Download</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/mochi/cover.mp4" poster="image/mochi/cover.jpg" autoplay muted loop playsinline aria-label="Mochi bouncing, turning pink, then opening her message bar and sending a message"></video></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Everything, solo</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Open-source app</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Platform">
+      <div class="tag">05 · Platform</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Platform</div><div class="v">macOS</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Started">
+      <div class="tag">06 · Started</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Started</div><div class="v">Fall 2026</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="07 · Why" id="why">
+      <div class="tag">07 · Why</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">I kept losing Claude in a pile of windows.</span><span class="typed"><span class="t" data-text="I kept losing Claude in a pile of windows."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I have ADHD and a lot of projects going at once. Claude Code lives in Terminal, and Terminal lives somewhere under my browser, my Figma files and three other things I opened “for a second.” I’d ask Claude something, wander off, and forget it was even waiting on me.</p>
+        <p class="pasted">So I made Mochi. She’s a tiny pixel goo who floats at the bottom of my screen. I type into her, and the message goes straight to Claude. When Claude answers, she pops the reply up in a little bubble. She’s the one window I never lose.</p></div>
+    </div>
+    <div class="slot prose quote" data-name="08 · The idea">
+      <div class="tag">08 · The idea</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Less window hunting. More actually finishing things.</span><span class="typed"><span class="t" data-text="Less window hunting. More actually finishing things."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot prose bare" data-name="09 · What she does" id="what">
+      <div class="tag">09 · What she does</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What she does</span><span class="typed"><span class="t" data-text="What she does"></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">She started as a way to send a message. Then she kept learning little jobs.</p></div>
+    </div>
+    <div class="mo-shots group">
+    <div class="slot mo-shot sub paste" data-name="10 · Replies">
+      <div class="tag">10 · Replies</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="pic"><img class="mo-px" src="image/mochi/02-reply.png" alt="Mochi showing a reply from Claude in a bubble above her" loading="lazy"></div><h4>Replies, right where I am</h4><p>A short summary of Claude’s answer pops up above her. Long ones page with the arrow keys.</p></div>
+    </div>
+    <div class="slot mo-shot sub paste" data-name="11 · While it works">
+      <div class="tag">11 · While it works</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="pic"><img class="mo-px" src="image/mochi/03-working.png" alt="Mochi showing what Claude is doing, with a timer and token count" loading="lazy"></div><h4>What Claude is doing</h4><p>One line of what it’s working on right now, plus a little timer, so I know it hasn’t forgotten me.</p></div>
+    </div>
+    <div class="slot mo-shot sub paste" data-name="12 · To-dos">
+      <div class="tag">12 · To-dos</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="pic"><img class="mo-px" src="image/mochi/05-todo.png" alt="Mochi announcing a new item on her to-do list" loading="lazy"></div><h4>A to-do list for me</h4><p>When Claude needs me to do something myself, like upload a file, it goes on Mochi’s list and she reminds me.</p></div>
+    </div>
+    <div class="slot mo-shot sub paste" data-name="13 · Social">
+      <div class="tag">13 · Social</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="pic"><img class="mo-px" src="image/mochi/04-social.png" alt="Mochi with little Instagram, Threads and LinkedIn notification badges" loading="lazy"></div><h4>Little social badges</h4><p>New notifications from Instagram, Threads, LinkedIn or X tabs open in Chrome. Click one to jump right there.</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="14 · Her personality">
+      <div class="tag">14 · Her personality</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">She’s a little bit of a character.</span><span class="typed"><span class="t" data-text="She’s a little bit of a character."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I wanted her to feel alive, not like a tool. She breathes, blinks and follows my cursor. She hops when I send something and throws a tiny paper plane. If I hover over her she wiggles, and if I keep hovering she gets petted and hearts come out. When it’s quiet for a while she melts into a sleepy puddle.</p>
+        <p class="pasted">She also dresses for the time of day: coffee in the morning, sunglasses on Friday afternoons, and a nightcap when I’m up way too late.</p></div>
+    </div>
+    <div class="slot mo-strip lilac paste" data-name="15 · Moods">
+      <div class="tag">15 · Moods</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="pic"><img class="mo-px" src="image/mochi/moods.png" alt="Mochi petted with a heart, sleepy, with morning coffee, in Friday sunglasses and in a nightcap" loading="lazy"></div><div class="cap">petted · sleepy · morning coffee · Friday sunglasses · nightcap</div></div>
+    </div>
+    <div class="slot mo-strip peach paste" data-name="16 · Colors">
+      <div class="tag">16 · Colors</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="pic"><img class="mo-px" src="image/mochi/colors.png" alt="Mochi in sky blue, bubblegum pink, mint, lemon and lavender" loading="lazy"></div><div class="cap">any color you want her to be</div></div>
+    </div>
+    <div class="slot prose" data-name="17 · Sharing her" id="share">
+      <div class="tag">17 · Sharing her</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Making her for everyone, not just me.</span><span class="typed"><span class="t" data-text="Making her for everyone, not just me."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">My Mochi was wired to my own Mac, so I made a clean version anyone can install. I wanted setup to feel like meeting her, not like configuring something.</p>
+        <div class="bullets pasted"><div class="b wob"><b>The first question is the fun one.</b>The installer asks “What color do you want Mochi to be?” and shows little swatches right in Terminal.</div><div class="b wob"><b>Social is your choice.</b>It asks if you want notification badges and for which sites. Say no and she never looks at Chrome.</div><div class="b wob"><b>Your Claude can change her.</b>She teaches your own Claude Code how to work on her, so you can just say “make Mochi wear a party hat.”</div><div class="b wob"><b>She remembers her permissions.</b>Each Mac gets its own signing certificate, so rebuilding her never makes macOS forget her.</div><div class="b wob"><b>Easy to undo.</b>One command removes her and puts your settings back.</div></div></div>
+    </div>
+    <div class="slot mo-dl paste" data-name="18 · Download" id="download">
+      <div class="tag">18 · Download</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img class="icon" src="image/mochi/icon.png" alt="Mochi’s app icon">
+        <div><h2>Take Mochi home.</h2>
+          <p>She’s free and open source. You need a Mac (macOS 13 or newer) and Claude Code.</p>
+          <a class="get wob" href="https://github.com/jessawolfe-ux/mochi" target="_blank" rel="noopener">Download Mochi <svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></a>
+          <pre>git clone https://github.com/jessawolfe-ux/mochi.git
+cd mochi
+./install.sh</pre>
+          <small>Paste those three lines into Terminal. She’ll ask what color she should be, then pop up at the bottom of your screen.</small></div></div>
+    </div>
+    <div class="slot prose" data-name="19 · The story">
+      <div class="tag">19 · The story</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">How she came to be</span><span class="typed"><span class="t" data-text="How she came to be"></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">I wrote about building her, from a plain text bar to a little goo with outfits, and what it’s like designing tools for an ADHD brain.</p>
+        <a class="cta pasted" href="https://medium.com/@jessawolfe/how-i-built-an-interactive-pet-for-claude-to-help-with-my-adhd-9cc1926155d1" target="_blank" rel="noopener">Read the story on Medium <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a></div>
+    </div>
+    <div class="slot prose quote butter" data-name="20 · North star">
+      <div class="tag">20 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A tool can be helpful and still make you smile.</span><span class="typed"><span class="t" data-text="A tool can be helpful and still make you smile."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot prose tools" data-name="21 · Tools" id="tools">
+      <div class="tag">21 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">A native Mac app, built with Claude in the loop. Every pixel of her is drawn in code.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude Code</b><small>Building her, and the hooks she listens to</small></div><div class="tlc"><img src="image/mochi/icon.png" alt="" class="mo-px"><b>Swift + AppKit</b><small>The floating app itself</small></div><div class="tlc"><img src="image/tools/python.svg" alt=""><b>Python</b><small>The hooks that tell her what Claude is doing</small></div><div class="tlc"><img src="image/mochi/pixel-heart.svg" alt="" class="mo-px"><b>Pixel art in code</b><small>Her body, moods and outfits, drawn cell by cell</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="https://github.com/jessawolfe-ux/mochi" target="_blank" rel="noopener">Download Mochi →</a><a class="wob" href="https://medium.com/@jessawolfe/how-i-built-an-interactive-pet-for-claude-to-help-with-my-adhd-9cc1926155d1" target="_blank" rel="noopener">Read the story →</a><a class="wob" href="app.html#work">← Back to work</a><a class="wob" href="app.html#hi">Say hi</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

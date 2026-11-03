@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>The Descent · Jessa Wolfe</title>
+<meta name="description" content="The Descent, a concept website for an aquarium of the deep. An octopus swims in as you scroll, then the name sits right on the water line. Designed and built by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<style>
+  /* The Descent: calm, grown-up, water blues. Videos sit in a plain browser window. */
+  body.descent .cs-cover { --fill: #fff; }
+  body.descent .cs-cover .content { background: #fff; }
+  body.descent .cs-cover video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  body.descent .ds-sky { --fill: #e3f0f8; } body.descent .ds-navy { --fill: #0b2346; color: #fff; } body.descent .ds-mist { --fill: #f1f5f9; }
+  body.descent .ds-vids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; width: 100%; }
+  body.descent .ds-vid { padding: 18px 18px 16px; }
+  body.descent .ds-vid.wide { grid-column: 1 / -1; }
+  body.descent .ds-vid .win { border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 12px 30px rgba(20, 50, 90, .16); }
+  body.descent .ds-vid .win i.bar { display: flex; gap: 6px; padding: 9px 12px; background: #fff; border-bottom: 1px solid #e6edf3; }
+  body.descent .ds-vid .win i.bar b { width: 9px; height: 9px; border-radius: 50%; background: #d5dee8; }
+  body.descent .ds-vid video { width: 100%; height: auto; display: block; background: #fff; }
+  body.descent .ds-vid h4 { margin: 14px 4px 4px; font-size: 18px; letter-spacing: -.01em; }
+  body.descent .ds-vid p { margin: 0 4px; font-size: 15px; line-height: 1.5; font-weight: 500; color: #3a4656; }
+  body.descent .ds-navy h4 { color: #fff; } body.descent .ds-navy p { color: #c9d9ea; }
+  body.descent .ds-phone { padding: 22px 26px; }
+  body.descent .ds-phone .content { display: grid; grid-template-columns: 300px 1fr; gap: 34px; align-items: center; }
+  body.descent .ds-phone .ph { border-radius: 38px; overflow: hidden; border: 10px solid #0d0b10; background: #0d0b10; box-shadow: 0 18px 40px rgba(20, 50, 90, .22); }
+  body.descent .ds-phone .ph video { width: 100%; display: block; }
+  body.descent .ds-phone h4 { margin: 0 0 8px; font-size: 24px; letter-spacing: -.02em; }
+  body.descent .ds-phone p { margin: 0 0 12px; font-size: 16px; line-height: 1.55; color: #3a4656; }
+  /* tried and dropped: one row per idea that didn't make it */
+  body.descent .ds-tried { width: 100%; display: grid; gap: 12px; }
+  body.descent .ds-try { padding: 16px 22px; }
+  body.descent .ds-try .content { display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: baseline; }
+  body.descent .ds-try b { font-size: 17px; letter-spacing: -.01em; text-decoration: line-through; text-decoration-color: #4aa3c9; text-decoration-thickness: 2px; }
+  body.descent .ds-try span { font-size: 15.5px; line-height: 1.5; color: #3a4656; }
+  body.descent .ds-try q { font: 700 22px/1.2 'Caveat', cursive; color: #1d6aa3; quotes: "“" "”"; margin-right: 6px; }
+  body.descent .ds-cta { --fill: #0b2346; }
+  body.descent .ds-cta .content { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; padding: 26px 30px; color: #fff; }
+  body.descent .ds-cta .cta-t { flex: 1; min-width: 220px; } body.descent .ds-cta h3 { margin: 0 0 4px; font-size: 22px; color: #fff; } body.descent .ds-cta p { margin: 0; color: #c9d9ea; font-size: 15.5px; }
+  body.descent .ds-cta a { display: inline-flex; padding: 14px 24px; border-radius: 999px; background: #fff; color: #0b2346; font-weight: 700; font-size: 16px; text-decoration: none; --wb: #fff; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  body.descent .ds-cta a:hover { transform: rotate(-2deg) scale(1.05); }
+  @media (max-width: 860px) { body.descent .ds-vids { grid-template-columns: 1fr; } body.descent .ds-phone .content, body.descent .ds-try .content { grid-template-columns: 1fr; gap: 14px; } body.descent .ds-phone .ph { max-width: 260px; margin: 0 auto; } body.descent .ds-phone { padding: 18px 20px 20px; } }
+</style>
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page descent">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ The Descent</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+  <main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · The Descent">
+      <div class="tag">01 · The Descent</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">The Descent, an aquarium of the deep</span><span class="typed"><span class="t" data-text="The Descent, an aquarium of the deep"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#idea">The idea</a><a class="wob" href="#direction">Art direction</a><a class="wob" href="#dive">The dive</a><a class="wob" href="#pages">The pages</a><a class="wob" href="#built">How I built it</a><a class="wob" href="#tools">Tools</a><a class="wob" href="apps/descent/index.html" target="_blank" rel="noopener">Visit the site ↗</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/descent/cover.mp4" poster="image/descent/cover.jpg" autoplay muted loop playsinline aria-label="An octopus swims through, the logo settles on a line of water, then the water rises under THE DESCENT and a ship sails by"></video></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Design + build, solo</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Concept website</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Focus">
+      <div class="tag">05 · Focus</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Focus</div><div class="v">Scroll storytelling</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Started">
+      <div class="tag">06 · Started</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Started</div><div class="v">Fall 2026</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="07 · The idea" id="idea">
+      <div class="tag">07 · The idea</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A website that feels like going under.</span><span class="typed"><span class="t" data-text="A website that feels like going under."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">The Descent is a concept site for an aquarium of the deep. I wanted the first few seconds to feel like the moment you lean over the edge of a boat and look down.</p>
+        <p class="pasted">So the whole site is one long dive. You start on calm white. Scroll, and an octopus swims up to meet you. The name settles right on the water line, half above and half below, while a little ship drifts across the top. Keep going and it gets darker, deeper and stranger, all the way down to an anglerfish with its light on.</p></div>
+    </div>
+    <div class="slot ds-cta paste" data-name="08 · Visit">
+      <div class="tag">08 · Visit</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="cta-t"><h3>Take the dive yourself.</h3><p>The whole site is live. Scroll slowly.</p></div><a class="wob" href="apps/descent/index.html" target="_blank" rel="noopener">Visit The Descent ↗</a></div>
+    </div>
+    <div class="slot prose" data-name="09 · Art direction" id="direction">
+      <div class="tag">09 · Art direction</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">An aquarium for grown-ups, too.</span><span class="typed"><span class="t" data-text="An aquarium for grown-ups, too."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Most aquarium websites are built for kids. Bright primary colors, cartoon fish, bubbles everywhere, every section shouting for attention. They’re fun, but they all look the same, and none of them feel like the hushed, blue wonder of actually standing in front of a tank.</p>
+        <p class="pasted">I wanted The Descent to feel like that moment instead. Engaging and interactive, so it still feels like play, but calm, clean and a little bit expensive. Think gallery, not theme park. Lots of white space, one confident typeface, a palette taken straight from the water, and the animals doing the talking.</p>
+        <div class="bullets pasted"><div class="b wob"><b>Classy, not childish.</b>No cartoons, no rainbow. Black type on white, then the deep blues of the sea.</div><div class="b wob"><b>Interactive, not busy.</b>One thing moves at a time: the octopus, the water, the ship. You set the pace by scrolling.</div><div class="b wob"><b>Real animals as the art.</b>Big, crisp creatures on clean backgrounds, like specimens in a museum.</div></div></div>
+    </div>
+    <div class="slot prose bare" data-name="10 · The dive" id="dive">
+      <div class="tag">10 · The dive</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The dive, from the top.</span><span class="typed"><span class="t" data-text="The dive, from the top."></span><span class="caret"></span></span></span></h2><p class="pasted">Everything here is the real site, recorded in the browser.</p></div>
+    </div>
+    <div class="ds-vids group">
+    <div class="slot ds-vid ds-sky wide sub paste" data-name="11 · Home">
+      <div class="tag">11 · Home</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/descent/home.mp4" poster="image/descent/home.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Scrolling from the octopus to the name on the water line"></video></div><h4>The octopus and the water line</h4><p>The octopus is a film you scrub with your scroll, so you swim with it. Then THE DESCENT lands on the water, black above and white below, with the ship and a depth meter on the side.</p></div>
+    </div>
+    <div class="slot ds-vid ds-navy sub paste" data-name="12 · Down">
+      <div class="tag">12 · Down</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/descent/dive.mp4" poster="image/descent/dive.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Diving from the name down to the anglerfish"></video></div><h4>Going under</h4><p>The water rises, the page goes dark, and an anglerfish swims out of the black. It plays on its own when it fills the screen. Scroll while it swims and it speeds up.</p></div>
+    </div>
+    <div class="slot ds-vid ds-navy sub paste" data-name="13 · Exhibits">
+      <div class="tag">13 · Exhibits</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/descent/exhibits.mp4" poster="image/descent/exhibits.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Hovering exhibit cards to read each story"></video></div><h4>The exhibits</h4><p>Two columns of cards drift past. Hover one and the big title turns into its story: a sonar sweep, the depth, a captain’s log and a few facts.</p></div>
+    </div>
+    <div class="slot ds-vid ds-mist wide sub paste" data-name="14 · Deeper">
+      <div class="tag">14 · Deeper</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/descent/deeper.mp4" poster="image/descent/deeper.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Scrolling through philosophy, events, tickets and the footer"></video></div><h4>Philosophy, events, tickets</h4><p>Calm white for the philosophy, glowing jellyfish behind the events, then white water floods back up for tickets, with the octopus resting at the bottom.</p></div>
+    </div>
+    </div>
+    <div class="slot prose bare" data-name="15 · The pages" id="pages">
+      <div class="tag">15 · The pages</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The other pages.</span><span class="typed"><span class="t" data-text="The other pages."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="ds-vids group">
+    <div class="slot ds-vid ds-sky sub paste" data-name="16 · Plan visit">
+      <div class="tag">16 · Plan visit</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/descent/visit.mp4" poster="image/descent/visit.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The plan your visit film and the visit details"></video></div><h4>Plan your visit</h4><p>A short film made of five people at the aquarium, each with one line: Say hello. Walk under sharks. Reach out. Then everything you need for the day.</p></div>
+    </div>
+    <div class="slot ds-vid ds-mist sub paste" data-name="17 · Tickets">
+      <div class="tag">17 · Tickets</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/descent/tickets.mp4" poster="image/descent/tickets.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Booking tickets: picking a day, a time and people"></video></div><h4>Book your dive</h4><p>Pick a day, a time and who’s coming, and the total adds up as you go. Times show how many spots are left.</p></div>
+    </div>
+    </div>
+    <div class="slot ds-phone ds-sky sub paste" data-name="18 · On a phone">
+      <div class="tag">18 · On a phone</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="ph"><video src="image/descent/phone.mp4" poster="image/descent/phone.jpg" autoplay muted loop playsinline aria-label="The Descent on a phone, with the full screen menu"></video></div><div><h4>On a phone</h4><p>The dive works the same in your hand. The nav folds into a Menu button that opens a full screen navy menu.</p><p>The exhibits swipe sideways, and pressing and holding a card opens its story as a sheet from the bottom.</p></div></div>
+    </div>
+    <div class="slot prose" data-name="19 · How I built it" id="built">
+      <div class="tag">19 · How I built it</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">How I built it.</span><span class="typed"><span class="t" data-text="How I built it."></span><span class="caret"></span></span></span></h2>
+        <div class="bullets pasted"><div class="b wob"><b>One page, one scroll.</b>The home page is a single story driven by scroll position, so every section can hand off to the next instead of just stacking up.</div><div class="b wob"><b>The octopus is 361 frames.</b>I cut the octopus out of a film, frame by frame, and draw it on a canvas so it follows your scroll without a background.</div><div class="b wob"><b>The water is drawn live.</b>The waves, the ship and the specks in the water are code, so they move on their own and the ship rocks when you poke it.</div><div class="b wob"><b>The creatures and films.</b>I made the exhibit animals and the visit film with AI image and video tools, using real photos as references, then cut each one out by hand.</div><div class="b wob"><b>Every link knows where to land.</b>Nav links glide right to their part of the dive, and the logo takes you back to the name on the water.</div></div></div>
+    </div>
+    <div class="slot prose tools" data-name="20 · Tools" id="tools">
+      <div class="tag">20 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Designed and coded by me, with Claude in the loop. No templates, no page builder.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude Code</b><small>Building the site with me</small></div><div class="tlc"><img src="image/tools/html5.svg" alt=""><b>HTML + CSS</b><small>The pages, the type, the water</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>The scroll story, the octopus film, the waves and the ship</small></div><div class="tlc"><img src="image/tools/higgsfield.png" alt=""><b>Higgsfield</b><small>The creatures and the films</small></div></div></div>
+    </div>
+    <div class="slot prose quote" data-name="21 · North star">
+      <div class="tag">21 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Calm on the surface. Wonder underneath.</span><span class="typed"><span class="t" data-text="Calm on the surface. Wonder underneath."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot ds-cta paste" data-name="22 · Visit again">
+      <div class="tag">22 · Visit again</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="cta-t"><h3>Take the dive yourself.</h3><p>The whole site is live. Scroll slowly.</p></div><a class="wob" href="apps/descent/index.html" target="_blank" rel="noopener">Visit The Descent ↗</a></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="apps/descent/index.html" target="_blank" rel="noopener">Visit The Descent →</a><a class="wob" href="app.html#work">More work →</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

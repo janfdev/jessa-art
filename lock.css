@@ -1,0 +1,82 @@
+/* ===== PIN lock for private case studies (soft gate) ===== */
+body.locked .canvas { overflow: hidden; height: var(--lock-h, auto); -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 300px), transparent calc(100% - 40px)); mask-image: linear-gradient(to bottom, #000 calc(100% - 300px), transparent calc(100% - 40px)); }
+.lk { transition: filter .9s ease, opacity .9s ease; }
+body.locked .lk { filter: blur(12px) saturate(.9); opacity: .75; pointer-events: none; user-select: none; }
+body.locked .shared { clip-path: inset(0 0 calc(100% - var(--lock-cut, 0px)) 0); }
+
+.lockpad, .lockpad.wob { position: relative; z-index: 1; width: min(360px, calc(100vw - 32px)); rotate: -1.2deg;
+  padding: 26px 26px 22px; border-radius: 36px; text-align: center; isolation: isolate; --wb: #fff;
+  box-shadow: 0 24px 60px rgba(130, 95, 140, .22), 0 3px 10px rgba(130, 95, 140, .08); animation: lpIn .6s var(--spring, cubic-bezier(.34,1.56,.64,1)) both; }
+.lp-x { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; border: 0; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 2px #eee3ec; color: var(--ink, #494848); font: 700 18px/1 var(--font, sans-serif); cursor: pointer; transition: transform .4s var(--spring, cubic-bezier(.34,1.56,.64,1)); }
+.lp-x:hover { transform: rotate(90deg) scale(1.08); }
+.lockmodal { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 16px; background: rgba(73, 72, 72, .22); opacity: 0; pointer-events: none; transition: opacity .3s; }
+.lockmodal.on { opacity: 1; pointer-events: auto; }
+.lockmodal:not(.on) .lockpad { animation: none; }
+
+/* floating bar above the toolbar */
+.lockbar, .lockbar.wob { position: fixed; left: 50%; bottom: 94px; z-index: 110; display: flex; align-items: center; gap: 12px; padding: 9px 9px 9px 16px; border-radius: 100px; --wb: #fff;
+  translate: -50% 0; box-shadow: 0 14px 34px rgba(130, 95, 140, .16), 0 2px 6px rgba(130, 95, 140, .08); white-space: nowrap; animation: lbIn .7s var(--spring, cubic-bezier(.34,1.56,.64,1)) .8s both; transition: opacity .4s, transform .5s var(--spring, cubic-bezier(.34,1.56,.64,1)); }
+@keyframes lbIn { from { opacity: 0; transform: translateY(24px) scale(.9); } }
+.lockbar.gone { opacity: 0; transform: translateY(24px) scale(.9); pointer-events: none; }
+.lockbar svg { width: 22px; height: 24px; flex: none; overflow: visible; animation: lpBob 3.4s ease-in-out infinite; }
+.lockbar svg .body { fill: var(--pink, #ff9ec4); stroke: var(--ink, #494848); stroke-width: 3; }
+.lockbar svg .shackle { fill: none; stroke: var(--ink, #494848); stroke-width: 5; stroke-linecap: round; }
+.lockbar svg .hole { fill: var(--ink, #494848); }
+.lockbar span { font-size: 14.5px; font-weight: 700; color: var(--ink, #494848); }
+.lockbar button { appearance: none; border: 0; font: 700 14px/1 var(--font, "DM Sans", sans-serif); color: var(--ink, #494848); padding: 10px 16px; border-radius: 100px; background: var(--butter-deep, #f3d96a); cursor: pointer; transition: transform .45s var(--spring, cubic-bezier(.34,1.56,.64,1)); }
+.lockbar button:hover { transform: rotate(-3deg) scale(1.07); }
+.lockbar.nudge button { animation: lbNudge .6s var(--spring, cubic-bezier(.34,1.56,.64,1)); }
+@keyframes lbNudge { 40% { transform: scale(1.18) rotate(-6deg); } }
+@media (max-width: 480px) { .lockbar { bottom: 86px; gap: 8px; padding-left: 12px; } .lockbar span { font-size: 13px; } .lockbar button { padding: 9px 13px; font-size: 13px; } }
+@keyframes lpIn { from { opacity: 0; transform: translateY(26px) scale(.9); } }
+.lockpad.shake { animation: lpShake .5s cubic-bezier(.36,.07,.19,.97); }
+@keyframes lpShake { 15%, 55% { transform: translateX(-10px) rotate(-1deg); } 35%, 75% { transform: translateX(10px) rotate(1deg); } }
+.lockpad.open { animation: lpOut .7s cubic-bezier(.5,-.4,.6,1) .55s both; }
+@keyframes lpOut { 30% { transform: scale(1.05); } to { opacity: 0; transform: translateY(-30px) scale(.7) rotate(6deg); } }
+.lockmodal.done { opacity: 0; transition: opacity .4s .9s; }
+
+.lp-lock { width: 64px; height: 72px; margin: -2px auto 8px; display: block; overflow: visible; animation: lpBob 3.4s ease-in-out infinite; }
+@keyframes lpBob { 50% { transform: translateY(-4px) rotate(3deg); } }
+.lp-lock .body { fill: var(--pink, #ff9ec4); stroke: var(--ink, #494848); stroke-width: 3; stroke-linejoin: round; }
+.lp-lock .shackle { fill: none; stroke: var(--ink, #494848); stroke-width: 5; stroke-linecap: round; transform-origin: 46px 34px; transition: transform .5s var(--spring, cubic-bezier(.34,1.56,.64,1)); }
+.lp-lock .hole { fill: var(--ink, #494848); }
+.lp-lock .shine { fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; opacity: .8; }
+.lockpad.open .lp-lock .shackle { transform: translateY(-9px) rotate(28deg); }
+.lockpad.open .lp-lock .body { fill: var(--mint-deep, #7ad3a3); }
+
+.lp-h { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -.02em; color: var(--ink, #494848); }
+.lp-sub { margin: 4px 0 0; font-family: var(--hand, "Caveat", cursive); font-size: 23px; font-weight: 700; line-height: 1.05; color: var(--ink, #494848); }
+
+.lp-dots { display: flex; justify-content: center; gap: 14px; margin: 18px 0 16px; }
+.lp-dots i { width: 20px; height: 20px; border-radius: 48% 52% 45% 55% / 55% 45% 55% 45%; box-shadow: inset 0 0 0 2.5px #e6dbe4; background: transparent; transition: transform .35s var(--spring, cubic-bezier(.34,1.56,.64,1)), background .2s; }
+.lp-dots i.on { box-shadow: none; transform: scale(1.18) rotate(-8deg); }
+.lp-dots i.on:nth-child(1) { background: var(--pink, #ff9ec4); } .lp-dots i.on:nth-child(2) { background: var(--butter-deep, #f3d96a); }
+.lp-dots i.on:nth-child(3) { background: var(--mint-deep, #7ad3a3); } .lp-dots i.on:nth-child(4) { background: var(--sky-deep, #8cc1ff); }
+.lockpad.bad .lp-dots i { background: var(--coral, #ff9a7b); box-shadow: none; }
+.lockpad.good .lp-dots i { background: var(--mint-deep, #7ad3a3); animation: lpHop .5s var(--spring, cubic-bezier(.34,1.56,.64,1)) both; }
+.lockpad.good .lp-dots i:nth-child(2) { animation-delay: .06s; } .lockpad.good .lp-dots i:nth-child(3) { animation-delay: .12s; } .lockpad.good .lp-dots i:nth-child(4) { animation-delay: .18s; }
+@keyframes lpHop { 50% { transform: translateY(-10px) scale(1.25); } }
+
+.lp-keys { display: grid; grid-template-columns: repeat(3, 66px); justify-content: center; gap: 12px 16px; }
+.lp-keys button { appearance: none; border: 0; padding: 0; width: 66px; height: 66px; border-radius: 50%; position: relative; isolation: isolate; cursor: pointer;
+  font: 700 24px/1 var(--font, "DM Sans", sans-serif); color: var(--ink, #494848); rotate: var(--r, 0deg);
+  transition: transform .45s var(--spring, cubic-bezier(.34,1.56,.64,1)); -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+.lp-keys button::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: var(--k, var(--blush, #ffecec)); filter: url(#wobs); box-shadow: 0 4px 0 rgba(130, 95, 140, .12); }
+.lp-keys button:hover { transform: translateY(-3px) rotate(-4deg) scale(1.06); }
+.lp-keys button.press, .lp-keys button:active { transform: scale(.84) rotate(6deg); transition-duration: .08s; }
+.lp-keys button.fn { font-size: 13px; font-weight: 700; --k: #fff; }
+.lp-keys button.fn::before { box-shadow: inset 0 0 0 2px #eee3ec, 0 4px 0 rgba(130, 95, 140, .08); }
+.lp-keys button svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.lp-msg { height: 26px; margin: 14px 0 0; font-family: var(--hand, "Caveat", cursive); font-size: 22px; font-weight: 700; color: var(--pink-deep, #f27aa8); }
+.lp-ask { display: inline-block; margin-top: 4px; font-size: 13.5px; font-weight: 700; color: var(--ink, #494848); text-decoration: none; padding: 7px 14px; border-radius: 100px; background: var(--butter, #fff5c8); transition: transform .4s var(--spring, cubic-bezier(.34,1.56,.64,1)); }
+.lp-ask:hover, .lp-ask.nudge { transform: rotate(-3deg) scale(1.06); }
+.lp-pop { position: absolute; width: 10px; height: 10px; border-radius: 50%; pointer-events: none; z-index: 40; animation: lpPop .7s ease-out forwards; }
+@keyframes lpPop { to { transform: translate(var(--dx), var(--dy)) scale(.2); opacity: 0; } }
+@media (max-width: 400px) { .lp-keys { grid-template-columns: repeat(3, 60px); gap: 10px 14px; } .lp-keys button { width: 60px; height: 60px; } }
+@media (prefers-reduced-motion: reduce) { .lockpad, .lp-lock, .lp-keys button, .lp-dots i { animation: none !important; transition: none !important; } }
+
+/* the cursors stay on top of the bar and the PIN popup */
+body.locked .cur:not(.peer-cur) { z-index: 130; }
+.lockpad.wait .lp-keys button { opacity: .4; cursor: not-allowed; }
+.lockpad.wait .lp-keys button:hover { transform: none; }
+.lockpad.wait .lp-msg { color: var(--ink, #494848); font-size: 20px; }

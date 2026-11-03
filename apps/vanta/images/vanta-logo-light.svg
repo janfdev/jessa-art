@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 90" width="500" height="90" role="img" aria-label="VANTA">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300&amp;display=swap');
+      .wm { font-family: 'Manrope', 'Helvetica Neue', Arial, sans-serif; font-weight: 300; font-size: 52px; letter-spacing: 16px; }
+    </style>
+  </defs>
+  <text x="18" y="60" class="wm" fill="#FFFFFF">VANTA<tspan fill="#FF3B14">.</tspan></text>
+</svg>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440">
+<title>Fisher-Price</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Roboto+Slab:wght@300;400;500;600;700&family=Source+Serif+Pro:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#0c8ee1;
+    --blue2:#1179be;
+    --blue3:#1479be;
+    --grey:#656769;
+    --cyan:#00d1ff;
+    --red:#ff3a1e;
+    --red2:#ff3f1a;
+    --display:'Roboto Slab',Georgia,serif; /* Archer substitute */
+    --body:'Inter',system-ui,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{margin:0;padding:0;overflow-x:hidden;}
+  body{background:#fff;font-family:var(--body);}
+  /* Scale the 1440x4213 Figma stage to fill the viewport width on any
+     screen size. The wrapper holds the scaled-down height so the
+     document scrolls correctly, and the stage uses a CSS transform
+     instead of mutating every absolute coordinate. */
+  .stage-wrap{position:relative;width:100vw;height:calc(100vw * 4261 / 1440);overflow:hidden;}
+  .stage{position:absolute;left:0;top:0;width:1440px;height:4261px;background:#fff;transform-origin:top left;}
+  .abs{position:absolute;}
+  img{display:block;max-width:none;}
+  .btn{display:flex;align-items:center;justify-content:center;border-radius:100px;font-family:var(--body);font-weight:700;font-size:16px;text-transform:none;cursor:pointer;background:transparent;text-align:center;transition:background-color .2s ease,color .2s ease,border-color .2s ease;}
+  /* All buttons share one hover state: filled white with blue text. */
+  .btn:hover{background:#fff;color:var(--blue);border-color:#fff;}
+  /* Decorative vertical lines in the blue hero band — pinned behind
+     the toy/baby images that decorate the section. Both stay absolutely
+     positioned via the .abs base class; only the z-index changes. */
+  .deco-line{z-index:0;}
+  .blue-art{z-index:1;}
+  a{text-decoration:none;color:inherit;}
+  /* Carousel: clickable arrows + dots */
+  .carousel-prev,.carousel-next,.carousel-dot{cursor:pointer;transition:transform .18s ease;}
+  .carousel-prev:hover,.carousel-next:hover{transform:scale(1.08);}
+  .carousel-card-img{transition:opacity .25s ease;}
+</style>
+</head>
+<body>
+<div class="stage-wrap">
+<div class="stage">
+
+  <!-- ============ BACKGROUND BLOCKS ============ -->
+  <div class="abs" style="left:0;top:0;width:1440px;height:32px;background:#e8eef3;display:flex;align-items:center;justify-content:center;font-family:var(--body);font-size:11px;color:#989898;letter-spacing:0.01em;">
+    <a href="https://web.archive.org/web/20150905060414/http://www.fisher-price.com/en_US/index.html" style="color:#989898;text-decoration:underline;">Home for Fisher-Price Toys &amp; More</a>
+    <span style="margin:0 8px;">|</span>
+    <span>Use of this site signifies your acceptance of the terms and conditions of use.</span>
+  </div>
+  <div class="abs" style="left:0;top:32px;width:1440px;height:66px;background:#fff;"></div>
+  <div class="abs" style="left:1221px;top:32px;width:147px;height:66px;background:#01bfd7;"></div>
+  <div class="abs" style="left:1368px;top:32px;width:72px;height:66px;background:#00acc1;"></div>
+
+  <!-- hero left photo -->
+  <div class="abs" style="left:0;top:98px;width:785px;height:673px;overflow:hidden;">
+    <img src="images/rebuild/hero-left.png" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+  <!-- hero right top blue -->
+  <div class="abs" style="left:785px;top:98px;width:655px;height:335px;background:var(--blue);"></div>
+  <!-- Thomas portrait sits inside the blue hero block, behind the
+       headline. top:98 matches the blue block's top edge so the image
+       doesn't punch up into the cyan store-nav strip; right edge stops
+       at 1440 (page edge); the headline at left:827 overlaps Thomas's
+       left side, which is the intended layering. -->
+  <!-- Container aspect matches the PNG's native 335:360 so Thomas
+       fills it edge-to-edge with no letterboxing or cropping. -->
+  <div class="abs" style="left:1129px;top:155px;width:311px;height:334px;overflow:hidden;">
+    <img src="thomas-image.png" alt="Thomas the Tank Engine" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+  <!-- hero right bottom (Jonathan Adler) -->
+  <div class="abs" style="left:785px;top:433px;width:655px;height:334px;overflow:hidden;">
+    <img src="images/rebuild/hero-thomas.png" style="width:100%;height:126.86%;">
+  </div>
+  <div class="abs" style="left:784px;top:506px;width:391px;height:261px;">
+    <img src="images/rebuild/hero-thomas-overlay.svg" style="width:100%;height:100%;">
+  </div>
+
+  <!-- "best possible start" big blue band -->
+  <div class="abs" style="left:0;top:767px;width:1440px;height:599px;background:var(--blue);"></div>
+  <!-- decorative vertical lines — rendered first and stacked below the
+       images via .deco-line { z-index: 0 } / .blue-art { z-index: 1 }. -->
+  <div class="abs deco-line" style="left:1089px;top:767px;width:2px;height:378px;background:rgba(255,255,255,.35);"></div>
+  <div class="abs deco-line" style="left:1246px;top:767px;width:2px;height:151px;background:rgba(255,255,255,.35);"></div>
+  <div class="abs deco-line" style="left:192px;top:767px;width:2px;height:262px;background:rgba(255,255,255,.35);"></div>
+  <div class="abs blue-art" style="left:1010px;top:811.5px;width:184px;height:437px;">
+    <img src="images/rebuild/blue-strip.svg" style="width:100%;height:100%;">
+  </div>
+  <div class="abs blue-art" style="left:1060px;top:1080px;width:266px;height:306px;overflow:hidden;">
+    <img src="images/rebuild/blue-photo.png" style="width:121.37%;height:207.79%;position:absolute;top:-107.7%;left:0;">
+  </div>
+  <div class="abs blue-art" style="left:32px;top:812px;width:322px;height:322px;">
+    <img src="images/rebuild/star-left.png" style="width:298.5px;height:298.5px;margin:11.7px;">
+  </div>
+  <div class="abs blue-art" style="left:1133px;top:849px;width:223px;height:223px;">
+    <img src="images/rebuild/star-right-outline.svg" style="width:100%;height:100%;">
+  </div>
+  <div class="abs blue-art" style="left:1125px;top:829px;width:243px;height:243px;">
+    <img src="images/rebuild/star-right-photo.png" style="width:210px;height:202px;margin:11px 16px;">
+  </div>
+
+  <!-- products carousel band -->
+  <div class="abs" style="left:0;top:1366px;width:1440px;height:670px;background:#e8eef3;"></div>
+  <!-- 3 cards (images + labels are swapped by JS when the carousel pages) -->
+  <div class="abs" style="left:166px;top:1480px;width:354px;height:275px;border-radius:12px 12px 0 0;overflow:hidden;">
+    <img class="carousel-card-img" src="images/card-baby-gear.jpg" alt="Baby Gear" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+  <div class="abs" style="left:543px;top:1480px;width:354px;height:275px;border-radius:12px 12px 0 0;overflow:hidden;">
+    <img class="carousel-card-img" src="images/card-baby-toys.jpg" alt="Baby Toys" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+  <div class="abs" style="left:920px;top:1480px;width:354px;height:275px;border-radius:12px 12px 0 0;overflow:hidden;">
+    <img class="carousel-card-img" src="images/card-little-people.jpg" alt="Little People Toys" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+  <div class="abs" style="left:166px;top:1755px;width:354px;height:78px;background:#fff;"></div>
+  <div class="abs" style="left:543px;top:1755px;width:354px;height:78px;background:#fff;"></div>
+  <div class="abs" style="left:920px;top:1755px;width:354px;height:78px;background:#fff;"></div>
+  <!-- card labels — each label container spans the full card width so
+       text-align:center sits the label visually centered on its card. -->
+  <div class="abs carousel-card-label" style="left:166px;top:1783px;width:354px;text-align:center;font-weight:700;font-size:18px;color:var(--blue);letter-spacing:.54px;">BABY GEAR</div>
+  <div class="abs carousel-card-label" style="left:543px;top:1783px;width:354px;text-align:center;font-weight:700;font-size:18px;color:var(--blue);letter-spacing:.54px;">BABY TOYS</div>
+  <div class="abs carousel-card-label" style="left:920px;top:1783px;width:354px;text-align:center;font-weight:700;font-size:18px;color:var(--blue);letter-spacing:.54px;">LITTLE PEOPLE<span style="font-weight:400;">™</span> TOYS</div>
+  <!-- carousel arrows -->
+  <div class="abs carousel-prev" style="left:60px;top:1645px;width:68px;height:68px;border-radius:50%;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:24px;">‹</div>
+  <div class="abs carousel-next" style="left:1313px;top:1645px;width:68px;height:68px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;">›</div>
+  <!-- dots -->
+  <div class="abs carousel-dot" data-page="0" style="left:654px;top:1913px;width:34px;height:34px;border-radius:50%;background:var(--blue);"></div>
+  <div class="abs carousel-dot" data-page="1" style="left:703px;top:1913px;width:34px;height:34px;border-radius:50%;border:2px solid #c5ccd3;"></div>
+  <div class="abs carousel-dot" data-page="2" style="left:751px;top:1913px;width:34px;height:34px;border-radius:50%;border:2px solid #c5ccd3;"></div>
+
+  <!-- ============ NAV BAR ============ -->
+  <a href="#" class="abs" style="left:51px;top:46px;width:87px;height:34px;display:block;">
+    <img src="fisher-price-logo.svg" alt="Fisher-Price" style="width:100%;height:100%;display:block;">
+  </a>
+  <nav class="abs" style="left:calc(50% - 16px);top:57px;transform:translateX(-50%);display:flex;gap:63px;align-items:center;font-weight:700;font-size:14px;color:var(--grey);text-transform:uppercase;white-space:nowrap;">
+    <span>products</span>
+    <span>age-by-age playtime guide</span>
+    <span>parenting</span>
+    <span>games &amp; activities</span>
+    <span>our story</span>
+  </nav>
+  <div class="abs" style="left:1287px;top:57px;font-weight:700;font-size:14px;color:#fff;text-transform:uppercase;">STORE</div>
+  <!-- cart icon -->
+  <svg class="abs" style="left:1255px;top:53px;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+  <!-- search icon -->
+  <svg class="abs" style="left:1391px;top:53px;" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+
+  <!-- ============ HERO TEXT ============ -->
+  <!-- left card -->
+  <div class="abs" style="left:51px;top:140px;width:417px;font-family:var(--display);font-weight:700;font-size:34px;color:var(--blue);">Move. Dance. Learn.</div>
+  <div class="abs" style="left:51px;top:187px;width:260px;font-weight:500;font-size:18px;color:var(--blue);">Bright Beats™<br>Learnin' Lights Dance Mat</div>
+
+  <!-- Thomas card -->
+  <div class="abs" style="left:827px;top:231px;width:429px;font-family:var(--display);font-weight:500;font-size:34px;color:#fff;">Thomas can do anything!</div>
+  <div class="abs" style="left:827px;top:280px;width:429px;font-family:var(--display);font-weight:700;font-size:34px;color:#fff;">What should he do next?</div>
+  <div class="btn abs" style="left:822px;top:338px;width:330px;height:49px;border:2px solid #fff;color:#fff;">SUBMIT FOR A CHANCE TO WIN</div>
+
+  <!-- Jonathan Adler card -->
+  <div class="abs" style="left:827px;top:535px;width:355px;font-family:var(--display);font-weight:500;font-size:34px;color:#fff;line-height:1.1;">Iconic designer Jonathan Adler is joining our team!</div>
+  <div class="btn abs" style="left:822px;top:683px;width:180px;height:49px;border:2px solid #fff;color:#fff;">LEARN MORE</div>
+
+  <!-- best possible start -->
+  <div class="abs" style="left:392px;top:819px;font-family:var(--display);font-weight:500;font-size:44px;color:#fff;">The best possible start</div>
+  <div class="abs" style="left:392px;top:900px;width:626px;font-family:var(--display);font-weight:400;font-size:24px;color:#fff;line-height:1.4;">
+    Your goal? To give your child the best possible start in life.<br><br>
+    Ours? To bring you the best possible baby gear and toys, all thoughtfully designed to help you nurture your child's development.<br><br>
+    Because isn't that the most important job in the world?<br>For more than 80 years, we've been helping families<br>with that job.
+  </div>
+  <div class="btn abs" style="left:392px;top:1265px;width:212px;height:49px;border:2px solid #fff;color:#fff;">READ OUR STORY</div>
+
+  <!-- ============ PLAYTIME GUIDE ============ -->
+  <div class="abs" style="left:calc(50% - 16px);top:2116px;transform:translateX(-50%);width:504px;text-align:center;font-weight:700;font-size:18px;color:var(--blue);letter-spacing:.54px;">AGE-BY-AGE PLAYTIME GUIDE</div>
+  <div class="abs" style="left:calc(50% - 16.5px);top:2159px;transform:translateX(-50%);font-family:var(--display);font-weight:500;font-size:44px;color:var(--blue);text-align:center;white-space:nowrap;">Play. Wonder. Grow. Repeat.</div>
+  <div class="abs" style="left:calc(50% - 16px);top:2235px;transform:translateX(-50%);width:870px;font-family:var(--display);font-weight:400;font-size:24px;color:var(--grey);text-align:center;line-height:32px;">Playtime is essential to development. Each fun-filled moment is a stepping stone to new learning, new discoveries, and new skills. Our Playtime Guide is packed with ideas to help you enrich key areas of development as your child grows.</div>
+  <div class="btn abs" style="left:calc(50% - 16px);top:2374px;transform:translateX(-50%);width:198px;height:49px;border:2px solid var(--red);color:var(--red);">VIEW GUIDE</div>
+  <!-- crawling babies strip -->
+  <div class="abs" style="left:calc(50% - 16px);top:2477px;transform:translateX(-50%);width:1096px;height:116px;">
+    <img src="images/rebuild/guide-figures.png" style="width:100%;height:100%;object-fit:cover;">
+  </div>
+
+  <!-- ============ PARENTING ARTICLES ============ -->
+  <!-- background photo (feet) -->
+  <div class="abs" style="left:0;top:2661px;width:1456px;height:913px;overflow:hidden;">
+    <img src="images/rebuild/bottom-photo.png" style="width:111.81%;height:89.15%;">
+  </div>
+  <div class="abs" style="left:0;top:3294px;width:1440px;height:275px;background:#f5f1f8;"></div>
+
+  <!-- "Parenting Articles" title sits on the same row as the icon
+       circles so the red title visually anchors the icon strip. -->
+  <div class="abs" style="left:calc(50% - 676px);top:3192px;width:245px;font-family:'Source Serif Pro',serif;font-size:44px;color:var(--red);line-height:1;">Parenting Articles</div>
+
+  <!-- Developmental category labels — circles removed. Labels sit on
+       the same vertical center as the "Parenting Articles" header
+       (header top:3192, font 44px → center ~3214; labels top:3208,
+       font 16px → center ~3216, visually aligned). -->
+  <div class="abs" style="left:379px;top:3208px;font-weight:700;font-size:16px;color:#49d1ff;">PHYSICAL</div>
+  <div class="abs" style="left:739px;top:3208px;font-weight:700;font-size:16px;color:var(--blue3);">COGNITIVE</div>
+  <div class="abs" style="left:1074px;top:3208px;width:200px;font-weight:700;font-size:16px;color:var(--red);">SOCIAL &amp; EMOTIONAL</div>
+
+  <!-- article cards — titles, descriptions, and READ buttons are all
+       on the same horizontal lines across the three columns so the
+       longest title (Siblings) can wrap without crashing into its body
+       copy. -->
+  <!-- Each article is a single container so title → desc → READ flow
+       in normal order with explicit margins. Title-to-desc stays tight
+       regardless of how many lines the title wraps to. -->
+  <div class="abs" style="left:calc(50% - 353px);top:3258px;width:280px;">
+    <div style="font-family:'Source Serif Pro',serif;font-size:26px;color:var(--cyan);line-height:1.2;">Signs Your Baby is Turning into a Toddler</div>
+    <div style="font-weight:500;font-size:16px;color:var(--grey);line-height:1.5;margin-top:14px;">Is your sweet baby growing into toddlerhood? You're going to have a wonderful time exploring the world together!</div>
+    <div style="font-weight:700;font-size:16px;color:var(--blue2);margin-top:24px;">READ</div>
+  </div>
+
+  <div class="abs" style="left:50%;top:3258px;width:280px;">
+    <div style="font-family:'Source Serif Pro',serif;font-size:26px;color:var(--blue2);line-height:1.2;">The Many Benefits of Play</div>
+    <div style="font-weight:500;font-size:16px;color:var(--grey);line-height:1.5;margin-top:14px;">Ever considered the power of playtime? One of our child development experts takes you through all the ways play helps your child thrive.</div>
+    <div style="font-weight:700;font-size:16px;color:var(--blue2);margin-top:24px;">READ</div>
+  </div>
+
+  <div class="abs" style="left:calc(50% + 337px);top:3258px;width:280px;">
+    <div style="font-family:'Source Serif Pro',serif;font-size:26px;color:var(--red2);line-height:1.2;">Ensure Lifelong Friendships Between Siblings</div>
+    <div style="font-weight:500;font-size:16px;color:var(--grey);line-height:1.5;margin-top:14px;">Read on for how you can help your kids learn to respect and cherish each other to create lifelong relationships that are truly friendships.</div>
+    <div style="font-weight:700;font-size:16px;color:var(--blue2);margin-top:24px;">READ</div>
+  </div>
+
+  <!-- ============ NEWSLETTER ============ -->
+  <div class="abs" style="left:calc(50% - 690px);top:3612px;width:381px;font-family:'Source Serif Pro',serif;font-size:28px;color:var(--blue3);">Subscribe to our newsletter!</div>
+  <div class="btn abs" style="left:429px;top:3605px;width:159px;height:49px;border:2px solid var(--blue3);color:var(--blue3);">SUBSCRIBE</div>
+  <div class="abs" style="left:46px;top:3692px;width:1348px;height:1px;background:#d8d8d8;"></div>
+
+  <!-- ============ FOOTER ============ -->
+  <div class="abs" style="left:calc(50% - 689px);top:3735px;width:271px;font-weight:400;font-size:18px;color:var(--grey);line-height:30px;">
+    <div style="font-weight:700;color:#9f9f9f;">PRODUCTS</div>
+    Baby Gear<br>Baby Toys<br>Building Toys<br>Dolls, Dollhouses &amp; Accessories<br>Learning &amp; Educational Toys<br>Outdoor Toys &amp; Sports<br>Playsets &amp; Action Figures<br>Puzzles, Books &amp; Games<br>Ride-on Toys<br>Stuffed Animals &amp; Characters<br>Toy Cars, Trucks &amp; Vehicles<br>Toy Trains &amp; Train Sets
+  </div>
+
+  <div class="abs" style="left:calc(50% - 298px);top:3735px;width:271px;font-size:18px;color:var(--grey);line-height:30px;">
+    <div style="font-weight:700;color:#9f9f9f;">BRANDS</div>
+    Everything Baby<br>Laugh &amp; Learn<br>Little People<br>Imaginext<br>Power Wheels<br>Thomas &amp; Friends<br><br>
+    <div style="font-weight:700;color:#9f9f9f;">GAMES &amp; ACTIVITIES</div>
+    Apps for Kids<br>Coloring Pages<br>Crafts for Kids<br>Online Games<br>Online Videos
+  </div>
+
+  <div class="abs" style="left:calc(50% + 28px);top:3735px;width:271px;font-size:18px;color:var(--grey);line-height:30px;">
+    <div style="font-weight:700;color:#9f9f9f;">MORE TO EXPLORE</div>
+    Age-by-Age Playtime Guide<br>Birthday Party Tips<br>Our Story<br>Parenting Articles<br>Photo Sharing Site<br>SHOPPING<br>Our Online Store<br>Replacement parts<br>Request a Catalog
+  </div>
+
+  <div class="abs" style="left:calc(50% + 411px);top:3735px;width:271px;font-size:18px;color:var(--grey);line-height:30px;">
+    <div style="font-weight:700;color:#9f9f9f;">CUSTOMER SERVICE</div>
+    Contact Us<br>Product Registration<br>Recalls<br><br>
+    <div style="font-weight:700;color:#9f9f9f;">OTHER F-P SITES</div>
+    En Español<br>Submit Product Ideas
+  </div>
+
+  <div class="abs" style="left:calc(50% - 16px);top:4231px;transform:translateX(-50%);width:1160px;text-align:center;font-weight:500;font-size:12px;color:#bababa;line-height:30px;">
+    <a href="#" style="text-decoration:underline;">Home for Fisher-Price Toys &amp; More</a> | Use of this site signifies your acceptance of the terms and conditions of use.
+  </div>
+
+</div>
+</div>
+
+<script>
+  /* Scale the 1440x4213 stage to fit the viewport width. CSS calc
+     inside transform: scale() isn't reliably accepted, so set it from
+     JS on load and resize. */
+  (function () {
+    const stage = document.querySelector('.stage');
+    function fit() { if (stage) stage.style.transform = 'scale(' + (window.innerWidth / 1440) + ')'; }
+    fit();
+    window.addEventListener('resize', fit);
+  })();
+
+  /* Carousel — three pages of three product cards. Click the arrows or
+     a dot to swap the image + label on each card. Placeholder colored
+     cards stand in for the real Higgsfield photography. */
+  (function () {
+    const PAGES = [
+      [
+        { img: 'images/card-baby-gear.jpg',     label: 'BABY GEAR' },
+        { img: 'images/card-baby-toys.jpg',     label: 'BABY TOYS' },
+        { img: 'images/card-little-people.jpg', label: 'LITTLE PEOPLE<span style="font-weight:400;">™</span> TOYS' },
+      ],
+      [
+        { img: 'images/card-building-toys.jpg', label: 'BUILDING TOYS' },
+        { img: 'images/card-dolls.jpg',         label: 'DOLLS &amp; DOLLHOUSES' },
+        { img: 'images/card-educational.jpg',   label: 'EDUCATIONAL TOYS' },
+      ],
+      [
+        { img: 'images/card-outdoor-toys.jpg',  label: 'OUTDOOR TOYS' },
+        { img: 'images/card-playsets.jpg',      label: 'PLAYSETS' },
+        { img: 'images/card-ride-on-toys.jpg',  label: 'RIDE-ON TOYS' },
+      ],
+    ];
+    const BLUE = '#0c8ee1';
+    const imgs = document.querySelectorAll('.carousel-card-img');
+    const labels = document.querySelectorAll('.carousel-card-label');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const prev = document.querySelector('.carousel-prev');
+    const next = document.querySelector('.carousel-next');
+    let page = 0;
+    function render() {
+      PAGES[page].forEach((card, i) => {
+        if (imgs[i]) {
+          imgs[i].style.opacity = '0';
+          imgs[i].src = card.img;
+          imgs[i].alt = card.label.replace(/<[^>]*>/g, '');
+          imgs[i].onload = () => { imgs[i].style.opacity = '1'; };
+        }
+        if (labels[i]) labels[i].innerHTML = card.label;
+      });
+      dots.forEach((dot, i) => {
+        if (i === page) {
+          dot.style.background = BLUE;
+          dot.style.border = 'none';
+        } else {
+          dot.style.background = 'transparent';
+          dot.style.border = '2px solid #c5ccd3';
+        }
+      });
+    }
+    if (prev) prev.addEventListener('click', () => { page = (page - 1 + PAGES.length) % PAGES.length; render(); });
+    if (next) next.addEventListener('click', () => { page = (page + 1) % PAGES.length; render(); });
+    dots.forEach((dot, i) => dot.addEventListener('click', () => { page = i; render(); }));
+  })();
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

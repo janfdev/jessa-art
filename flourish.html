@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Flourish · Jessa Wolfe</title>
+<meta name="description" content="Flourish, a pastel illustrated gardening brand built from a blank page by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Flourish</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Flourish">
+      <div class="tag">01 · Flourish</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Flourish, a gardening brand</span><span class="typed"><span class="t" data-text="Flourish, a gardening brand"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#about">About the project</a><a class="wob" href="#brand">The brand</a><a class="wob" href="#world">The world</a><a class="wob" href="#made">How it was made</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/garden-loop.mp4" poster="image/flourish/garden.jpg" autoplay muted loop playsinline></video></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Brand design and art direction</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Client brand, gardening line</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Deliverables">
+      <div class="tag">05 · Deliverables</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Deliverables</div><div class="v">Packaging, characters, patterns, video</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Year">
+      <div class="tag">06 · Year</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Year</div><div class="v">2026</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="07 · The idea" id="about">
+      <div class="tag">07 · The idea</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Good soil. Better blooms.</span><span class="typed"><span class="t" data-text="Good soil. Better blooms."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Flourish is a pastel illustrated brand for potting soil, garden tools, patterns, and short video. I built it for a client from a blank page: the wordmark, a palette, a cast of tiny gardeners, packaging, a product line, six seamless patterns, and three looping films.</p>
+        <p class="pasted">The whole thing runs on one sentence. Every asset follows the same style description, so a soil bag, a seed packet, and a short video all look like they came from the same hand.</p></div>
+    </div>
+    <div class="slot prose quote blush" data-name="08 · The style" id="brand">
+      <div class="tag">08 · The style</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Flat, soft, and a little bit grainy. No outlines. Tiny dot eyes. Flowers bigger than people.</span><span class="typed"><span class="t" data-text="Flat, soft, and a little bit grainy. No outlines. Tiny dot eyes. Flowers bigger than people."></span><span class="caret"></span></span></span></h2><p class="pasted">The style, in one paragraph: flat vector-style illustration with soft airy gradient shading and subtle grain, rounded simplified shapes, small faces on characters, a pastel pink, coral, lavender, sky blue, and fresh green palette. Oversized flowers, soap bubbles, translucent rainbow droplets, little gardeners in bucket hats.</p></div>
+    </div>
+    <div class="side">
+    <div class="slot prose" data-name="09 · Palette">
+      <div class="tag">09 · Palette</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">A palette you could plant.</span><span class="typed"><span class="t" data-text="A palette you could plant."></span><span class="caret"></span></span></span></h3><div class="swatches pasted"><div class="swatch"><i style="background:#1F6B3A"></i><b>Deep green</b><span>#1F6B3A</span></div><div class="swatch"><i style="background:#F07A7A"></i><b>Coral</b><span>#F07A7A</span></div><div class="swatch"><i style="background:#FBE7EE"></i><b>Blush</b><span>#FBE7EE</span></div><div class="swatch"><i style="background:#F4A3C0"></i><b>Pink bloom</b><span>#F4A3C0</span></div><div class="swatch"><i style="background:#C9B6E8"></i><b>Lavender</b><span>#C9B6E8</span></div><div class="swatch"><i style="background:#A9CBEF"></i><b>Sky blue</b><span>#A9CBEF</span></div><div class="swatch"><i style="background:#9DBA8A"></i><b>Sage</b><span>#9DBA8A</span></div><div class="swatch"><i style="background:#F5C07A"></i><b>Sun yellow</b><span>#F5C07A</span></div></div></div>
+    </div>
+    <div class="slot polaroid-wrap paste" data-name="10 · Wordmark">
+      <div class="tag">10 · Wordmark</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/logo.png" alt="The Flourish wordmark on an upward arc, in deep green" style="background:#fff"><div class="cap">Fraunces, soft and a little wonky, on an arc</div></div>
+    </div>
+    </div>
+    <div class="slot typeframe paste" data-name="11 · Type">
+      <div class="tag">11 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/specimen.jpg" alt="Type specimen showing Flourish Serif and Nunito"><div class="tcap"><h4>Serif for the name, Nunito for everything else.</h4><p>The wordmark is Fraunces at its largest optical size, weight 600, softness all the way up. Body copy is Nunito. Both are open fonts, shipped in the kit as Flourish Serif.</p></div></div>
+    </div>
+    <div class="slot prose bagframe" data-name="12 · The bag">
+      <div class="tag">12 · The bag</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">The canonical bag.</span><span class="typed"><span class="t" data-text="The canonical bag."></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">Arched wordmark, a gardener watering an oversized bloom, a wheelbarrow, seed packets, and a 20L badge. Everything else in the line takes its cues from this one piece.</p>
+        <img class="bag pasted" src="image/flourish/bag.jpg" alt="The Flourish potting soil bag"></div>
+    </div>
+    <div class="slot prose" data-name="13 · The cast" id="world">
+      <div class="tag">13 · The cast</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The gardeners.</span><span class="typed"><span class="t" data-text="The gardeners."></span><span class="caret"></span></span></span></h2><p class="pasted">Six little gardeners and six things they use. I kept the people small and the flowers huge, and gave each gardener something to do: watering, planting, hauling pots, pruning from a ladder, sitting with a plant, lugging a sack of soil. They come as transparent PNGs so they can go on anything.</p></div>
+    </div>
+    <div class="chars six group">
+    <div class="slot char sub paste" data-name="14 · Watering">
+      <div class="tag">14 · Watering</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c01.jpg" alt=""><div class="cap">01 watering</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="15 · Planting">
+      <div class="tag">15 · Planting</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c02.jpg" alt=""><div class="cap">02 planting</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="16 · Carrying Pots">
+      <div class="tag">16 · Carrying Pots</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c03.jpg" alt=""><div class="cap">03 carrying pots</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="17 · Pruning">
+      <div class="tag">17 · Pruning</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c04.jpg" alt=""><div class="cap">04 pruning</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="18 · Sitting">
+      <div class="tag">18 · Sitting</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c05.jpg" alt=""><div class="cap">05 sitting</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="19 · Soil Sack">
+      <div class="tag">19 · Soil Sack</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c06.jpg" alt=""><div class="cap">06 soil sack</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="20 · Watering Can">
+      <div class="tag">20 · Watering Can</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c07.jpg" alt=""><div class="cap">07 watering can</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="21 · Pots">
+      <div class="tag">21 · Pots</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c08.jpg" alt=""><div class="cap">08 pots</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="22 · Hand Tools">
+      <div class="tag">22 · Hand Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c09.jpg" alt=""><div class="cap">09 hand tools</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="23 · Wheelbarrow">
+      <div class="tag">23 · Wheelbarrow</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c10.jpg" alt=""><div class="cap">10 wheelbarrow</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="24 · Sprout">
+      <div class="tag">24 · Sprout</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c11.jpg" alt=""><div class="cap">11 sprout</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="25 · Hat And Gloves">
+      <div class="tag">25 · Hat And Gloves</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/c12.jpg" alt=""><div class="cap">12 hat and gloves</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="26 · Loops">
+      <div class="tag">26 · Loops</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Each one moves.</span><span class="typed"><span class="t" data-text="Each one moves."></span><span class="caret"></span></span></span></h3><p class="pasted">Every character has a five-second loop for social and email: a sway, a pat, a wobble of pots. Small, gentle, and cyclic, so the set feels alive without ever getting busy.</p></div>
+    </div>
+    <div class="cast six group">
+    <div class="slot member sub paste" data-name="27 · Watering loop">
+      <div class="tag">27 · Watering loop</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/loop-watering.mp4" autoplay muted loop playsinline></video><h4>Watering</h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="28 · Planting loop">
+      <div class="tag">28 · Planting loop</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/loop-planting.mp4" autoplay muted loop playsinline></video><h4>Planting</h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="29 · Pots loop">
+      <div class="tag">29 · Pots loop</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/loop-pots.mp4" autoplay muted loop playsinline></video><h4>Pots</h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="30 · Pruning loop">
+      <div class="tag">30 · Pruning loop</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/loop-pruning.mp4" autoplay muted loop playsinline></video><h4>Pruning</h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="31 · Sitting loop">
+      <div class="tag">31 · Sitting loop</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/loop-sitting.mp4" autoplay muted loop playsinline></video><h4>Sitting</h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="32 · Soil sack loop">
+      <div class="tag">32 · Soil sack loop</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/loop-soil-sack.mp4" autoplay muted loop playsinline></video><h4>Soil sack</h4><p></p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="33 · Lifestyle">
+      <div class="tag">33 · Lifestyle</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">On a shelf, in a garden, on a bench.</span><span class="typed"><span class="t" data-text="On a shelf, in a garden, on a bench."></span><span class="caret"></span></span></span></h3><p class="pasted">Photoreal is fine for product and lifestyle shots, as long as the printed bag art and the wordmark stay exact. The bag goes out into real light and holds up.</p></div>
+    </div>
+    <div class="group screens wide">
+    <div class="slot screen wide sub paste" data-name="34 · Garden path">
+      <div class="tag">34 · Garden path</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/life1.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="35 · Potting bench">
+      <div class="tag">35 · Potting bench</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/life2.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="36 · Lawn, open bag">
+      <div class="tag">36 · Lawn, open bag</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/life3.jpg" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="37 · Products">
+      <div class="tag">37 · Products</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">The product line.</span><span class="typed"><span class="t" data-text="The product line."></span><span class="caret"></span></span></span></h3><p class="pasted">A hand rake, gloves, a trowel, a watering can, a pot set, and seed packets, each shot solo against blush with the illustrated characters on the packaging.</p></div>
+    </div>
+    <div class="chars products six group">
+    <div class="slot char sub paste" data-name="38 · Hand rake">
+      <div class="tag">38 · Hand rake</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/p1.jpg" alt=""><div class="cap">Hand rake</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="39 · Gloves">
+      <div class="tag">39 · Gloves</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/p2.jpg" alt=""><div class="cap">Gloves</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="40 · Trowel">
+      <div class="tag">40 · Trowel</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/p3.jpg" alt=""><div class="cap">Trowel</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="41 · Watering can">
+      <div class="tag">41 · Watering can</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/p4.jpg" alt=""><div class="cap">Watering can</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="42 · Pot set">
+      <div class="tag">42 · Pot set</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/p5.jpg" alt=""><div class="cap">Pot set</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="43 · Seed packets">
+      <div class="tag">43 · Seed packets</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/p6.jpg" alt=""><div class="cap">Seed packets</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="44 · Patterns">
+      <div class="tag">44 · Patterns</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Six seamless patterns.</span><span class="typed"><span class="t" data-text="Six seamless patterns."></span><span class="caret"></span></span></span></h3><p class="pasted">Ditsy floral on sage, garden tools on blush, pots and seedlings on cream, little gardeners on lavender, bubbles and droplets on sky, and a lush botanical on deep sage. Each one tiles cleanly on a flat ground, for wrapping paper, liners, and the backs of seed packets.</p></div>
+    </div>
+    <div class="chars patterns six group">
+    <div class="slot char sub paste" data-name="45 · Ditsy floral">
+      <div class="tag">45 · Ditsy floral</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/pt1.jpg" alt=""><div class="cap">Ditsy floral</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="46 · Garden tools">
+      <div class="tag">46 · Garden tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/pt2.jpg" alt=""><div class="cap">Garden tools</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="47 · Pots and seedlings">
+      <div class="tag">47 · Pots and seedlings</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/pt3.jpg" alt=""><div class="cap">Pots and seedlings</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="48 · Little gardeners">
+      <div class="tag">48 · Little gardeners</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/pt4.jpg" alt=""><div class="cap">Little gardeners</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="49 · Bubbles">
+      <div class="tag">49 · Bubbles</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/pt5.jpg" alt=""><div class="cap">Bubbles</div></div>
+    </div>
+    <div class="slot char sub paste" data-name="50 · Lush botanical">
+      <div class="tag">50 · Lush botanical</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/flourish/pt6.jpg" alt=""><div class="cap">Lush botanical</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="51 · Motion">
+      <div class="tag">51 · Motion</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">And then it moved.</span><span class="typed"><span class="t" data-text="And then it moved."></span><span class="caret"></span></span></span></h3><p class="pasted">Three illustrated films: a giant garden loop in both 16:9 and 9:16, a field that blooms from bare soil to full color, and a photo reel. Each loop starts and ends on the same frame, so the garden breathes and comes back to rest.</p></div>
+    </div>
+    <div class="group screens wide">
+    <div class="slot screen wide sub paste" data-name="52 · Garden loop">
+      <div class="tag">52 · Garden loop</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/garden-loop.mp4" poster="image/flourish/garden.jpg" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="53 · Field bloom">
+      <div class="tag">53 · Field bloom</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/flourish/field-bloom.mp4" poster="image/flourish/field-start.jpg" muted loop playsinline autoplay></video></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="54 · Process" id="made">
+      <div class="tag">54 · Process</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">How it was made.</span><span class="typed"><span class="t" data-text="How it was made."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">The craft was in the constraints. One style sentence governs every piece, one reference sets the look, and a short list of rules keeps the pieces honest with each other, so the line can keep growing without drifting.</p><div class="bullets pasted"><div class="b wob"><b>Illustrated pieces stay flat.</b> No outlines, no 3D, no photorealism. Keep the grain and the soft gradients.</div><div class="b wob"><b>Characters are small.</b> Flowers are oversized. Bubbles and droplets are iridescent.</div><div class="b wob"><b>Photoreal only for product and lifestyle.</b> And only if the printed art stays exact.</div><div class="b wob"><b>Clean edges.</b> Transparent characters ship with crisp alpha, so they sit cleanly on any ground.</div><div class="b wob"><b>Loops close.</b> End frame equals start frame, so every animation returns home.</div><div class="b wob"><b>Keep the originals.</b> Every cleaned file ships next to its source, in a folder per asset type.</div></div></div>
+    </div>
+    <div class="slot prose quote" data-name="55 · North star">
+      <div class="tag">55 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A brand should feel like one person drew all of it.</span><span class="typed"><span class="t" data-text="A brand should feel like one person drew all of it."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot prose tools" id="tools" data-name="56 · Tools">
+      <div class="tag">56 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Two tools, start to finish.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/figma.svg" alt=""><b>Figma</b><small>Packaging, characters, patterns and layouts</small></div><div class="tlc"><img src="image/tools/adobephotoshop.svg" alt=""><b>Photoshop</b><small>Image editing and finishing</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="app.html#work">← Back to work</a><a class="wob" href="app.html#hi">Say hi</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

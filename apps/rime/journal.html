@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Field Journal · Rime</title>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    :root { --page: #f5f5f5; --ink: #0d0d0d; --soft: #6b6b6b; --line: rgba(13,13,13,.14); }
+    html, body { background: var(--page); color: var(--ink); }
+    body { font: 400 15px/1.7 "Montserrat", system-ui, sans-serif; overflow-x: clip; }
+
+    /* header: the mark top-left, the shop menu in the middle, account + bag on the right */
+    .top {
+      position: fixed; z-index: 5; top: 0; left: 0; right: 0;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      padding: 28px clamp(20px, 3.4vw, 52px);
+      font: 500 11px/1 "Montserrat", system-ui, sans-serif; letter-spacing: .22em; text-transform: uppercase;
+    }
+    .top a { color: #0d0d0d; text-decoration: none; white-space: nowrap; }
+    .mark { justify-self: start; display: block; width: 44px; }
+    .mark svg { display: block; width: 100%; overflow: visible; }
+    .mark path { fill: none; stroke: #0d0d0d; stroke-width: 1.5px; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+    .menu, .util { display: flex; gap: clamp(22px, 2.6vw, 40px); list-style: none; padding: 0; }
+    .util { justify-self: end; }
+    /* hairline that draws in under a link on hover */
+    .menu a, .util a { position: relative; padding: 6px 0; }
+    .menu a::after, .util a::after {
+      content: ""; position: absolute; left: 0; right: .22em; bottom: 0; height: 1px; background: currentColor;
+      transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.2,.7,.2,1);
+    }
+    .menu a:hover::after, .util a:hover::after, .menu a:focus-visible::after { transform: scaleX(1); }
+    .menu-btn { display: none; }
+
+    /* phones: links fold into a full-screen menu behind a two-line button */
+    @media (max-width: 860px) {
+      .top { grid-template-columns: 1fr auto; padding: 22px 20px; }
+      .top nav, .util .hide-sm { display: none; }
+      .util { gap: 22px; align-items: center; }
+      .menu-btn {
+        display: grid; gap: 6px; width: 26px; padding: 8px 0; background: none; border: 0; cursor: pointer;
+      }
+      .menu-btn i { display: block; height: 1.5px; background: #0d0d0d; transition: transform .35s ease; }
+      .menu-open .menu-btn i:first-child { transform: translateY(3.75px) rotate(45deg); }
+      .menu-open .menu-btn i:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+    }
+    .sheet {
+      position: fixed; z-index: 4; inset: 0; background: rgba(245,245,245,.94);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      display: grid; align-content: center; padding: 0 28px;
+      opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s .35s;
+    }
+    .menu-open .sheet { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+    .sheet ul { list-style: none; padding: 0; display: grid; gap: 22px; }
+    .sheet a {
+      color: #0d0d0d; text-decoration: none; text-transform: uppercase;
+      font: 400 26px/1 "Montserrat", system-ui, sans-serif; letter-spacing: .24em;
+      display: inline-block; opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease;
+    }
+    .menu-open .sheet a { opacity: 1; transform: none; }
+    .menu-open .sheet li:nth-child(2) a { transition-delay: .05s; } .menu-open .sheet li:nth-child(3) a { transition-delay: .1s; }
+    .menu-open .sheet li:nth-child(4) a { transition-delay: .15s; } .menu-open .sheet li:nth-child(5) a { transition-delay: .2s; }
+    .sheet .small { margin-top: 44px; gap: 16px; }
+    .sheet .small a { font-size: 12px; letter-spacing: .22em; color: #555; }
+
+
+    /* field journal: Rime's own look: page grey, frosted glass spreads, Montserrat, hairlines; one spread per piece of gear */
+    .jr { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; padding: 104px 20px 40px; }
+    html.has-rs .jr { padding-right: 54px; }
+    .book { position: relative; width: min(1100px, calc(100vw - 300px), calc((100svh - 190px) * 1.55)); aspect-ratio: 1.55; margin-right: 140px; }
+    .book > .spread { z-index: 1; }
+    .spread { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; border-radius: 28px; overflow: hidden;
+      background: linear-gradient(115deg, rgba(255,255,255,.7), rgba(255,255,255,0) 45%), rgba(255,255,255,.38);
+      border: 1px solid rgba(255,255,255,.9); box-shadow: inset 0 1px 0 #fff, 0 50px 90px -60px rgba(0,0,0,.35); }
+    .page { position: relative; overflow: hidden; color: #0d0d0d; }
+    .page.r::before { content: ""; position: absolute; left: 0; top: 7%; bottom: 7%; width: 1px; background: rgba(13,13,13,.1); }   /* a hairline for the gutter */
+    .page .in { position: absolute; inset: 0; padding: 7% 8%; }
+    .folio { position: absolute; bottom: 5%; font: 500 9px/1 "Montserrat", sans-serif; letter-spacing: .24em; text-transform: uppercase; color: #999; }
+    .l .folio { left: 8%; } .r .folio { right: 8%; }
+
+    /* photos: clean white-bordered prints, gently tilted; the sketch as a flat print */
+    .pol { position: absolute; margin: 0; background: #fff; padding: 2.6% 2.6% 0; border-radius: 3px;
+      box-shadow: 0 18px 36px -18px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.06);
+      transform: rotate(var(--r, 0deg)); transition: transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .6s; cursor: zoom-in; }
+    .pol img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; filter: grayscale(1); }
+    .pol figcaption { height: 3em; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      font: 500 clamp(8px, .7vw, 10px)/1 "Montserrat", sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #555; }
+    .pol figcaption b { font-weight: 500; color: #0d0d0d; }
+    .pol:hover { transform: rotate(0deg) translateY(-6px); box-shadow: 0 30px 50px -20px rgba(0,0,0,.35); z-index: 5; }
+    .sketch { position: absolute; margin: 0; background: #fff; padding: 1.8%; border-radius: 3px; box-shadow: 0 18px 36px -20px rgba(0,0,0,.28);
+      transform: rotate(var(--r, 0deg)); cursor: zoom-in; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+    .sketch:hover { transform: rotate(0deg) translateY(-4px); z-index: 5; }
+    .sketch img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; filter: grayscale(1) contrast(1.05); }
+    .sketch figcaption { padding-top: 2.5%; font: 500 clamp(8px, .7vw, 10px)/1 "Montserrat", sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #555; }
+
+    /* a callout: a hairline from a dot to a short spaced label */
+    .note { position: absolute; display: flex; align-items: center; gap: 10px; font: 500 clamp(8.5px, .72vw, 10.5px)/1.5 "Montserrat", sans-serif;
+      letter-spacing: .2em; text-transform: uppercase; color: #0d0d0d; }
+    .note::before { content: ""; width: 7px; height: 7px; transform: rotate(45deg); background: #0d0d0d; flex: none; }
+    .note::after { content: ""; order: -1; width: 46px; height: 1px; background: #0d0d0d; opacity: .5; }
+
+    /* the story page */
+    .no { font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .28em; text-transform: uppercase; color: #8a8a8a; }
+    .r h2 { margin-top: 3.5%; font: 400 clamp(26px, 3vw, 48px)/1.02 "Montserrat", sans-serif; letter-spacing: .02em; text-transform: uppercase; }
+    .r .sub { margin-top: 2.5%; font: 400 clamp(13px, 1.15vw, 16px)/1.5 "Montserrat", sans-serif; color: #555; letter-spacing: .02em; }
+    .r .rule { height: 1px; background: rgba(13,13,13,.12); margin: 4.5% 0 4%; }
+    .r .story { font: 400 clamp(11.5px, 1.02vw, 14.5px)/1.75 "Montserrat", sans-serif; color: #2a2a2a; }
+    .r .story p + p { margin-top: .9em; }
+    .r .by { margin-top: 5%; display: flex; align-items: center; gap: 14px; }
+    .r .by .av { width: 34px; height: 34px; border-radius: 50%; background: #0d0d0d; color: #fff; display: grid; place-items: center; font: 500 11px/1 "Montserrat", sans-serif; letter-spacing: .06em; flex: none; }
+    .r .by b { display: block; font: 500 11px/1.3 "Montserrat", sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+    .r .by small { font: 500 9px/1.4 "Montserrat", sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #8a8a8a; }
+    .r .shop { position: absolute; right: 8%; bottom: 9%; display: inline-flex; align-items: center; padding: 15px 22px; border-radius: 999px;
+      background: #0d0d0d; color: #fff; text-decoration: none; font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .22em; text-transform: uppercase; transition: background .25s; }
+    .r .shop:hover { background: #333; }
+
+    /* cover + contents */
+    .cover .in { display: grid; align-content: space-between; }
+    .cover h1 { font: 400 clamp(38px, 5vw, 84px)/.95 "Montserrat", sans-serif; letter-spacing: .03em; text-transform: uppercase; }
+    .cover .mark svg { width: 64px; fill: none; stroke: #0d0d0d; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+    .cover .lede { font: 400 clamp(14px, 1.3vw, 18px)/1.6 "Montserrat", sans-serif; max-width: 26ch; color: #2a2a2a; }
+    .cover .vol { font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .28em; text-transform: uppercase; color: #8a8a8a; }
+    .cover .ph { position: absolute; right: 9%; top: 44%; width: 34%; }
+    .cover .lede { max-width: 22ch; }
+    .toc h3 { font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .28em; text-transform: uppercase; color: #8a8a8a; margin-bottom: 7%; }
+    .toc a { display: grid; grid-template-columns: 3.2em 1fr auto; align-items: center; gap: 10px; padding: 4.2% 0; border-bottom: 1px solid rgba(13,13,13,.1);
+      color: #0d0d0d; text-decoration: none; transition: padding .35s cubic-bezier(.2,.8,.2,1); }
+    .toc a:hover { padding-left: 10px; }
+    .toc .n { font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .2em; color: #8a8a8a; }
+    .toc .t { font: 400 clamp(15px, 1.6vw, 22px)/1.1 "Montserrat", sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+    .toc .t small { display: block; margin-top: 6px; font-size: .52em; letter-spacing: .14em; color: #777; }
+    .toc .p { font: 500 10px/1 "Montserrat", sans-serif; letter-spacing: .14em; color: #8a8a8a; }
+    .toc .soon { margin-top: 7%; font: 500 10px/1.6 "Montserrat", sans-serif; letter-spacing: .2em; text-transform: uppercase; color: #8a8a8a; }
+
+    /* changing entries: the old spread slides and blurs out, the new one in */
+    .spread.out { animation: jrOut .38s cubic-bezier(.4,0,.6,1) forwards; }
+    .spread.in { animation: jrIn .7s cubic-bezier(.2,.85,.25,1); }
+    @keyframes jrOut { to { opacity: 0; transform: translateX(calc(var(--dir) * -40px)); filter: blur(8px); } }
+    @keyframes jrIn { from { opacity: 0; transform: translateX(calc(var(--dir) * 40px)); filter: blur(8px); } }
+    .spread.in .pol, .spread.in .sketch, .spread.in .note, .spread.in .r .in > * { animation: jrPiece .8s cubic-bezier(.2,.85,.25,1) backwards; }
+    .spread.in .pol:nth-of-type(2) { animation-delay: .08s; } .spread.in .sketch { animation-delay: .16s; } .spread.in .note { animation-delay: .3s; }
+    @keyframes jrPiece { from { opacity: 0; translate: 0 14px; } }
+
+    /* index tabs: little divider tabs along the book's right edge, one per entry; the open one sticks out further */
+    .jnav { position: absolute; left: 100%; top: 9%; z-index: 0; display: grid; gap: 6px; }
+    .jnav button { position: relative; display: grid; justify-items: start; gap: 5px; width: 128px; padding: 11px 14px 11px 16px;
+      border: 1px solid rgba(255,255,255,.9); border-left: 0; border-radius: 0 14px 14px 0; cursor: pointer; text-align: left; color: #555; white-space: nowrap;
+      background: linear-gradient(115deg, rgba(255,255,255,.75), rgba(255,255,255,.3)), rgba(255,255,255,.35);
+      -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 14px 30px -20px rgba(0,0,0,.35);
+      font: 500 9px/1.25 "Montserrat", sans-serif; letter-spacing: .16em; text-transform: uppercase;
+      transition: width .5s cubic-bezier(.2,.85,.25,1), background .3s, color .3s; }
+    .jnav button span { font-size: 10px; letter-spacing: .2em; color: #999; transition: color .3s; }
+    .jnav button:hover { width: 138px; color: #0d0d0d; }
+    .jnav button[aria-current="true"] { width: 152px; background: #0d0d0d; color: #fff; border-color: #0d0d0d; }
+    .jnav button[aria-current="true"] span { color: rgba(255,255,255,.55); }
+    .jr { position: relative; }
+
+    /* controls */
+    .ctrl { position: absolute; left: 0; right: 0; bottom: -58px; display: flex; justify-content: center; align-items: center; gap: 22px; }
+    .ctrl button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(13,13,13,.2); background: rgba(255,255,255,.5); cursor: pointer;
+      display: grid; place-items: center; transition: background .25s, border-color .25s, opacity .25s; }
+    .ctrl button:hover { border-color: #0d0d0d; background: #fff; }
+    .ctrl button:disabled { opacity: .3; cursor: default; }
+    .ctrl svg { width: 14px; height: 14px; fill: none; stroke: #0d0d0d; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+    .ctrl .dots { display: flex; gap: 8px; }
+    .ctrl .dots i { width: 6px; height: 6px; transform: rotate(45deg); border: 1px solid #0d0d0d; transition: background .3s; }
+    .ctrl .dots i.on { background: #0d0d0d; }
+
+    /* lightbox */
+    .lb { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; background: rgba(245,245,245,.6); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+      opacity: 0; visibility: hidden; transition: opacity .3s, visibility 0s .3s; cursor: zoom-out; }
+    .lb.on { opacity: 1; visibility: visible; transition: opacity .3s; }
+    .lb img { max-width: min(86vw, 900px); max-height: 80vh; background: #fff; padding: 12px; border-radius: 4px; box-shadow: 0 40px 80px -30px rgba(0,0,0,.45); transform: scale(.95); transition: transform .45s cubic-bezier(.2,.85,.25,1); }
+    .lb.on img { transform: none; }
+
+    /* phones: the spreads stack into a scroll of glass pages */
+    @media (max-width: 760px) {
+      .book { margin-right: 0; }
+      .jr { display: block; padding: 96px 16px 60px; }
+      .book { width: 100%; aspect-ratio: auto; }
+      .ctrl { display: none; }
+      .jnav { display: none; }
+      .spread { position: relative; display: block; border-radius: 20px; }
+      .spread + .spread { margin-top: 22px; }
+      .page.r::before { left: 8%; right: 8%; top: 0; bottom: auto; width: auto; height: 1px; }
+      .page.l { aspect-ratio: .82; } .page.r .in { position: relative; padding: 9% 8% 12%; } .page.cover { aspect-ratio: .9; }
+      .r .story { font-size: 14px; } .r .shop { position: static; margin-top: 26px; } .r .folio { display: none; }
+      .note::after { width: 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .spread.in, .spread.out, .spread.in * { animation: none !important; } }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="mark" href="index.html" aria-label="Rime home">
+      <svg viewBox="0 0 48 24" aria-hidden="true"><path d="M2 22 L20 6 Q24 2.6 28 6 L46 22 M13.81 11.5 L24 16.2 L34.19 11.5"/></svg>
+    </a>
+    <nav aria-label="Shop">
+      <ul class="menu">
+        <li><a href="index.html#outerwear">Outerwear</a></li>
+        <li><a href="index.html#technical">Technical</a></li>
+        <li><a href="index.html#equipment">Equipment</a></li>
+        <li><a href="expeditions.html">Expeditions</a></li>
+        <li><a href="index.html#journal">Journal</a></li>
+      </ul>
+    </nav>
+    <ul class="util">
+      <li class="hide-sm"><a href="index.html#search">Search</a></li>
+      <li class="hide-sm"><a href="index.html#account">Account</a></li>
+      <li><a href="index.html#bag">Bag (0)</a></li>
+      <li><button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sheet"><i></i><i></i></button></li>
+    </ul>
+  </header>
+
+  <div class="sheet" id="sheet">
+    <ul>
+      <li><a href="index.html#outerwear">Outerwear</a></li>
+      <li><a href="index.html#technical">Technical</a></li>
+      <li><a href="index.html#equipment">Equipment</a></li>
+      <li><a href="expeditions.html">Expeditions</a></li>
+      <li><a href="index.html#journal">Journal</a></li>
+    </ul>
+    <ul class="small">
+      <li><a href="index.html#search">Search</a></li>
+      <li><a href="index.html#account">Account</a></li>
+    </ul>
+  </div>
+
+
+
+  <main class="jr" data-chapter="Journal">
+    <div class="book" id="book" aria-live="polite">
+      <nav class="jnav" id="jnav" aria-label="Journal entries"></nav>
+      <div class="spread" id="spread"></div>
+      <div class="ctrl">
+        <button id="prev" aria-label="Previous page"><svg viewBox="0 0 14 14"><path d="M9 2 L4 7 L9 12"/></svg></button>
+        <div class="dots" id="dots"></div>
+        <button id="next" aria-label="Next page"><svg viewBox="0 0 14 14"><path d="M5 2 L10 7 L5 12"/></svg></button>
+      </div>
+    </div>
+  </main>
+  <div class="lb" id="lb"><img alt=""></div>
+
+  <script src="catalog.js"></script>
+  <script>
+    /* phone menu: the button toggles the sheet; a link, Esc or widening the window closes it */
+    (() => {
+      const root = document.documentElement, btn = document.getElementById('menuBtn'), sheet = document.getElementById('sheet');
+      const set = open => {
+        root.classList.toggle('menu-open', open);
+        btn.setAttribute('aria-expanded', open);
+        btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      };
+      btn.addEventListener('click', () => set(!root.classList.contains('menu-open')));
+      sheet.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+      addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+      matchMedia('(min-width: 861px)').addEventListener('change', e => { if (e.matches) set(false); });
+    })();
+
+    /* the entries: placeholder stories and designers, made up for now */
+    const ENTRIES = [
+      { id: 'tent', no: '01', title: 'Basecamp Dome', sub: 'Built for the night the wind changed', date: 'Plaza de Mulas, 2019',
+        caps: ['Denali, 14k camp', 'Pole crossings'], note: ['5 poles', '8 crossings'],
+        story: [
+          'At 4,300 metres on Aconcagua, the wind turned in the middle of the night. By morning half the camp was flat. Our designer Tomás Ibarra spent that night holding his own tent up from the inside.',
+          'He came home wanting a shelter that doesn’t care where the wind comes from. The answer was a geodesic dome: five poles that cross eight times, so every gust meets the same strength from every side.',
+          'Forty-one prototypes later, it stood through 110 km/h in the wind tunnel, then three weeks on Denali. It pitches in four minutes with gloves on, because that’s when you’ll need it.' ],
+        by: ['Tomás Ibarra', 'Shelter design, Mendoza'] },
+      { id: 'pack', no: '02', title: 'Couloir 45', sub: 'One pack, stripped to the bone', date: 'Chamonix studio, 2021',
+        caps: ['Aiguille du Midi', 'Back panel'], note: ['900 g', 'stripped'],
+        story: [
+          'Mara Lind weighed every buckle. Literally: there’s a kitchen scale on her desk and a spreadsheet of every strap, clip and seam on every pack she’d ever carried.',
+          'Couloir 45 started from one question: what if the approach pack and the summit pack were the same pack? The lid lifts off, the frame sheet slides out, the hip belt unthreads. What’s left weighs 900 grams.',
+          'It carries three nights of kit on the walk in, then strips down for the summit push, so you never leave anything you need at camp.' ],
+        by: ['Mara Lind', 'Packs, Chamonix'] },
+      { id: 'axe', no: '03', title: 'Arête Axe', sub: 'The curve that took two years', date: 'Zermatt forge, 2020',
+        caps: ['Mönch north face', 'The pick'], note: ['17° was too much.', '14° just right'],
+        story: [
+          'An ice axe lives or dies by its curve. Too straight and it bounces off steep ice; too bent and it’s useless walking on snow. Kenji Arai bent the shaft one degree at a time for two years.',
+          'Every version went to the Mönch north face with a guide who wasn’t told what had changed. Fourteen degrees was the one they all reached for first.',
+          'The pick is hot-forged, not cut, so the grain of the steel runs the length of the tooth. It bites on the first swing, which is the only swing that matters when your calves are burning.' ],
+        by: ['Kenji Arai', 'Hardware, Zermatt'] },
+      { id: 'jacket', no: '04', title: 'Névé Shell', sub: 'Pockets above the harness', date: 'Banff, 2022',
+        caps: ['Mont Blanc high camp', 'Hood + zip'], note: ['pockets clear', 'the harness'],
+        story: [
+          'The complaint Ines Ruelle heard most from guides wasn’t about warmth or weight. It was pockets: every shell put them right where a harness sits, so you couldn’t reach your gloves on the climb.',
+          'So she drew the harness first and the jacket second. The chest pockets sit clear of the waist belt, the hood is cut to close over a helmet, and the pit zips open with a gloved hand.',
+          'Three layers, sealed seams, 410 grams. It’s the jacket you forget you’re wearing until the weather turns, and then it’s the only thing you’re thinking about.' ],
+        by: ['Ines Ruelle', 'Outerwear, Banff'] },
+    ];
+    const G = window.RIME_GEAR, mark = '<svg viewBox="0 0 48 24"><path d="M2 22 L20 6 Q24 2.6 28 6 L46 22 M13.81 11.5 L24 16.2 L34.19 11.5"/></svg>';
+    const img = (e, k) => `journal/${e.id}-${k}.jpg`;
+
+    // each spread is [left page html, right page html]
+    const SPREADS = [[
+      `<div class="page l cover"><div class="in"><div><div class="vol">Rime &middot; Vol. 01</div><h1 style="margin-top:6%">Field<br>Journal</h1></div>
+        <div><p class="lede">How our gear was made, and why it had to be. Notes, sketches and photos from the people who built it.</p><div class="mark" style="margin-top:8%">${mark}</div></div></div>
+        <figure class="pol ph" style="--r:4deg"><img src="journal/tent-a.jpg" alt=""><figcaption><b>No. 01</b><span>Denali</span></figcaption></figure></div>`,
+      `<div class="page r"><div class="in toc"><h3>Contents</h3>${ENTRIES.map((e, i) => `<a href="#${e.id}" data-go="${i + 1}"><span class="n">${e.no}</span><span class="t">${e.title}<small>${e.sub}</small></span><span class="p">p. ${(i + 1) * 2}</span></a>`).join('')}
+        <p class="soon">More entries on the way</p></div><span class="folio">i</span></div>`
+    ]].concat(ENTRIES.map((e, i) => [
+      `<div class="page l"><div class="in">
+        <figure class="pol" style="left:7%;top:7%;width:46%;--r:-3deg"><img src="${img(e, 'a')}" alt="${e.title} on the mountain"><figcaption><b>No. ${e.no}</b><span>${e.caps[0]}</span></figcaption></figure>
+        <figure class="pol" style="right:7%;top:12%;width:37%;--r:2.5deg"><img src="${img(e, 'b')}" alt="${e.title}, another angle"><figcaption><span>${e.caps[1]}</span></figcaption></figure>
+        <figure class="sketch" style="left:9%;bottom:9%;width:62%;--r:-1deg"><img src="${img(e, 's')}" alt="Design sketch of the ${e.title}"><figcaption>Original sketch &middot; ${e.by[0]}</figcaption></figure>
+        <div class="note" style="right:5%;bottom:22%">${e.note[0]}<br>${e.note[1]}</div>
+      </div><span class="folio">p. ${(i + 1) * 2 - 1}</span></div>`,
+      `<div class="page r"><div class="in">
+        <div class="no">No. ${e.no} &middot; ${e.date}</div>
+        <h2>${e.title}</h2><p class="sub">${e.sub}</p><div class="rule"></div>
+        <div class="story">${e.story.map(s => `<p>${s}</p>`).join('')}</div>
+        <div class="by"><span class="av">${e.by[0].split(' ').map(w => w[0]).join('')}</span><div><b>${e.by[0]}</b><small>${e.by[1]}</small></div></div>
+        <a class="shop" href="product.html?p=${e.id}">Shop the ${G[e.id] ? G[e.id].name : e.title} &middot; ${G[e.id] ? G[e.id].price : ''}</a>
+      </div><span class="folio">p. ${(i + 1) * 2}</span></div>`
+    ]));
+
+    const spread = document.getElementById('spread'), book = document.getElementById('book');
+    const phone = () => matchMedia('(max-width: 760px)').matches;
+    let at = Math.max(0, ENTRIES.findIndex(e => '#' + e.id === location.hash) + 1), busy = false;
+
+    const paint = () => {
+      if (phone()) spread.parentElement.querySelectorAll('.spread.extra').forEach(n => n.remove());
+      if (phone()) {   // phones: every page, one after another
+        spread.innerHTML = SPREADS[0].join('');
+        SPREADS.slice(1).forEach(s => { const d = document.createElement('div'); d.className = 'spread extra'; d.innerHTML = s.join(''); spread.parentElement.insertBefore(d, spread.parentElement.querySelector('.ctrl')); });
+      } else spread.innerHTML = SPREADS[at].join('');
+      document.getElementById('prev').disabled = at === 0; document.getElementById('next').disabled = at === SPREADS.length - 1;
+      const nav = document.getElementById('jnav');
+      nav.innerHTML = `<button data-n="0" aria-current="${at === 0}"><span>00</span>Contents</button>` +
+        ENTRIES.map((e, i) => `<button data-n="${i + 1}" aria-current="${at === i + 1}"><span>${e.no}</span>${e.title}</button>`).join('');
+      nav.querySelectorAll('button').forEach(b => b.onclick = () => {
+        const n = +b.dataset.n;
+        if (phone()) { (n ? document.getElementById(ENTRIES[n - 1].id) : book).scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+        turn(n);
+      });
+      document.getElementById('dots').innerHTML = SPREADS.map((_, i) => `<i class="${i === at ? 'on' : ''}"></i>`).join('');
+      wire();
+    };
+    const wire = () => {
+      book.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); if (phone()) { document.getElementById(ENTRIES[a.dataset.go - 1].id)?.scrollIntoView({ behavior: 'smooth' }); return; } turn(+a.dataset.go); });
+      book.querySelectorAll('.pol img, .sketch img').forEach(im => im.parentElement.onclick = () => { const lb = document.getElementById('lb'); lb.querySelector('img').src = im.src; lb.classList.add('on'); });
+    };
+    document.getElementById('lb').onclick = () => document.getElementById('lb').classList.remove('on');
+
+    // change spread: the old one slides and blurs out, the new one slides in with its pieces settling in turn
+    const turn = n => {
+      if (busy || n === at || n < 0 || n >= SPREADS.length) return;
+      const dir = n > at ? 1 : -1;
+      busy = true; spread.style.setProperty('--dir', dir);
+      spread.classList.remove('in'); spread.classList.add('out');
+      setTimeout(() => {
+        at = n; paint(); spread.classList.remove('out'); void spread.offsetWidth; spread.classList.add('in');
+        busy = false; history.replaceState(null, '', at ? '#' + ENTRIES[at - 1].id : location.pathname);
+      }, matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 360);
+    };
+    document.getElementById('prev').onclick = () => turn(at - 1);
+    document.getElementById('next').onclick = () => turn(at + 1);
+    addEventListener('keydown', e => { if (phone() || document.querySelector('.fs-open, .bd-open')) return; if (e.key === 'ArrowRight') turn(at + 1); if (e.key === 'ArrowLeft') turn(at - 1); if (e.key === 'Escape') document.getElementById('lb').classList.remove('on'); });
+    // swipe on touch screens wider than a phone
+    let sx = null; book.addEventListener('pointerdown', e => sx = e.clientX); book.addEventListener('pointerup', e => { if (sx === null || phone()) return; const d = e.clientX - sx; if (Math.abs(d) > 60) turn(at + (d < 0 ? 1 : -1)); sx = null; });
+    // phones: give each entry an id to scroll to
+    let wasPhone = phone(); paint();
+    if (phone()) document.querySelectorAll('.spread.extra').forEach((s, i) => s.id = ENTRIES[i].id);
+    addEventListener('resize', () => { if (phone() !== wasPhone) { wasPhone = phone(); paint(); } });
+  </script>
+  <script src="bag.js"></script>
+  <script src="header.js"></script>
+  <script src="search.js"></script>
+  <script src="scroller.js"></script>
+  <script src="cursor.js"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

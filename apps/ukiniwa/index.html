@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<title>浮庭 Ukiniwa · The Floating Garden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Reenie+Beanie&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root { --paper: #f4f0e8; --ink: #1c1a17; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  /* off-white paper with a faint grain baked into the background, so it reads as a material, not a flat fill */
+  body {
+    background-color: var(--paper);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .42  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    color: var(--ink);
+    min-height: 100vh;
+  }
+  .scroller { height: 1600vh; }
+  .stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+  /* the scene is centred on the page; the logo hangs off the building's lower-left */
+  .scene {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    width: min(64vw, 108vh, 980px);
+  }
+  .pavilion svg, .logo svg { display: block; width: 100%; height: auto; }
+  .pavilion { position: relative; }
+  .pavilion .draw { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* hold everything back until the intro starts, so nothing flashes in finished */
+  body:not(.ready) .stage { visibility: hidden; }
+  /* stamped at the waterline, under the reeds, like a seal on a drawing */
+  .logo { position: absolute; left: -9%; bottom: -12%; width: clamp(84px, 8.4vw, 124px); }
+  /* name + poem */
+  /* quick-pen handwriting to match the hand-drawn logo */
+  .jp { font-family: "Yomogi", serif; }
+  .en { font-family: "Reenie Beanie", cursive; color: #4a463f; }
+  /* written quickly: whole blocks lean, each letter wobbles (see jitter() below) */
+  .name { transform: rotate(-3deg); transform-origin: left bottom; }
+  .poem { transform: rotate(2.5deg); transform-origin: right top; }
+  .ch { display: inline-block; }
+  .name, .poem { position: absolute; }
+  .name .jp { font-size: clamp(18px, 1.6vw, 24px); letter-spacing: .3em; display: block; }
+  .name .en { font-size: clamp(16px, 1.35vw, 20px); letter-spacing: .04em; display: block; margin-top: 4px; white-space: nowrap; }
+  .poem .jp { writing-mode: vertical-rl; font-size: clamp(14px, 1.2vw, 18px); letter-spacing: .5em; line-height: 2.6; display: block; }
+  .poem .ln { display: block; }
+  .poem .ln:nth-child(2) { padding-top: 2.2em; }
+  .poem .ln:nth-child(3) { padding-top: 4.4em; }
+  .poem .en { font-size: clamp(16px, 1.35vw, 20px); display: block; margin-top: 18px; line-height: 1.5; white-space: nowrap; }
+
+  /* name signs beside the logo; poem stands on the right past the pine, balancing the logo */
+  .name { left: 6%; bottom: -12%; }
+  .poem { right: -20%; top: 4%; }
+  /* ---- scene two: the hall on the left, the story in the middle, polaroids + cherry branch on the right ---- */
+  .two { position: absolute; inset: 0; }
+  .two > * { position: absolute; }
+  .draw-box canvas { display: block; width: 100%; height: 100%; }
+  .hall { left: 2.5vw; top: 50%; transform: translateY(-44%); width: 28vw; aspect-ratio: 1360 / 754; }
+  .story { left: 32vw; width: 37vw; top: 50%; transform: translateY(-50%); display: flex; flex-direction: row-reverse; justify-content: center; gap: 2.6vw; align-items: flex-start; }
+  .story .jp { writing-mode: vertical-rl; height: min(64vh, 560px); font-size: clamp(12px, .95vw, 15px); letter-spacing: .1em; line-height: 1.95; flex: none; }
+  .story .jp p { margin: 0 0 0 1.1em; }
+  .story .en { flex: 0 1 17.5vw; min-width: 220px; font-family: "Cormorant Garamond", serif; font-style: normal; color: #2f2c27; font-size: clamp(15px, 1.2vw, 18px); line-height: 1.6; padding-top: .3em; }
+  .story .en p { margin: 0 0 .7em; }
+  .story .en p:first-child { font-style: italic; font-size: 1.12em; }
+  .story .kicker { display: block; font: 400 clamp(17px, 1.3vw, 21px)/1 "Reenie Beanie", cursive; color: #6b665d; margin-bottom: 1em; }
+  .pols { right: 2.5vw; top: 14vh; width: 27vw; height: 74vh; }
+  .pol { position: absolute; width: 54%; margin: 0; filter: drop-shadow(0 10px 14px rgba(40,30,20,.16)) drop-shadow(0 1px 1px rgba(40,30,20,.12)); }
+  .pol .ph { position: absolute; object-fit: cover; left: var(--wl); top: var(--wt); width: var(--ww); height: var(--wh); }
+  .pol .fr { position: relative; display: block; width: 100%; }
+  .branch { right: -1.5vw; top: 4vh; width: 33vw; aspect-ratio: 1738 / 848; transform: scaleX(-1); }
+
+  /* ---- scene three: the sketchbook map, a walk through the garden ---- */
+  .three { position: absolute; inset: 0; }
+  .map { position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); width: min(66vw, 80vh * 1.352); aspect-ratio: 1091 / 807; }
+  .map canvas, .map .route { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .map canvas { z-index: 0; }
+  .map .route { overflow: visible; pointer-events: none; z-index: 1; }
+  .map .stop { z-index: 2; opacity: 0; }   /* a tag appears only when its label is written (site.js) */
+  .map .pol { z-index: 3; }
+  .route .trail { fill: none; stroke: #a8432c; stroke-width: 13; stroke-linecap: round; stroke-dasharray: 0.1 34; }
+  .route .tip { fill: #a8432c; }
+  .route .leads path { fill: none; stroke: #1c1a17; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 5 11; opacity: .7; }
+  .stop .ch { text-shadow: 0 0 3px #f4f0e8, 0 0 6px #f4f0e8, 0 0 10px #f4f0e8; }
+  .stop { position: absolute; transform: translate(-50%, -50%) rotate(var(--r, -3deg)); text-align: center; white-space: nowrap; }
+  .stop .jp { display: block; font-family: "Yomogi", serif; font-size: clamp(15px, 1.35vw, 21px); letter-spacing: .2em; color: #1c1a17; }
+  .stop .en { display: block; font-family: "Reenie Beanie", cursive; font-size: clamp(17px, 1.5vw, 23px); line-height: .9; color: #a8432c; margin-top: 1px; }
+  .three .pol { width: 13%; }
+  .map-title { position: absolute; left: 4vw; top: 7vh; }
+  .map-title .jp { display: block; font-family: "Yomogi", serif; font-size: clamp(18px, 1.6vw, 24px); letter-spacing: .3em; }
+  .map-title .en { display: block; font-family: "Reenie Beanie", cursive; font-size: clamp(17px, 1.4vw, 21px); color: #6b665d; }
+
+  /* label variants (testing) */
+  body[data-lv="a"] .route .trail { stroke: #1c1a17; }
+  body[data-lv="a"] .route .tip { fill: #1c1a17; }
+  body[data-lv="a"] .stop .en { color: #1c1a17; font-size: clamp(19px, 1.65vw, 25px); }
+  body[data-lv="a"] .stop .jp { font-size: clamp(17px, 1.5vw, 23px); }
+  body[data-lv="a"] .stop .ch { text-shadow: 0 0 2px #f4f0e8, 0 0 4px #f4f0e8, 0 0 8px #f4f0e8, 0 0 14px #f4f0e8, 0 0 20px #f4f0e8; }
+  body[data-lv="b"] .route .trail { stroke: #1c1a17; } body[data-lv="b"] .route .tip { fill: #1c1a17; }
+  body[data-lv="b"] .stop, body[data-lv="c"] .stop { background: #fbf8f1; padding: 5px 10px 3px; box-shadow: 0 1px 1px rgba(40,30,20,.12), 0 4px 10px -4px rgba(40,30,20,.25); }
+  body[data-lv="b"] .stop .ch, body[data-lv="c"] .stop .ch { text-shadow: none; }
+  body[data-lv="b"] .stop .en { color: #1c1a17; }
+  body[data-lv="b"] .stop .en, body[data-lv="c"] .stop .en { font-size: clamp(18px, 1.55vw, 24px); }
+  body[data-lv="b"] .stop .jp, body[data-lv="c"] .stop .jp { font-size: clamp(16px, 1.4vw, 22px); }
+  body[data-lv="c"] .route .trail { stroke: #8e3522; }
+
+  /* ---- last scene: night falls, the logo + how to find the garden + footer ---- */
+  /* outer layer roughens the edge (filter), inner layer is the growing circle of ink (mask): filter must apply after the mask */
+  .night { position: absolute; inset: -20vmax; pointer-events: none; }
+  .night i { position: absolute; inset: 0; background: #12110f;
+    -webkit-mask-image: radial-gradient(circle at var(--nx, 60%) var(--ny, 70%), #000 var(--nr, 0%), transparent calc(var(--nr, 0%) + 1.6vmax));
+            mask-image: radial-gradient(circle at var(--nx, 60%) var(--ny, 70%), #000 var(--nr, 0%), transparent calc(var(--nr, 0%) + 1.6vmax)); }
+  .end { position: absolute; inset: 0; color: #ece6da; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 6vw 12vh; visibility: hidden; }
+  .end.on { visibility: visible; }
+  .end a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(236,230,218,.3); transition: border-color .2s; }
+  .end a:hover { border-color: #ece6da; }
+  .end-logo { width: clamp(84px, 7.5vw, 116px); color: #ece6da; }
+  .end-logo svg { display: block; width: 100%; height: auto; }
+  .end-name { margin-top: 2.2vh; text-align: center; }
+  .end-name .jp { display: block; font-family: "Yomogi", serif; font-size: clamp(20px, 1.8vw, 28px); letter-spacing: .35em; }
+  .end-name .en { display: block; font-family: "Reenie Beanie", cursive; font-size: clamp(18px, 1.5vw, 23px); color: #a59e90; margin-top: 2px; }
+  .info { margin-top: 7vh; width: min(1060px, 100%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 4vw; }
+  .info h3 { margin: 0 0 1.1em; font-weight: 400; }
+  .info h3 .jp { font-family: "Yomogi", serif; font-size: clamp(15px, 1.15vw, 18px); letter-spacing: .25em; margin-right: .6em; }
+  .info h3 .en { font-family: "Reenie Beanie", cursive; font-size: clamp(19px, 1.5vw, 23px); color: #a59e90; }
+  .info p { margin: 0 0 .75em; font-family: "Cormorant Garamond", serif; font-size: clamp(15px, 1.15vw, 18px); line-height: 1.55; color: #d9d2c4; }
+  .info .soft { color: #8f897d; font-style: italic; }
+  .foot { position: absolute; left: 6vw; right: 6vw; bottom: 4.5vh; display: flex; justify-content: space-between; align-items: baseline; gap: 24px;
+    padding-top: 2.2vh; border-top: 1px solid rgba(236,230,218,.14); font-family: "Cormorant Garamond", serif; font-size: clamp(13px, .95vw, 15px); color: #8f897d; }
+  .foot nav { display: flex; gap: 2.4vw; }
+  .foot nav a, .foot .top { border: 0; color: #a59e90; }
+  .foot nav a:hover, .foot .top:hover { color: #ece6da; }
+  .foot .jp { font-family: "Yomogi", serif; letter-spacing: .2em; }
+
+  /* ---- floating "visit" button: a quick pen loop around a handwritten word, always in the corner ---- */
+  .cta { position: fixed; right: clamp(16px, 2.6vw, 40px); bottom: clamp(16px, 3.4vh, 36px); z-index: 20; width: clamp(128px, 10.5vw, 158px); aspect-ratio: 160 / 72;
+    display: block; color: #1c1a17; text-decoration: none; opacity: 0; pointer-events: none; transition: color .5s; }
+  .cta.on { pointer-events: auto; }
+  .cta svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .cta .fill { fill: #f4f0e8; opacity: .94; transition: fill .5s; }
+  .cta .loop { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .cta .word { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: .35em; padding: 0 12% 3% 0; transform: rotate(-4deg); }
+  .cta .word .jp { font-family: "Yomogi", serif; font-size: clamp(13px, 1vw, 15px); letter-spacing: .1em; }
+  .cta .word .en { font-family: "Reenie Beanie", cursive; font-size: clamp(24px, 1.95vw, 30px); line-height: 1; }
+  .cta .arrow { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .35s cubic-bezier(.3,.7,.3,1); }
+  .cta:hover .arrow, .cta:focus-visible .arrow { transform: translate(4px, -3px); }
+  .cta:focus-visible { outline: none; }
+  .cta:focus-visible .loop { stroke-width: 3; }
+  .cta.dark { color: #ece6da; } .cta.dark .fill { fill: #12110f; }
+
+  /* ---- custom scroller: hand-drawn ink line with the logo's crescent moon as the thumb ---- */
+  html { scrollbar-width: none; } html::-webkit-scrollbar { display: none; }
+  .rail { position: fixed; right: clamp(14px, 1.7vw, 26px); top: 14vh; bottom: 24vh; width: 34px; z-index: 19; color: #1c1a17; opacity: 0; transition: color .5s; }
+  .rail svg.line { position: absolute; left: 50%; top: 0; height: 100%; width: 12px; transform: translateX(-50%); overflow: visible; }
+  .rail .base { fill: none; stroke: currentColor; stroke-width: 1.3; opacity: .28; stroke-linecap: round; }
+  .rail .done { fill: none; stroke: currentColor; stroke-width: 1.6; opacity: .8; stroke-linecap: round; }
+  .rail .mark { position: absolute; left: 50%; transform: translate(-50%, -50%); width: 26px; height: 18px; border: 0; padding: 0; background: none; cursor: pointer; color: inherit; }
+  .rail .mark::before { content: ""; position: absolute; left: 50%; top: 50%; width: 9px; height: 1.4px; background: currentColor; opacity: .55; transform: translate(-50%, -50%) rotate(-8deg); border-radius: 1px; }
+  .rail .mark span { position: absolute; right: 26px; top: 50%; transform: translateY(-50%); white-space: nowrap; font-family: "Yomogi", serif; font-size: 13px; letter-spacing: .15em; opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .rail .mark span i { font: 400 17px/1 "Reenie Beanie", cursive; font-style: normal; letter-spacing: 0; margin-left: .45em; opacity: .7; }
+  .rail:hover .mark span, .rail.dragging .mark span { opacity: .85; }
+  .rail .mark.here::before { opacity: 1; width: 13px; }
+  .rail .moon { position: absolute; left: 50%; top: 0; width: 22px; height: 22px; transform: translate(-50%, -50%); cursor: grab; touch-action: none; }
+  .rail.dragging .moon { cursor: grabbing; }
+  .rail .moon svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .rail .moon .disc { fill: #f4f0e8; transition: fill .5s; }
+  .rail .moon .cres { fill: currentColor; }
+  .rail.dark { color: #ece6da; } .rail.dark .moon .disc { fill: #12110f; }
+
+  /* ---- custom mouse: an ink dot with a loose pen loop trailing behind it (mouse/trackpad only) ---- */
+  @media (hover: hover) and (pointer: fine) {
+    html.ink-cursor, html.ink-cursor * { cursor: none !important; }
+  }
+  .pen { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; color: #1c1a17; opacity: 0; transition: opacity .3s, color .5s; }
+  .pen.on { opacity: 1; } .pen.dark { color: #ece6da; }
+  .pen .dot { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: currentColor; }   /* moved + scaled every frame in site.js */
+  .pen .ring { position: absolute; width: 38px; height: 38px; margin: -19px 0 0 -19px; transition: width .35s cubic-bezier(.3,.7,.3,1), height .35s cubic-bezier(.3,.7,.3,1), margin .35s cubic-bezier(.3,.7,.3,1); }
+  .pen .ring svg { width: 100%; height: 100%; overflow: visible; display: block; }
+  .pen .ring path { fill: none; stroke: currentColor; stroke-width: 1.3; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: .75; }
+  .pen.link .ring { width: 62px; height: 62px; margin: -31px 0 0 -31px; }
+
+  @media (max-width: 640px) {
+    .scene { width: 112vw; }
+    .logo { left: 11%; bottom: -30%; }
+    .name { left: 38%; bottom: -24%; }
+    .poem { right: auto; left: 13%; top: -96%; transform-origin: left top; }
+    .poem .jp { letter-spacing: .2em; line-height: 2.2; }
+    .poem .ln:nth-child(2) { padding-top: 1.2em; }
+    .poem .ln:nth-child(3) { padding-top: 2.4em; }
+    .poem .en { margin-top: 10px; }
+    /* phone (temporary until her phone pass): stacked — hall, Japanese across, English, polaroids at the bottom */
+    .hall { left: 10vw; top: 3vh; transform: none; width: 80vw; }
+    .story { left: 7vw; width: 86vw; top: 29vh; transform: none; flex-direction: column; gap: 12px; }
+    .story .jp { writing-mode: horizontal-tb; height: auto; font-size: 11.5px; letter-spacing: .06em; line-height: 1.75; }
+    .story .jp p { margin: 0; display: inline; }
+    .story .en { flex: none; min-width: 0; font-size: 13px; line-height: 1.45; padding: 0; }
+    .story .en p { margin: 0 0 .45em; }
+    .story .kicker { display: none; }
+    .pols { right: 3vw; top: auto; bottom: 1.5vh; width: 70vw; height: 19vh; }
+    .pol { width: 30%; }
+    .pol:nth-child(1) { left: 2% !important; top: 4% !important; }
+    .pol:nth-child(2) { left: 66% !important; top: 0 !important; }
+    .pol:nth-child(3) { left: 34% !important; top: 10% !important; }
+    .branch { right: -4vw; top: auto; bottom: 15vh; width: 46vw; }
+    .map { width: 100vw; top: 46%; }
+    .map { top: 40%; }
+    .three .pol { width: 22%; }
+    .end { justify-content: flex-start; padding-top: 7vh; }
+    .info { grid-template-columns: 1fr; gap: 2.4vh; margin-top: 4vh; }
+    .info h3 { margin-bottom: .4em; }
+    .info p { font-size: 14px; margin-bottom: .3em; }
+    .foot { flex-direction: column; gap: 8px; bottom: 2.5vh; }
+    .foot nav { gap: 16px; flex-wrap: wrap; }
+    .rail { right: 6px; top: 18vh; bottom: 26vh; width: 24px; }
+    .rail .mark span { display: none; }
+    .three .pol:nth-of-type(1) { left: 3% !important; top: 112% !important; }
+    .three .pol:nth-of-type(2) { left: 27% !important; top: 118% !important; }
+    .three .pol:nth-of-type(3) { left: 51% !important; top: 111% !important; }
+    .three .pol:nth-of-type(4) { left: 75% !important; top: 117% !important; }
+    .stop .jp { font-size: 11px; } .stop .en { font-size: 13px; }
+  }
+</style>
+</head>
+<body data-lv="b">
+  <main class="scroller">
+    <div class="stage">
+
+  <div class="scene one">
+    <div class="pavilion" role="img" aria-label="Pen sketch of a wooden pavilion over a pond" data-src="assets/pavilion.svg"></div>
+    <div class="logo" aria-label="Ukiniwa logo" data-src="assets/logo.svg"></div>
+    <div class="name"><span class="jp" lang="ja">浮庭</span><span class="en">Ukiniwa · the floating garden</span></div>
+    <div class="poem"><span class="jp" lang="ja"><span class="ln">ねむる池</span><span class="ln">月をひとひら</span><span class="ln">浮かべけり</span></span><span class="en">the sleeping pond<br>has set one petal<br>of the moon afloat</span></div>
+  </div>
+    <div class="scene-two two">
+      <div class="hall draw-box" role="img" aria-label="Pen sketch of a long temple hall beside a dry garden"></div>
+      <article class="story">
+        <div class="jp" lang="ja">
+          <p>浮庭は、眠れない人のためにつくられた。</p>
+          <p>提灯職人の妻は、夜ごと眠れずにいた。</p>
+          <p>夫は窓の下に池を掘り、水の上に小さな東屋を建てた。月が休める場所になるように。</p>
+          <p>忍耐のために松を、梅雨のために紫陽花を、そして、ほかのすべてを忘れられる春の一週間のために、桜を一本植えた。</p>
+          <p>やがて妻は、また眠れるようになった。</p>
+          <p>池は今も、眠れない誰かのために月を浮かべているという。</p>
+        </div>
+        <div class="en">
+          <span class="kicker">how it began</span>
+          <p>Ukiniwa was made for someone who could not sleep.</p>
+          <p>A lantern maker&rsquo;s wife lay awake, night after night.</p>
+          <p>So he dug a pond beneath her window and raised a small pavilion over the water &mdash; somewhere for the moon to rest.</p>
+          <p>He planted a pine for patience, hydrangeas for the rainy season, and one cherry tree for the single week each spring when everything else can be forgotten.</p>
+          <p>In time, she slept again.</p>
+          <p>They say the pond still holds the moon for anyone who can&rsquo;t.</p>
+        </div>
+      </article>
+      <div class="pols">
+        <figure class="pol" data-frame="03" data-win="6.92,7.74,86.54,71.86" style="--wl:6.92%;--wt:7.74%;--ww:86.54%;--wh:71.86%;aspect-ratio:0.7945;left:0;top:2%;--r:-6deg"><img class="ph" src="photos/polaroid/02.jpg" alt="The pavilion at dusk with a crescent moon"><img class="fr" src="frames/light/03.png" alt=""></figure>
+        <figure class="pol" data-frame="01" data-win="6.23,5.76,87.48,73.66" style="--wl:6.23%;--wt:5.76%;--ww:87.48%;--wh:73.66%;aspect-ratio:0.8078;left:44%;top:27%;--r:5deg"><img class="ph" src="photos/polaroid/08.jpg" alt="The moon reflected on the pond at night"><img class="fr" src="frames/light/01.png" alt=""></figure>
+        <figure class="pol" data-frame="05" data-win="6.51,5.5,86.91,73.67" style="--wl:6.51%;--wt:5.5%;--ww:86.91%;--wh:73.67%;aspect-ratio:0.7979999999999999;left:6%;top:50%;--r:-2deg"><img class="ph" src="photos/polaroid/10.jpg" alt="A stone basin with a dried hydrangea"><img class="fr" src="frames/light/05.png" alt=""></figure>
+      </div>
+      <div class="branch draw-box" role="img" aria-label="Pen sketch of a cherry blossom branch"></div>
+    </div>
+    <div class="scene-three three">
+      <div class="map-title"><span class="jp" lang="ja">庭をあるく</span><span class="en">a walk through the garden</span></div>
+      <div class="map" role="img" aria-label="Sketchbook map of the garden with a path from the gate to the pavilion">
+        <svg class="route" viewBox="0 0 2182 1614" aria-hidden="true">
+          <defs><mask id="walked" maskUnits="userSpaceOnUse" x="-100" y="-100" width="2400" height="1800"><path class="reveal" fill="none" stroke="#fff" stroke-width="40" stroke-linecap="round"/></mask></defs>
+          <g class="leads"></g>
+          <path class="trail" mask="url(#walked)"/>
+          <circle class="tip" r="15"/>
+        </svg>
+        <div class="stop" data-at="0" data-lead style="left:7.88%;top:63.01%;--r:-4deg"><span class="jp" lang="ja">門</span><span class="en">the gate</span></div>
+        <div class="stop" data-at="6" style="left:27.36%;top:45.97%;--r:3deg"><span class="jp" lang="ja">蹲踞</span><span class="en">the basin</span></div>
+        <div class="stop" data-at="9" style="left:63.70%;top:40.95%;--r:-2deg"><span class="jp" lang="ja">枯山水</span><span class="en">the dry garden</span></div>
+        <div class="stop" data-at="11" style="left:79.47%;top:29.18%;--r:4deg"><span class="jp" lang="ja">灯籠</span><span class="en">the lantern</span></div>
+        <div class="stop" data-at="12" data-lead style="left:107.06%;top:44.55%;--r:-3deg"><span class="jp" lang="ja">松</span><span class="en">the pine</span></div>
+        <div class="stop" data-at="13" style="left:53.35%;top:63.32%;--r:2deg"><span class="jp" lang="ja">池</span><span class="en">the pond</span></div>
+        <div class="stop" data-at="14" data-lead style="left:76.86%;top:95.79%;--r:-1deg"><span class="jp" lang="ja">東屋</span><span class="en">where the moon rests</span></div>
+        <figure class="pol" style="--wl:6.29%;--wt:6.26%;--ww:87.02%;--wh:73.48%;aspect-ratio:0.8115000000000001;left:-16%;top:24%;--r:-7deg"><img class="ph" src="photos/polaroid/05.jpg" alt="The long hall and its dry garden"><img class="fr" src="frames/light/02.png" alt=""></figure>
+        <figure class="pol" style="--wl:6.06%;--wt:5.92%;--ww:87.89%;--wh:73.69%;aspect-ratio:0.7936;left:103%;top:5%;--r:6deg"><img class="ph" src="photos/polaroid/09.jpg" alt="Mossy stepping stones leading to a stone lantern"><img class="fr" src="frames/light/04.png" alt=""></figure>
+        <figure class="pol" style="--wl:7.67%;--wt:7.96%;--ww:86.16%;--wh:72.26%;aspect-ratio:0.7903;left:-13%;top:62%;--r:4deg"><img class="ph" src="photos/polaroid/07.jpg" alt="A pine branch and a crescent moon"><img class="fr" src="frames/light/06.png" alt=""></figure>
+        <figure class="pol" style="--wl:6.23%;--wt:5.76%;--ww:87.48%;--wh:73.66%;aspect-ratio:0.8078;left:100%;top:63%;--r:-5deg"><img class="ph" src="photos/polaroid/03.jpg" alt="The pavilion's posts standing in the pond"><img class="fr" src="frames/light/01.png" alt=""></figure>
+      </div>
+    </div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="bleed" x="-10%" y="-10%" width="120%" height="120%">
+      <!-- ink soaking into paper: a ragged, fibrous edge instead of a clean circle -->
+      <feTurbulence type="fractalNoise" baseFrequency=".006 .009" numOctaves="5" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="260" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="2.5"/>
+    </filter></svg>
+    <div class="night" aria-hidden="true"><i></i></div>
+    <footer class="end" id="visit">
+      <div class="end-logo" aria-label="Ukiniwa logo"></div>
+      <div class="end-name"><span class="jp" lang="ja">浮庭</span><span class="en">Ukiniwa · the floating garden</span></div>
+      <div class="info">
+        <section>
+          <h3><span class="jp" lang="ja">道</span><span class="en">how to find it</span></h3>
+          <p>Ukiniwa, Sakyō-ku, Kyoto</p>
+          <p>From Demachiyanagi Station, follow the canal east for twelve minutes. The gate has no sign &mdash; look for the stone lantern beside it.</p>
+          <p><a href="https://maps.google.com/?q=Sakyo-ku,+Kyoto" target="_blank" rel="noopener">Open in maps</a></p>
+        </section>
+        <section>
+          <h3><span class="jp" lang="ja">開園</span><span class="en">visiting</span></h3>
+          <p>Open 7:00 &ndash; 17:00, closed Tuesdays</p>
+          <p>On full-moon nights the gate stays open until 22:00.</p>
+          <p class="soft">Please walk on the stones, not the gravel.</p>
+        </section>
+        <section>
+          <h3><span class="jp" lang="ja">連絡</span><span class="en">contact</span></h3>
+          <p><a href="mailto:hello@ukiniwa.jp">hello@ukiniwa.jp</a></p>
+          <p><a href="https://instagram.com/ukiniwa" target="_blank" rel="noopener">@ukiniwa</a></p>
+          <p class="soft">Letters are answered by hand, slowly.</p>
+        </section>
+      </div>
+      <div class="foot">
+        <nav aria-label="Sections"><a href="#" data-to="0">The garden</a><a href="#" data-to="2.4">The story</a><a href="#" data-to="11.2">The walk</a><a href="#" data-to="15">Visit</a></nav>
+        <span><span class="jp" lang="ja">浮庭</span> &nbsp;© 2026 Ukiniwa</span>
+        <a href="#" class="top" data-to="0">back to the top ↑</a>
+      </div>
+    </footer>
+    </div>
+  </main>
+  <a class="cta" href="#visit" data-to="15" aria-label="Visit the garden: how to find it and opening hours">
+    <svg viewBox="0 0 160 72" aria-hidden="true">
+      <path class="fill" d="M22 44 C16 22 70 9 120 12 C151 14 160 34 147 50 C133 66 61 67 29 59 C11 54 9 37 31 25 C45 18 63 15 76 16"/>
+      <path class="loop" d="M22 44 C16 22 70 9 120 12 C151 14 160 34 147 50 C133 66 61 67 29 59 C11 54 9 37 31 25 C45 18 63 15 76 16"/>
+      <path class="arrow" d="M121 42 L132 32 M125 31.5 L132.5 31.5 L132.5 39"/>
+    </svg>
+    <span class="word"><span class="jp" lang="ja">訪</span><span class="en">visit</span></span>
+  </a>
+  <nav class="rail" aria-label="Where you are in the garden">
+    <svg class="line" preserveAspectRatio="none" viewBox="0 0 12 1000" aria-hidden="true">
+      <path class="base" d="M6 0 C 4 120, 8 230, 6 340 S 3 560, 6.5 680 S 8 880, 6 1000" vector-effect="non-scaling-stroke"/>
+      <path class="done" d="M6 0 C 4 120, 8 230, 6 340 S 3 560, 6.5 680 S 8 880, 6 1000" vector-effect="non-scaling-stroke"/>
+    </svg>
+    <button class="mark" data-to="0" style="top:0%"><span lang="ja">庭<i>the garden</i></span></button>
+    <button class="mark" data-to="2.4" style="top:16%"><span lang="ja">話<i>the story</i></span></button>
+    <button class="mark" data-to="8.2" style="top:54.7%"><span lang="ja">歩<i>the walk</i></span></button>
+    <button class="mark" data-to="15" style="top:100%"><span lang="ja">訪<i>visit</i></span></button>
+    <div class="moon" role="slider" aria-label="Scroll position" aria-valuemin="0" aria-valuemax="100" tabindex="0">
+      <svg viewBox="-12 -12 24 24" aria-hidden="true"><circle class="disc" r="9"/><path class="cres" d="M2.5 -8.6 A 9 9 0 1 0 8.4 3.2 A 7 7 0 1 1 2.5 -8.6 Z"/></svg>
+    </div>
+  </nav>
+  <div class="pen" aria-hidden="true"><div class="ring"><svg viewBox="-20 -20 40 40"><path d="M-14 6 C-17 -9 -2 -17 9 -14 C18 -11 18 4 11 11 C4 18 -12 16 -15 7 C-17 0 -12 -8 -3 -11"/></svg></div><div class="dot"></div></div>
+  <script src="site.js"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

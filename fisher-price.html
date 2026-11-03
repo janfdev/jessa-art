@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Fisher-Price · Jessa Wolfe</title>
+<meta name="description" content="Bringing the joy of Fisher-Price to digital, 2012 to 2016. A case study by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Fisher-Price</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Fisher-Price">
+      <div class="tag">01 · Fisher-Price</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Fisher-Price, the joy of play, online</span><span class="typed"><span class="t" data-text="Fisher-Price, the joy of play, online"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#about">About the project</a><a class="wob" href="#work">The work</a><a class="wob" href="#back">Looking back</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/hero.jpg" alt="Fisher-Price toys"></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Interactive graphic designer: design and front-end, end to end</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Brand">
+      <div class="tag">04 · Brand</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Brand</div><div class="v">Every sub-brand under the umbrella</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Timeline">
+      <div class="tag">05 · Timeline</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Timeline</div><div class="v">2012 to 2016</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Disciplines">
+      <div class="tag">06 · Disciplines</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Disciplines</div><div class="v">Storyboarding, UI, animation, HTML, email, social, games</div></div>
+    </div>
+    </div>
+    <div class="slot prose" id="about" data-name="07 · The question">
+      <div class="tag">07 · The question</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Where my career started.</span><span class="typed"><span class="t" data-text="Where my career started."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Four years of designing and building playful digital experiences for every brand under the Fisher-Price umbrella. This was before mobile standards, before social was a given, before UX was even a job title.</p>
+        <p class="pasted">My title said interactive graphic designer. What I actually did was the whole pipeline: storyboard the experience, design the visuals, animate the moments, then build the front end myself in HTML5 while Flash wound down. A website could genuinely play, and I loved that.</p></div>
+    </div>
+    <div class="slot site-embed paste" data-name="08 · The site, rebuilt">
+      <div class="tag">08 · The site, rebuilt</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content">
+        <div class="browser"><i></i><i></i><i></i><span class="url">fisher-price.com · 2013</span><a href="apps/fisher-price/site-rebuild.html" target="_blank" rel="noopener">Open full screen ↗</a></div>
+        <iframe src="apps/fisher-price/site-rebuild.html" title="A working rebuild of the Fisher-Price.com homepage as it existed in this era" loading="lazy"></iframe>
+      </div>
+    </div>
+    <div class="stats group">
+    <div class="slot stat sub paste" data-name="09 · Games">
+      <div class="tag">09 · Games</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">40+</div><p>interactive games and playful experiences built for children</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="10 · Campaigns">
+      <div class="tag">10 · Campaigns</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">Dozens</div><p>of campaigns across every sub-brand, storyboard to ship</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="11 · Designers">
+      <div class="tag">11 · Designers</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">3</div><p>designers producing work that had to read as one hand</p></div>
+    </div>
+    </div>
+    <div class="slot prose" id="work" data-name="12 · Marketing to meaning">
+      <div class="tag">12 · Marketing to meaning</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Translating marketing into meaningful experiences.</span><span class="typed"><span class="t" data-text="Translating marketing into meaningful experiences."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Most projects started as a marketing request. Promote a new toy, grow a brand, drive retail traffic. The real work started when I asked what it meant for the parent, and what it meant for the child.</p><div class="bullets pasted"><div class="b wob"><b>The core value.</b>What does the toy actually do? Learning, motor skills, imagination, social play.</div><div class="b wob"><b>The audience.</b>Which age group, and should parent and child experience it together or apart?</div><div class="b wob"><b>The behavior.</b>Play, explore, share, purchase. Every screen designed back from the action we wanted.</div></div></div>
+    </div>
+    <div class="slot prose quote butter bare" data-name="13 · The era">
+      <div class="tag">13 · The era</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">“You don’t see many microsites today, but back then a website could be pure play.”</span><span class="typed"><span class="t" data-text="“You don’t see many microsites today, but back then a website could be pure play.”"></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="side">
+    <div class="slot prose" data-name="14 · Three designers">
+      <div class="tag">14 · Three designers</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">One brand, three designers, no Figma.</span><span class="typed"><span class="t" data-text="One brand, three designers, no Figma."></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">Three designers with different skills and taste, all making work that had to look like one hand made it, before collaborative tools existed. Everyone worked in Photoshop. The discipline was the chain: build, peer review, director review, marketing. That chain, not tooling, is how dozens of campaigns stayed unmistakably Fisher-Price.</p>
+        <p class="pasted">Sometimes the job was getting ahead of the brand’s comfort zone. When I brought the hamburger menu to the site, marketing worried moms wouldn’t recognize it, so they put a “MENU” label under it. Once the pattern became a web standard, the label quietly went away.</p></div>
+    </div>
+    <div class="slot menus paste" data-name="15 · Menu">
+      <div class="tag">15 · Menu</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content">
+        <div class="mrow"><div class="mnav"><span class="mlogo">Fisher-Price</span><span class="mbtn"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg><b>MENU</b></span></div><div class="mcap">what marketing wanted</div></div>
+        <div class="mrow"><div class="mnav"><span class="mlogo">Fisher-Price</span><span class="mbtn"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span></div><div class="mcap">what I wanted</div></div>
+        <div class="mrow"><div class="mnav"><span class="mlogo">Fisher-Price</span><span class="mbtn"><b>MENU</b></span></div><div class="mcap">what the old site had</div></div>
+      </div>
+    </div>
+    </div>
+    <div class="choices zig two six group" id="process">
+    <div class="slot choice sub paste" data-name="16 · Goal">
+      <div class="tag">16 · Goal</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">1</div><h3>Define the goal.</h3><p>Partner with marketing to understand the product, the audience, and the campaign objective.</p></div>
+    </div>
+    <div class="slot choice sub paste" data-name="17 · Concept">
+      <div class="tag">17 · Concept</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">2</div><h3>Translate into concepts.</h3><p>Microsite, game, email, or ad. Choose the format that fits the goal.</p></div>
+    </div>
+    <div class="slot choice sub paste" data-name="18 · Storyboard">
+      <div class="tag">18 · Storyboard</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">3</div><h3>Storyboard the experience.</h3><p>Map the flow and interaction. That was the UX of the day. Every beat before production.</p></div>
+    </div>
+    <div class="slot choice sub paste" data-name="19 · Direction">
+      <div class="tag">19 · Direction</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">4</div><h3>Set creative direction.</h3><p>Visual style, story, and tone, so it felt playful, on-brand, and age-appropriate.</p></div>
+    </div>
+    <div class="slot choice sub paste" data-name="20 · Build">
+      <div class="tag">20 · Build</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">5</div><h3>Build it.</h3><p>High-fidelity design and the front-end build, often animated in Adobe Edge.</p></div>
+    </div>
+    <div class="slot choice sub paste" data-name="21 · Launch">
+      <div class="tag">21 · Launch</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">6</div><h3>Review, refine, launch.</h3><p>Peer, director, marketing. Refine, then ship across the campaign.</p></div>
+    </div>
+    </div>
+    <div class="slot prose fav-head bare" data-name="22 · Favorites" id="favorites">
+      <div class="tag">22 · Favorites</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A slice of the four years.</span><span class="typed"><span class="t" data-text="A slice of the four years."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot prose fav maxsteel" data-name="23 · Max Steel" id="maxsteel">
+      <div class="tag">23 · Max Steel</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Max Steel: play that leads to purchase.</span><span class="typed"><span class="t" data-text="Max Steel: play that leads to purchase."></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">An animated experience built into the Toys“R”Us site. Kids could explore the world, meet the characters, watch the commercial, then jump back to the retail page to buy the toys. In an era when mobile-friendly was barely a thing.</p>
+        <div class="favtags pasted"><span>microsite</span><span>character bios</span><span>roll-over interactions</span><span>storyboarded, every beat</span></div></div>
+    </div>
+    <div class="group screens wide">
+    <div class="slot screen wide sub paste" data-name="24 · Good Guys">
+      <div class="tag">24 · Good Guys</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-1.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="25 · Max McGrath">
+      <div class="tag">25 · Max McGrath</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-2.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="26 · Kat Ryan">
+      <div class="tag">26 · Kat Ryan</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-3.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="27 · C.Y.T.R.O">
+      <div class="tag">27 · C.Y.T.R.O</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-4.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="28 · Steel">
+      <div class="tag">28 · Steel</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-5.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="29 · Roll-overs">
+      <div class="tag">29 · Roll-overs</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-6.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="30 · Bad Guys">
+      <div class="tag">30 · Bad Guys</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-7.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="31 · Toxzon">
+      <div class="tag">31 · Toxzon</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-8.jpg" alt=""></div>
+    </div>
+    <div class="slot screen wide sub paste" data-name="32 · Reveal notes">
+      <div class="tag">32 · Reveal notes</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/maxsteel-9.jpg" alt=""></div>
+    </div>
+    </div>
+    <div class="favgrid group">
+    <div class="slot favcard sub paste" data-name="33 · Timeline" id="timeline">
+      <div class="tag">33 · Timeline</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/fp/history-timeline.mp4" muted loop playsinline autoplay></video><div class="fbody"><span class="kicker">animation</span><h4>The history timeline.</h4><p>An animated walk through how Fisher-Price was created, with little toys coming to life along the way. Built in Adobe Edge, when HTML5 animation was the new frontier.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste" data-name="34 · Games" id="games">
+      <div class="tag">34 · Games</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/fp/games-for-kids.mp4" muted loop playsinline autoplay></video><div class="fbody"><span class="kicker">games</span><h4>Games for kids.</h4><p>Browser games built around the brands, like a Little People “What’s Different?” Simple, colorful, click-friendly for small hands.</p></div></div>
+    </div>
+    <div class="slot favcard sub paste wide" data-name="35 · Email" id="email">
+      <div class="tag">35 · Email</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/fp/emails.jpg" alt=""><div class="fbody"><span class="kicker">email</span><h4>Every brand’s inbox.</h4><p>Email campaigns for the full portfolio. Little People, Thomas and Friends, all of them. Promotional sends and “Moments of Joy” features alike.</p></div></div>
+    </div>
+    </div>
+    <div class="slot prose" id="back" data-name="36 · Looking back">
+      <div class="tag">36 · Looking back</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The craft was strong. The measurement was missing.</span><span class="typed"><span class="t" data-text="The craft was strong. The measurement was missing."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Performance data never made it back to designers. UX barely existed as a discipline, and we weren’t part of that conversation. With the engagement data we now treat as standard, I would have closed the loop: tested gameplay flows, iterated on what kids actually played longest, and let real behavior drive the next version instead of brand instinct alone. That gap is exactly what drew me toward UX.</p></div>
+    </div>
+    <div class="slot prose quote" data-name="37 · North star">
+      <div class="tag">37 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A formative four years.</span><span class="typed"><span class="t" data-text="A formative four years."></span><span class="caret"></span></span></span></h2><p class="pasted">Dozens of campaigns. Every brand under the umbrella. A role that stretched from storyboard to front-end build. Still the foundation for how I think about playful, human-centered design.</p></div>
+    </div>
+    <div class="slot prose tools" id="tools" data-name="38 · Tools">
+      <div class="tag">38 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Built in Adobe at the time, then brought over to Figma.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/adobephotoshop.svg" alt=""><b>Photoshop</b><small>Graphics, banners and email</small></div><div class="tlc"><img src="image/tools/adobeillustrator.svg" alt=""><b>Illustrator</b><small>Characters, icons and vector art</small></div><div class="tlc"><img src="image/tools/figma.svg" alt=""><b>Figma</b><small>Where the work lives now</small></div><div class="tlc"><img src="image/tools/html5.svg" alt=""><b>HTML</b><small>Structure, built by hand</small></div><div class="tlc"><img src="image/tools/css.svg" alt=""><b>CSS</b><small>Layout, styling and motion</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>Interactions and the working prototype</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="apps/fisher-price/site-rebuild.html" target=_blank rel=noopener>Open the site rebuild →</a><a class="wob" href="app.html#work">← Back to work</a><a class="wob" href="app.html#hi">Say hi</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

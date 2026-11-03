@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Somnar · Jessa Wolfe</title>
+<meta name="description" content="Somnar, a voice-first dream journal designed and built in two days by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page" data-zoom>
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Somnar</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Somnar">
+      <div class="tag">01 · Somnar</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Somnar, a voice-first dream journal</span><span class="typed"><span class="t" data-text="Somnar, a voice-first dream journal"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#about">About the project</a><a class="wob" href="#how">How it works</a><a class="wob" href="somnar-prototype.html">Prototype</a><a class="wob" href="somnar-flows.html">Flows</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/work/6fde1.jpg" alt="Somnar on a phone, late at night"></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Solo: product, design and build</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Timeline">
+      <div class="tag">04 · Timeline</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Timeline</div><div class="v">Two days, end to end</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Tools">
+      <div class="tag">05 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Tools</div><div class="v">Figma, Higgsfield, Claude</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Status">
+      <div class="tag">06 · Status</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Status</div><div class="v">Coming soon to the App Store</div></div>
+    </div>
+    </div>
+    <div class="group screens" id="app">
+    <div class="slot screen sub paste" data-name="07 · Capture">
+      <div class="tag">07 · Capture</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/somnar/capture.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="08 · Archive">
+      <div class="tag">08 · Archive</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/somnar/archive.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="09 · Dream">
+      <div class="tag">09 · Dream</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/somnar/dream.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="10 · Symbol">
+      <div class="tag">10 · Symbol</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/somnar/symbol.png" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="11 · Patterns">
+      <div class="tag">11 · Patterns</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/somnar/patterns.png" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose" id="about" data-name="12 · The question">
+      <div class="tag">12 · The question</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Your dreams, before they slip away.</span><span class="typed"><span class="t" data-text="Your dreams, before they slip away."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Somnar is a voice-first dream journal. Fast enough to catch a dream at 3am, and built to turn what recurs across your nights into a personal, evidence-backed read on your own symbols.</p>
+        <p class="pasted">I designed and built the whole thing myself in a weekend: brand, schema, eight screens, motion, and a working prototype.</p></div>
+    </div>
+    <div class="slot prose" data-name="13 · Running live">
+      <div class="tag">13 · Running live</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">The real app, running.</span><span class="typed"><span class="t" data-text="The real app, running."></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">Not mockups. These are screen recordings of the working prototype: the first-run tour, capturing a dream entirely by voice, and the pattern layer with lucid mode and cited explanations.</p>
+        <div class="ctas pasted"><a class="cta" href="somnar-prototype.html">Test out the app <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a><a class="cta soft" href="somnar-flows.html">View the flows <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div></div>
+    </div>
+    <div class="cast tall group">
+    <div class="slot member sub paste" data-name="14 · Onboarding">
+      <div class="tag">14 · Onboarding</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/onboarding.mp4" autoplay muted loop playsinline></video><h4>First run</h4><p>A short guided tour that sets the tone: calm, gold, unhurried. Then it gets out of the way.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="15 · Capture">
+      <div class="tag">15 · Capture</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/voice-capture.mp4" autoplay muted loop playsinline></video><h4>Talk to save a dream</h4><p>Tap the orb and speak. Voice transcribes in the moment, symbols are pulled, and the dream is saved. Your eyes never open.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="16 · Meaning">
+      <div class="tag">16 · Meaning</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/patterns-lucid.mp4" autoplay muted loop playsinline></video><h4>Patterns, lucid and lenses</h4><p>Recurring symbols, a lucid-mode read, and explanations through cited frameworks. All built from your own entries.</p></div>
+    </div>
+    </div>
+    <div class="slot prose quote butter" data-name="17 · One loop">
+      <div class="tag">17 · One loop</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">One calm loop, start to finish.</span><span class="typed"><span class="t" data-text="One calm loop, start to finish."></span><span class="caret"></span></span></span></h2><p class="pasted">Capture beats everything else: one big mic, voice-first, zero navigation. From there a dream flows into the archive, generative art, and a pattern layer that gets more personal the more you log.</p></div>
+    </div>
+    <div class="choices zig four group" id="rules">
+    <div class="slot choice has-ex ex-sq sub paste" data-name="18 · Capture">
+      <div class="tag">18 · Capture</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">1</div><h3>Capture beats everything.</h3><p>If catching a dream takes more than a breath, it’s already gone. Voice-first, eyes-closed, zero navigation.</p><video class="ex" src="image/somnar/voice-capture.mp4" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot choice has-ex ex-sq sub paste" data-name="19 · Calm">
+      <div class="tag">19 · Calm</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">2</div><h3>Calm, not clinical.</h3><p>Gold on black, serif, slow light. The hush of 3am, never a productivity app demanding a streak.</p><video class="ex" src="image/somnar/onboarding.mp4" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot choice has-ex ex-sq sub paste" data-name="20 · Pattern">
+      <div class="tag">20 · Pattern</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">3</div><h3>A pattern, never a verdict.</h3><p>Every interpretation is drawn only from your own entries and cites a named framework. No dream-dictionary claims.</p><video class="ex" src="image/somnar/patterns-lucid.mp4" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot choice has-ex ex-tall sub paste" data-name="21 · Yours">
+      <div class="tag">21 · Yours</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">4</div><h3>Meaning is earned, and yours.</h3><p>Capture and archive are always free. Meaning is the layer that grows. Contributing to the aggregate is off by default.</p><img class="ex" src="image/somnar/symbol.png" alt="" loading="lazy"></div>
+    </div>
+    </div>
+    <div class="side">
+    <div class="slot prose" data-name="22 · Dream image">
+      <div class="tag">22 · Dream image</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Every dream becomes an image.</span><span class="typed"><span class="t" data-text="Every dream becomes an image."></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">Each entry generates a luminous gold dream-image, tied to its own symbols and mood. It’s the dream’s art in the archive, and a share-card you can post without ever revealing the whole entry. You choose what leaves. The card itself is the marketing.</p></div>
+    </div>
+    <div class="slot polaroid-wrap paste" data-name="23 · Share card">
+      <div class="tag">23 · Share card</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/somnar/share-card.png" alt=""><div class="cap">a card, never the whole entry</div></div>
+    </div>
+    </div>
+    <div class="cast art group">
+    <div class="slot member sub paste" data-name="24 · Art 1">
+      <div class="tag">24 · Art 1</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/dream-1.mp4" autoplay muted loop playsinline></video><h4></h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="25 · Art 2">
+      <div class="tag">25 · Art 2</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/dream-2.mp4" autoplay muted loop playsinline></video><h4></h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="26 · Art 3">
+      <div class="tag">26 · Art 3</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/dream-3.mp4" autoplay muted loop playsinline></video><h4></h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="27 · Art 4">
+      <div class="tag">27 · Art 4</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/dream-4.mp4" autoplay muted loop playsinline></video><h4></h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="28 · Art 5">
+      <div class="tag">28 · Art 5</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/dream-5.mp4" autoplay muted loop playsinline></video><h4></h4><p></p></div>
+    </div>
+    <div class="slot member sub paste" data-name="29 · Art 6">
+      <div class="tag">29 · Art 6</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/dream-6.mp4" autoplay muted loop playsinline></video><h4></h4><p></p></div>
+    </div>
+    </div>
+    <div class="slot prose" id="how" data-name="30 · How it works">
+      <div class="tag">30 · How it works</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Capture is free. Meaning is the layer that grows.</span><span class="typed"><span class="t" data-text="Capture is free. Meaning is the layer that grows."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">The whole core loop runs for real in the prototype: on-device, no backend. Dreams persist locally, symbol extraction stands in for the model, and everything is shaped like the production schema.</p><div class="bullets pasted"><div class="b wob"><b>Capture.</b>One tap, just talk. Voice transcribes in the moment, typing is the fallback.</div><div class="b wob"><b>Extract.</b>Symbols and themes are pulled per mention: the phrase, the sentence around it, and how it felt.</div><div class="b wob"><b>Echo.</b>When a symbol recurs, Somnar says so gently, celebratory or quietly careful depending on the mood.</div><div class="b wob"><b>Patterns.</b>Over time your recurring symbols become a personal, cited read: Jungian, continuity, community lenses.</div></div></div>
+    </div>
+    <div class="side">
+    <div class="slot polaroid-wrap paste" data-name="31 · Echo">
+      <div class="tag">31 · Echo</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/somnar/echo-first.mp4" autoplay muted loop playsinline></video><div class="cap">“you’ve dreamt this before”</div></div>
+    </div>
+    <div class="slot prose" data-name="32 · Dictionary">
+      <div class="tag">32 · Dictionary</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">Your tags become your own dream dictionary.</span><span class="typed"><span class="t" data-text="Your tags become your own dream dictionary."></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">Most dream apps hand you a stranger’s dictionary: “water means emotion.” Somnar does the opposite. “Water” is never a checkbox. It’s stored with its surface form, its context, and its valence, every single time. Across nights those mentions stack, and a definition forms: “Water, for you, returns most on the nights you wake unsettled.”</p></div>
+    </div>
+    </div>
+    <div class="stats group" id="build">
+    <div class="slot stat sub paste" data-name="33 · Days">
+      <div class="tag">33 · Days</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">2</div><p>days, end to end</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="34 · Screens">
+      <div class="tag">34 · Screens</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">8</div><p>screens, fully built</p></div>
+    </div>
+    <div class="slot stat sub paste" data-name="35 · Person">
+      <div class="tag">35 · Person</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="num">1</div><p>person, solo</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="36 · How it came together">
+      <div class="tag">36 · How it came together</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Concept to clickable, self-built in two days.</span><span class="typed"><span class="t" data-text="Concept to clickable, self-built in two days."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Brand, schema, eight screens, motion, and a working prototype. All designed and built solo, with AI tools doing the heavy lifting where they’re strongest.</p><div class="bullets pasted"><div class="b wob"><b>Figma.</b>Brand board, the gold-on-black system, icon set, and all eight screens. The locked source of truth.</div><div class="b wob"><b>Higgsfield.</b>Generated the dream-art motion library, then art-directed it into one luminous language.</div><div class="b wob"><b>Claude.</b>Paired to turn the locked design into a real, on-device prototype: the full capture-to-patterns loop.</div></div>
+        <a class="cta pasted" href="somnar-prototype.html">Try the prototype <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a></div>
+    </div>
+    <div class="slot prose quote" data-name="37 · North star">
+      <div class="tag">37 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Catch them before they fade.</span><span class="typed"><span class="t" data-text="Catch them before they fade."></span><span class="caret"></span></span></span></h2><p class="pasted">A small proof that one person, with the right tools and a clear point of view, can take a product from idea to a polished, motion-rich prototype in a weekend.</p></div>
+    </div>
+    <div class="slot prose tools" id="tools" data-name="38 · Tools">
+      <div class="tag">38 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Two days, three tools, end to end.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/figma.svg" alt=""><b>Figma</b><small>Screens, flows and the visual system</small></div><div class="tlc"><img src="image/tools/higgsfield.png" alt=""><b>Higgsfield</b><small>Illustration and imagery</small></div><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude</b><small>The build</small></div><div class="tlc"><img src="image/tools/html5.svg" alt=""><b>HTML</b><small>Structure, built by hand</small></div><div class="tlc"><img src="image/tools/css.svg" alt=""><b>CSS</b><small>Layout, styling and motion</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>Interactions and the working prototype</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="somnar-flows.html">See every screen as a flow →</a><a class="wob" href="somnar-prototype.html">Try the prototype →</a><a class="wob" href="app.html#work">← Back to work</a><a class="wob" href="app.html#hi">Say hi</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

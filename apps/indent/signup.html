@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#F9F4EA" />
+<title>Indent — create your account</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#F9F4EA; --paper2:#F2EBDA; --ink:#1A1815; --mut:#8C8579;
+    --o:#D05C08; --r:#C36A75; --line:rgba(26,24,21,.12); --line2:rgba(26,24,21,.06);
+    --ok:#4C7A5A; --bad:#B3432B;
+    --serif:'Fraunces',Georgia,serif; --sans:'Inter',system-ui,sans-serif;
+  }
+  html,body{ margin:0; padding:0; }
+  *{ box-sizing:border-box; }
+  button{ font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+  input,textarea{ font-family:inherit; }
+  body{ background:var(--paper); color:var(--ink); font-family:var(--sans);
+        -webkit-font-smoothing:antialiased; }
+
+  .progress{ position:fixed; top:0; left:0; right:0; height:3px; background:var(--line2); z-index:5; }
+  .progress .bar{ height:100%; background:var(--o); transition:width .5s cubic-bezier(.76,0,.24,1); }
+
+  .wrap{ max-width:480px; margin:0 auto; min-height:100svh;
+         display:flex; flex-direction:column; padding:30px 30px 26px; }
+
+  /* header: back on the left, a centered title, the step count on the right */
+  .brandrow{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; margin-bottom:26px; }
+  .hdrtitle{ font-family:var(--serif); font-size:18px; font-weight:500; letter-spacing:-.005em; }
+  .stepmark{ justify-self:end; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+             font-weight:600; color:var(--mut); }
+  .backbtn{ visibility:hidden; justify-self:start; display:inline-flex; align-items:center; gap:5px;
+            font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+            color:var(--mut); padding:4px 0; }
+  .backbtn:hover{ color:var(--o); }
+  .backbtn.show{ visibility:visible; }
+
+  .step{ display:none; flex:1; flex-direction:column; animation:fade .4s; }
+  .step.on{ display:flex; }
+  /* the content block floats vertically centered between brand row and footer */
+  .mid{ margin:auto 0; }
+  @keyframes fade{ from{ opacity:0; transform:translateY(6px);} to{ opacity:1; transform:none;} }
+
+  .eye{ font-size:10.5px; letter-spacing:.32em; text-transform:uppercase;
+        font-weight:600; color:var(--mut); margin-bottom:12px; }
+  h1{ font-family:var(--serif); font-size:32px; font-weight:500; line-height:1.14;
+      letter-spacing:-.012em; margin:0 0 12px; }
+  h1 em{ font-style:italic; color:var(--o); }
+  .lede{ font-family:var(--serif); font-size:16px; line-height:1.55; color:#4c463d; margin:0 0 26px; }
+
+  /* ---- auth buttons ---- */
+  .auth{ display:flex; flex-direction:column; gap:10px; }
+  .oauth{ display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
+          padding:14px; border-radius:999px; border:1.5px solid var(--line); background:#FDFAF3;
+          font-size:14px; font-weight:600; transition:border-color .2s, transform .2s; }
+  .oauth:hover{ border-color:var(--ink); transform:translateY(-1px); }
+  .oauth svg{ flex:none; }
+  .or{ display:flex; align-items:center; gap:14px; margin:16px 0; color:var(--mut);
+       font-size:11px; letter-spacing:.22em; text-transform:uppercase; font-weight:600; }
+  .or::before,.or::after{ content:""; flex:1; height:1px; background:var(--line); }
+
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+                font-weight:600; color:var(--mut); margin-bottom:8px; }
+  .field input,.field textarea{ width:100%; padding:14px 16px; border-radius:14px;
+        border:1.5px solid var(--line); background:#FDFAF3; font-size:15px; color:var(--ink);
+        outline:none; transition:border-color .2s; }
+  .field textarea{ min-height:96px; resize:none; font-family:var(--serif); font-size:16px; line-height:1.5; }
+  .field input:focus,.field textarea:focus{ border-color:var(--o); }
+  .field input::placeholder,.field textarea::placeholder{ color:#b3ab9e; }
+
+  .pwrow{ position:relative; }
+  .pwrow input{ padding-right:64px; }
+  .pwtoggle{ position:absolute; right:16px; top:50%; transform:translateY(-50%);
+             font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:600; color:var(--mut); }
+  .rules{ list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:7px; }
+  .rules li{ display:flex; align-items:center; gap:9px; font-size:13px; color:var(--mut); transition:color .2s; }
+  .rules li::before{ content:"·"; width:16px; height:16px; border-radius:50%; border:1.5px solid var(--line);
+                     display:grid; place-items:center; font-size:0; transition:.2s; flex:none; }
+  .rules li.ok{ color:var(--ok); }
+  .rules li.ok::before{ content:"✓"; font-size:10px; color:#fff; background:var(--ok); border-color:var(--ok); }
+  .rules li.bad{ color:var(--bad); }
+  .rules li.bad::before{ border-color:var(--bad); }
+
+  /* ---- error states ---- */
+  .field.err input{ border-color:var(--bad); background:#FBF0EC; }
+  .field.err{ animation:nudge .3s; }
+  @keyframes nudge{ 25%{ transform:translateX(-4px);} 75%{ transform:translateX(4px);} }
+  .errmsg{ display:none; font-size:13px; line-height:1.5; color:var(--bad); margin:10px 2px 0; }
+  .errmsg.show{ display:block; animation:fade .3s; }
+  .errmsg a{ color:var(--bad); font-weight:600; }
+
+  /* ---- taste chips ---- */
+  .chips{ display:flex; flex-wrap:wrap; gap:9px; }
+  .chip{ padding:10px 16px; border-radius:999px; border:1.5px solid var(--line); background:#FDFAF3;
+         font-size:13.5px; font-weight:500; color:#4c463d; transition:.18s; }
+  .chip:hover{ border-color:var(--ink); }
+  .chip.on{ background:var(--ink); border-color:var(--ink); color:var(--paper); }
+  .picked{ font-size:12px; color:var(--mut); margin-top:16px; }
+
+  /* ---- photo ---- */
+  .photo{ display:flex; flex-direction:column; align-items:center; gap:18px; padding:8px 0 4px; }
+  .photodrop{ width:148px; height:148px; border-radius:50%; border:1.5px dashed rgba(26,24,21,.28);
+              background:#FDFAF3; display:grid; place-items:center; overflow:hidden;
+              transition:border-color .2s, transform .2s; }
+  .photodrop:hover{ border-color:var(--o); transform:scale(1.02); }
+  .photodrop img{ width:100%; height:100%; object-fit:cover; }
+  .photodrop .cam{ display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--mut); font-size:12px; }
+  .photonote{ font-size:12px; color:var(--mut); text-align:center; }
+
+  /* ---- footer ---- */
+  .foot{ margin-top:auto; padding-top:26px; display:flex; flex-direction:column; gap:12px; }
+  .btn-primary{ display:block; width:100%; padding:16px; border-radius:999px;
+                background:linear-gradient(150deg, var(--o), var(--r)); color:#fff;
+                font-size:13px; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+                text-align:center; text-decoration:none;
+                box-shadow:0 10px 24px -10px rgba(208,92,8,.55);
+                transition:transform .2s, box-shadow .2s, opacity .2s; }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 30px -10px rgba(208,92,8,.6); }
+  .btn-primary[disabled]{ opacity:.35; pointer-events:none; }
+  .btn-quiet{ display:block; text-align:center; font-size:13px; color:var(--mut);
+              text-decoration:none; padding:4px; background:none; }
+  .btn-quiet b{ color:var(--ink); font-weight:600; }
+  .btn-quiet:hover b{ color:var(--o); }
+  .fine{ font-size:11.5px; color:var(--mut); text-align:center; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<div class="progress"><div class="bar" id="bar" style="width:20%"></div></div>
+
+<div class="wrap">
+
+  <div class="brandrow">
+    <button class="backbtn" id="backbtn">‹ Back</button>
+    <span class="hdrtitle">Create Account</span>
+    <span class="stepmark" id="stepmark">1 of 4</span>
+  </div>
+
+  <!-- step 1 · the door -->
+  <section class="step" data-step="join">
+    <div class="mid">
+    <h1>Pull up a <em>chair</em>.</h1>
+    <p class="lede">Indent is free, for readers and writers both. Choose a door.</p>
+
+    <div class="auth">
+      <button class="oauth" data-next="taste">
+        <svg viewBox="0 0 384 512" width="16" height="16"><path fill="#1A1815" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+        Continue with Apple
+      </button>
+      <button class="oauth" data-next="taste">
+        <svg viewBox="0 0 18 18" width="16" height="16"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.72a5.41 5.41 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
+        Continue with Google
+      </button>
+      <button class="oauth" data-next="taste">
+        <svg viewBox="0 0 24 24" width="17" height="17"><path fill="#1877F2" d="M24 12c0-6.63-5.37-12-12-12S0 5.37 0 12c0 5.99 4.39 10.95 10.13 11.85v-8.38H7.08V12h3.05V9.36c0-3.01 1.79-4.67 4.53-4.67 1.31 0 2.68.23 2.68.23v2.95h-1.51c-1.49 0-1.95.92-1.95 1.87V12h3.32l-.53 3.47h-2.79v8.38C19.61 22.95 24 17.99 24 12z"/></svg>
+        Continue with Facebook
+      </button>
+    </div>
+
+    <div class="or">or</div>
+
+    <div class="field" id="emailField">
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="you@somewhere.com" autocomplete="off" />
+      <p class="errmsg" id="emailErr"></p>
+    </div>
+    </div><!-- /.mid -->
+
+    <div class="foot">
+      <button class="btn-primary" id="emailGo">Sign up with email</button>
+      <a class="btn-quiet" href="index.html?scene=feed">Already have one? <b>Sign in</b></a>
+      <p class="fine">Free, always. No ads between the lines.</p>
+    </div>
+  </section>
+
+  <!-- step 2 · password (email path only) -->
+  <section class="step" data-step="password">
+    <div class="mid">
+    <h1>Choose a <em>password</em>.</h1>
+    <p class="lede">A line only you know. Eight characters or more.</p>
+
+    <div class="field" id="pwField">
+      <label for="pw">Password</label>
+      <div class="pwrow">
+        <input id="pw" type="password" placeholder="••••••••" autocomplete="new-password" />
+        <button class="pwtoggle" id="pwToggle" type="button">Show</button>
+      </div>
+      <p class="errmsg" id="pwErr">Not quite a password yet. Mind the two lines below.</p>
+    </div>
+    <ul class="rules">
+      <li id="ruleLen">At least 8 characters</li>
+      <li id="ruleMix">A letter and a number</li>
+    </ul>
+    </div><!-- /.mid -->
+
+    <div class="foot">
+      <button class="btn-primary" id="pwGo">Continue</button>
+    </div>
+  </section>
+
+  <!-- step 3 · taste -->
+  <section class="step" data-step="taste">
+    <div class="mid">
+    <h1>What do <em>you</em> read?</h1>
+    <p class="lede">Pick a few. They shape what finds you here. Change them any time.</p>
+
+    <div class="chips" id="chips">
+      <button class="chip">Poetry</button>
+      <button class="chip">Free verse</button>
+      <button class="chip">Haiku</button>
+      <button class="chip">Short stories</button>
+      <button class="chip">Flash fiction</button>
+      <button class="chip">Serialized fiction</button>
+      <button class="chip">Essays</button>
+      <button class="chip">Memoir</button>
+      <button class="chip">Letters</button>
+      <button class="chip">Nature writing</button>
+      <button class="chip">Love poems</button>
+      <button class="chip">Spoken word</button>
+    </div>
+    <p class="picked" id="picked">Nothing picked yet. That's fine too.</p>
+    </div><!-- /.mid -->
+
+    <div class="foot">
+      <button class="btn-primary" data-next="photo">Continue</button>
+      <button class="btn-quiet" data-next="photo">Skip for now</button>
+    </div>
+  </section>
+
+  <!-- step 4 · photo -->
+  <section class="step" data-step="photo">
+    <div class="mid">
+    <h1>Put a face to the <em>words</em>.</h1>
+    <p class="lede">Add a photo if you like. Plenty of good writers are a quiet circle.</p>
+
+    <div class="photo">
+      <button class="photodrop" id="photodrop" aria-label="Add a profile photo">
+        <span class="cam" id="camhint">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#8C8579" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Add photo
+        </span>
+      </button>
+      <input id="photofile" type="file" accept="image/*" hidden />
+      <p class="photonote">Tap the circle to choose a photo.</p>
+    </div>
+    </div><!-- /.mid -->
+
+    <div class="foot">
+      <button class="btn-primary" data-next="profile">Continue</button>
+      <button class="btn-quiet" data-next="profile">Skip for now</button>
+    </div>
+  </section>
+
+  <!-- step 5 · profile -->
+  <section class="step" data-step="profile">
+    <div class="mid">
+    <h1>Introduce <em>yourself</em>.</h1>
+    <p class="lede">A name and a line or two. You can edit this any time.</p>
+
+    <div class="field">
+      <label for="pname">Name</label>
+      <input id="pname" type="text" placeholder="The name on your work" />
+    </div>
+    <div class="field">
+      <label for="pbio">Bio</label>
+      <textarea id="pbio" placeholder="Short fiction and the occasional poem. Still happily a beginner."></textarea>
+    </div>
+    </div><!-- /.mid -->
+
+    <div class="foot">
+      <a class="btn-primary" href="index.html?scene=feed&newuser=1">Enter indent</a>
+      <a class="btn-quiet" href="index.html?scene=feed&newuser=1">Skip for now</a>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const ORDER = ["join", "password", "taste", "photo", "profile"];
+  /* password is a sub-step of the email door, so it shares step 1 */
+  const STEPNUM = { join: 1, password: 1, taste: 2, photo: 3, profile: 4 };
+  const steps = {};
+  document.querySelectorAll(".step").forEach(s => steps[s.dataset.step] = s);
+  const bar = document.getElementById("bar");
+  const backbtn = document.getElementById("backbtn");
+  const stepmark = document.getElementById("stepmark");
+  const history = [];
+  let cur = "join";
+
+  function show(step, fromBack) {
+    if (!steps[step]) step = "join";
+    if (!fromBack && step !== cur) history.push(cur);
+    Object.values(steps).forEach(s => s.classList.remove("on"));
+    steps[step].classList.add("on");
+    cur = step;
+    bar.style.width = ((ORDER.indexOf(step) + 1) / ORDER.length * 100) + "%";
+    stepmark.textContent = STEPNUM[step] + " of 4";
+    backbtn.classList.toggle("show", step !== "join");
+    window.scrollTo(0, 0);
+  }
+  /* real history when it exists; the natural previous step when deep-linked */
+  const PREV = { password: "join", taste: "join", photo: "taste", profile: "photo" };
+  backbtn.addEventListener("click", () => {
+    if (history.length) show(history.pop(), true);
+    else if (PREV[cur]) show(PREV[cur], true);
+  });
+  document.querySelectorAll("[data-next]").forEach(b =>
+    b.addEventListener("click", () => show(b.dataset.next)));
+
+  /* email path — errors shown on the attempt, cleared as you type.
+     Addresses containing "taken" play the already-registered case. */
+  const email = document.getElementById("email"), emailGo = document.getElementById("emailGo");
+  const emailField = document.getElementById("emailField"), emailErr = document.getElementById("emailErr");
+  function emailFail(html) {
+    emailErr.innerHTML = html;
+    emailErr.classList.add("show");
+    emailField.classList.remove("err");
+    void emailField.offsetWidth;   /* restart the nudge */
+    emailField.classList.add("err");
+  }
+  email.addEventListener("input", () => {
+    emailField.classList.remove("err");
+    emailErr.classList.remove("show");
+  });
+  emailGo.addEventListener("click", () => {
+    const v = email.value.trim();
+    if (!v) emailFail("We'll need an email to hold your seat.");
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) emailFail("That address doesn't look quite finished.");
+    else if (/taken/i.test(v)) emailFail('That address already has an account here. <a href="index.html?scene=feed">Sign in instead</a>.');
+    else show("password");
+  });
+
+  /* password — checklist ticks live; the attempt marks what's missing */
+  const pw = document.getElementById("pw"), pwGo = document.getElementById("pwGo");
+  const pwField = document.getElementById("pwField"), pwErr = document.getElementById("pwErr");
+  const ruleLen = document.getElementById("ruleLen"), ruleMix = document.getElementById("ruleMix");
+  const pwOk = () => ({ len: pw.value.length >= 8, mix: /[a-zA-Z]/.test(pw.value) && /\d/.test(pw.value) });
+  pw.addEventListener("input", () => {
+    const { len, mix } = pwOk();
+    ruleLen.classList.toggle("ok", len);
+    ruleMix.classList.toggle("ok", mix);
+    ruleLen.classList.remove("bad"); ruleMix.classList.remove("bad");
+    pwField.classList.remove("err"); pwErr.classList.remove("show");
+  });
+  pwGo.addEventListener("click", () => {
+    const { len, mix } = pwOk();
+    if (len && mix) return show("taste");
+    pwErr.classList.add("show");
+    ruleLen.classList.toggle("bad", !len);
+    ruleMix.classList.toggle("bad", !mix);
+    pwField.classList.remove("err");
+    void pwField.offsetWidth;
+    pwField.classList.add("err");
+  });
+  document.getElementById("pwToggle").addEventListener("click", function () {
+    const showing = pw.type === "text";
+    pw.type = showing ? "password" : "text";
+    this.textContent = showing ? "Show" : "Hide";
+  });
+
+  /* taste chips */
+  const picked = document.getElementById("picked");
+  document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+    c.classList.toggle("on");
+    const n = document.querySelectorAll(".chip.on").length;
+    picked.textContent = n === 0 ? "Nothing picked yet. That's fine too."
+      : n === 1 ? "One picked. A fine start."
+      : n + " picked. Your shelf is taking shape.";
+  }));
+
+  /* photo */
+  const drop = document.getElementById("photodrop"), file = document.getElementById("photofile");
+  drop.addEventListener("click", () => file.click());
+  file.addEventListener("change", () => {
+    if (!file.files || !file.files[0]) return;
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file.files[0]);
+    drop.innerHTML = "";
+    drop.appendChild(img);
+    drop.style.borderStyle = "solid";
+    document.querySelector(".photonote").textContent = "Lovely. Tap again to change it.";
+  });
+
+  /* deep links for the flow map: ?step=join|password|taste|photo|profile,
+     plus error states played through the real validation:
+     ?step=join&err=1 (unfinished address) · ?step=join&err=taken (account exists)
+     ?step=password&err=1 (rules not met) */
+  const q = new URLSearchParams(location.search);
+  show(q.get("step") || "join", true);
+  const err = q.get("err");
+  if (err && cur === "join") {
+    email.value = err === "taken" ? "jessa@taken.com" : "jessa@wolfe";
+    emailGo.click();
+  } else if (err && cur === "password") {
+    pw.value = "quiet";
+    pw.dispatchEvent(new Event("input"));
+    pwGo.click();
+  }
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

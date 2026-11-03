@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Tandem · Jessa Wolfe</title>
+<meta name="description" content="Tandem, a concept website for a worldwide road freight company: one unbroken camera move from a live Earth in orbit down to a desert highway and back. Designed and built by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<style>
+  /* Tandem: its own palette. Videos sit in a plain browser window, like The Descent */
+  body.tandem .cs-cover { --fill: #fff; }
+  body.tandem .cs-cover .content { background: #fff; }
+  body.tandem .cs-cover video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  body.tandem .xs-soft { --fill: #eef2f8; } body.tandem .xs-deep { --fill: #0a1730; color: #fff; } body.tandem .xs-mist { --fill: #f1f3f7; }
+  body.tandem .xs-vids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; width: 100%; }
+  body.tandem .xs-vid { padding: 18px 18px 16px; }
+  body.tandem .xs-vid.wide { grid-column: 1 / -1; }
+  body.tandem .xs-vid .win { border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 12px 30px rgba(20, 20, 30, .16); }
+  body.tandem .xs-vid .win i.bar { display: flex; gap: 6px; padding: 9px 12px; background: #fff; border-bottom: 1px solid #e8e9ec; }
+  body.tandem .xs-vid .win i.bar b { width: 9px; height: 9px; border-radius: 50%; background: #d6d9de; }
+  body.tandem .xs-vid video, body.tandem .xs-vid img { width: 100%; height: auto; display: block; background: #fff; }
+  body.tandem .xs-vid h4 { margin: 14px 4px 4px; font-size: 18px; letter-spacing: -.01em; }
+  body.tandem .xs-vid p { margin: 0 4px; font-size: 15px; line-height: 1.5; font-weight: 500; color: #3a4456; }
+  body.tandem .xs-deep h4 { color: #fff; } body.tandem .xs-deep p { color: rgba(255, 255, 255, .78); }
+  body.tandem .xs-phone { padding: 22px 26px; }
+  body.tandem .xs-phone .content { display: grid; grid-template-columns: auto 1fr; gap: 34px; align-items: center; }
+  body.tandem .xs-phone .phs { display: flex; gap: 14px; }
+  body.tandem .xs-phone .ph { width: 190px; border-radius: 30px; overflow: hidden; border: 8px solid #0d0b10; background: #0d0b10; box-shadow: 0 18px 40px rgba(20, 20, 30, .22); }
+  body.tandem .xs-phone .ph img { width: 100%; display: block; }
+  body.tandem .xs-phone h4 { margin: 0 0 8px; font-size: 24px; letter-spacing: -.02em; }
+  body.tandem .xs-phone p { margin: 0 0 12px; font-size: 16px; line-height: 1.55; color: #3a4456; }
+  body.tandem .xs-tried { width: 100%; display: grid; gap: 12px; }
+  body.tandem .xs-try { padding: 16px 22px; }
+  body.tandem .xs-try .content { display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: baseline; }
+  body.tandem .xs-try b { font-size: 17px; letter-spacing: -.01em; text-decoration: line-through; text-decoration-color: #f2a93b; text-decoration-thickness: 2px; }
+  body.tandem .xs-try span { font-size: 15.5px; line-height: 1.5; color: #3a4456; }
+  body.tandem .xs-try q { font: 700 22px/1.2 'Caveat', cursive; color: #d9862b; quotes: "“" "”"; margin-right: 6px; }
+  body.tandem .xs-cta { --fill: #0a1730; }
+  body.tandem .xs-cta .content { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; padding: 26px 30px; color: #fff; }
+  body.tandem .xs-cta .cta-t { flex: 1; min-width: 220px; } body.tandem .xs-cta h3 { margin: 0 0 4px; font-size: 22px; color: #fff; } body.tandem .xs-cta p { margin: 0; color: rgba(255, 255, 255, .75); font-size: 15.5px; }
+  body.tandem .xs-cta a { display: inline-flex; padding: 14px 24px; border-radius: 999px; background: #fff; color: #0a1730; font-weight: 700; font-size: 16px; text-decoration: none; --wb: #fff; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+  body.tandem .xs-cta a:hover { transform: rotate(-2deg) scale(1.05); }
+  @media (max-width: 860px) { body.tandem .xs-vids { grid-template-columns: 1fr; } body.tandem .xs-phone .content, body.tandem .xs-try .content { grid-template-columns: 1fr; gap: 14px; } body.tandem .xs-phone .phs { justify-content: center; } body.tandem .xs-phone .ph { width: 46%; max-width: 190px; } body.tandem .xs-phone { padding: 18px 20px 20px; } }
+  /* night: body copy light, coloured frames outlined by night.js, the CTA a light pill with dark words */
+  html.night body.tandem .xs-vid p, html.night body.tandem .xs-phone p, html.night body.tandem .xs-try span { color: var(--ink-soft); }
+  html.night body.tandem .xs-try q { color: #f2a93b; }
+  html.night body.tandem .xs-cta a::before { background: #ece6f0 !important; box-shadow: none !important; }
+  html.night body.tandem .xs-cta a, html.night body.tandem .xs-cta a * { color: #17141b !important; }
+  html.night body.tandem .xs-vid .win { box-shadow: 0 0 0 1px rgba(255, 255, 255, .12), 0 12px 30px rgba(0, 0, 0, .5); }
+</style>
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page tandem">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Tandem</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+  <main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Tandem">
+      <div class="tag">01 · Tandem</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Tandem, a freight company you travel through</span><span class="typed"><span class="t" data-text="Tandem, a freight company you travel through"></span><span class="caret"></span></span></span></h1><nav class="subnav pasted"><a class="wob" href="#idea">The idea</a><a class="wob" href="#earth">The Earth</a><a class="wob" href="#road">The road</a><a class="wob" href="#port">The port</a><a class="wob" href="#orbit">Back to orbit</a><a class="wob" href="#learned">What I learned</a><a class="wob" href="apps/tandem/index.html" target="_blank" rel="noopener">Visit ↗</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/tandem/hero.mp4" poster="image/tandem/hero.jpg" autoplay muted loop playsinline aria-label="A live Earth rises from the bottom of the screen, then the name settles in above it"></video></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Design + build, solo</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Concept website</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Focus">
+      <div class="tag">05 · Focus</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Focus</div><div class="v">Live 3D + scroll film</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Started">
+      <div class="tag">06 · Started</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Started</div><div class="v">Fall 2026</div></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="07 · The idea" id="idea">
+      <div class="tag">07 · The idea</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The whole world, one camera move.</span><span class="typed"><span class="t" data-text="The whole world, one camera move."></span><span class="caret"></span></span></span></h2><p class="pasted">Tandem is a concept site for a worldwide road freight company. One unbroken camera move takes you from a live Earth in orbit, down to a desert highway at dusk, along the road, onto a container ship, and back up into space.</p><p class="pasted">Freight sites love a map with dots on it. I bet that you would rather feel the distance: start in orbit, fall all the way down to one truck on one road, and follow the load until it is somewhere else entirely.</p><p class="pasted">No cuts, no page loads. Scroll is the throttle.</p></div>
+    </div>
+    <div class="slot xs-cta paste" data-name="08 · Visit">
+      <div class="tag">08 · Visit</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="cta-t"><h3>Take the trip yourself.</h3><p>The whole site is live. Give the Earth a second to load, then scroll.</p></div><a class="wob" href="apps/tandem/index.html" target="_blank" rel="noopener">Visit Tandem ↗</a></div>
+    </div>
+    <div class="slot prose" data-name="09 · The Earth" id="earth">
+      <div class="tag">09 · The Earth</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A real planet, spinning live.</span><span class="typed"><span class="t" data-text="A real planet, spinning live."></span><span class="caret"></span></span></span></h2><p class="pasted">The globe is live 3D running on real NASA imagery, with clouds, city lights and an atmosphere glow, so it turns under your cursor instead of looping.</p><p class="pasted">It sits low on the screen like a horizon, which keeps the headline calm and the planet huge. The name is Tandem for the tandem axles on a truck, and the logo is those two axles.</p></div>
+    </div>
+    <div class="xs-vids group">
+    <div class="slot xs-vid xs-deep sub paste wide" data-name="10 · The dive">
+      <div class="tag">10 · The dive</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/tandem/dive.mp4" poster="image/tandem/dive.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Diving from orbit until the Earth flattens into a horizon"></video></div><h4>The dive</h4><p>The curve of the Earth flattens into a horizon as you scroll down toward it.</p></div>
+    </div>
+    </div>
+    <div class="xs-tried group">
+    <div class="slot xs-try sub paste" data-name="11 · Tried · An AI image turned into 3D">
+      <div class="tag">11 · Tried · An AI image turned into 3D</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><b>An AI image turned into 3D</b><span><q>soft and lumpy</q>I tried turning an AI image into a 3D model first. It came out soft and lumpy. Real satellite textures on a clean sphere won by a mile.</span></div>
+    </div>
+    </div>
+    <div class="slot prose bare" data-name="12 · The road" id="road">
+      <div class="tag">12 · The road</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A match cut from orbit to asphalt.</span><span class="typed"><span class="t" data-text="A match cut from orbit to asphalt."></span><span class="caret"></span></span></span></h2><p class="pasted">The planet’s horizon lines up exactly with the horizon in a road film, so the dive lands on a desert highway without a cut you can see.</p><p class="pasted">The film is scrubbed by your scroll: push and the road rolls toward you, stop and it holds. Then the truck sweeps past, and the numbers count up under it.</p><p class="pasted">Then the camera flips to straight overhead and follows the truck down the road, and the six services drift past beside it: full truckload, cross-border, refrigerated, expedited, dedicated, intermodal.</p></div>
+    </div>
+    <div class="xs-vids group">
+    <div class="slot xs-vid xs-deep sub paste" data-name="13 · The road">
+      <div class="tag">13 · The road</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/tandem/road.mp4" poster="image/tandem/road.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The desert highway and the truck sweeping past"></video></div><h4>Built for the long way</h4><p>The highway at dusk, scrubbed by your scroll, then the truck sweeps past.</p></div>
+    </div>
+    <div class="slot xs-vid xs-deep sub paste" data-name="14 · Services">
+      <div class="tag">14 · Services</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/tandem/services.mp4" poster="image/tandem/services.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The overhead road with the services drifting past"></video></div><h4>Six ways to move a load</h4><p>Overhead, each service rides along beside the truck.</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="15 · The port" id="port">
+      <div class="tag">15 · The port</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">A crane, a ship, the open sea.</span><span class="typed"><span class="t" data-text="A crane, a ship, the open sea."></span><span class="caret"></span></span></span></h2><p class="pasted">The road ends at a port. A gantry crane lifts the container off the truck and onto a ship, and the ship pulls away into deep blue water.</p><p class="pasted">Every piece is its own cut-out, so the crane, the container and the ship can all move separately. That is what makes the handoff feel like a handoff, and not a slideshow.</p></div>
+    </div>
+    <div class="xs-vids group">
+    <div class="slot xs-vid xs-soft sub paste wide" data-name="16 · The port">
+      <div class="tag">16 · The port</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/tandem/port.mp4" poster="image/tandem/port.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The crane lifting the container onto the ship"></video></div><h4>The crane makes the handoff</h4><p>The container swings from the truck to the ship, and out to sea.</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="17 · Back to orbit" id="orbit">
+      <div class="tag">17 · Back to orbit</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Up through the clouds, home again.</span><span class="typed"><span class="t" data-text="Up through the clouds, home again."></span><span class="caret"></span></span></span></h2><p class="pasted">The camera climbs out of the ocean, through soft drifting clouds, until the whole Earth hangs at the top of the screen again. Then the footer: “Let’s move the world.” and a big Tandem wordmark.</p></div>
+    </div>
+    <div class="xs-vids group">
+    <div class="slot xs-vid xs-deep sub paste" data-name="18 · Orbit">
+      <div class="tag">18 · Orbit</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/tandem/orbit.mp4" poster="image/tandem/orbit.jpg" autoplay muted loop playsinline preload="metadata" aria-label="Climbing through clouds back into orbit and the footer"></video></div><h4>Back in orbit</h4><p>Through the clouds and up, until the planet hangs over the footer.</p></div>
+    </div>
+    <div class="slot xs-vid xs-deep sub paste" data-name="19 · The trip">
+      <div class="tag">19 · The trip</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="win"><i class="bar"><b></b><b></b><b></b></i><video src="image/tandem/trip.mp4" poster="image/tandem/trip.jpg" autoplay muted loop playsinline preload="metadata" aria-label="The whole Tandem scroll from start to finish"></video></div><h4>The whole trip</h4><p>The full scroll, door to door: orbit, highway, overhead, port, sea, sky, orbit.</p></div>
+    </div>
+    </div>
+    <div class="xs-tried group">
+    <div class="slot xs-try sub paste" data-name="20 · Tried · Photo clouds">
+      <div class="tag">20 · Tried · Photo clouds</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><b>Photo clouds</b><span><q>they flickered</q>My first clouds were photos, and they flickered as they passed. These are built from soft layers at real altitudes, so they puff past the camera and never glitch.</span></div>
+    </div>
+    </div>
+    <div class="slot xs-phone xs-soft sub paste" data-name="21 · On a phone">
+      <div class="tag">21 · On a phone</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="phs"><div class="ph"><img src="image/tandem/m1-hero.jpg" alt="Tandem on a phone: the Earth and the name" loading="lazy"></div><div class="ph"><img src="image/tandem/m2-menu.jpg" alt="Tandem on a phone: the full screen menu" loading="lazy"></div></div><div><h4>Same trip, narrower road.</h4><p>On a phone the headlines grow, and the two-line menu button crosses into an X, the two axles of the logo.</p><p>A full screen menu slides in with the big serif links.</p></div></div>
+    </div>
+    <div class="slot prose" data-name="22 · What I learned" id="learned">
+      <div class="tag">22 · What I learned</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">One shot beats ten sections.</span><span class="typed"><span class="t" data-text="One shot beats ten sections."></span><span class="caret"></span></span></span></h2><div class="bullets pasted"><div class="b wob"><b>One continuous move.</b>A single camera move made a long page feel short. People stay to see where the truck goes next.</div><div class="b wob"><b>Real beats generated where it counts.</b>The Earth is satellite imagery; AI made the art around it.</div><div class="b wob"><b>Soft is harder than sharp.</b>The clouds took more tries than the crane, the ship and the planet put together.</div><div class="b wob"><b>Keep the type quiet.</b>One serif headline per stop let the film do the talking.</div></div></div>
+    </div>
+    <div class="slot prose tools" data-name="23 · Tools" id="tools">
+      <div class="tag">23 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2><p class="pasted">Designed and coded by me, with Claude in the loop. No templates, no page builder.</p><div class="row pasted"><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude Code</b><small>Building the site with me</small></div><div class="tlc"><img src="image/tools/html5.svg" alt=""><b>HTML + CSS</b><small>The pages and the type</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>The scroll film and the overhead road</small></div><div class="tlc"><img src="image/tools/threedotjs.svg" alt=""><b>three.js</b><small>The live Earth</small></div><div class="tlc"><img src="image/tools/higgsfield.png" alt=""><b>Higgsfield</b><small>The road film, the truck and the port art</small></div></div></div>
+    </div>
+    <div class="slot prose quote" data-name="24 · North star">
+      <div class="tag">24 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Feel the distance, not the map.</span><span class="typed"><span class="t" data-text="Feel the distance, not the map."></span><span class="caret"></span></span></span></h2></div>
+    </div>
+    <div class="slot xs-cta paste" data-name="25 · Visit again">
+      <div class="tag">25 · Visit again</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="cta-t"><h3>Go on, drive it yourself.</h3><p>Scroll down to the road and back up to orbit. Give the Earth a second to load.</p></div><a class="wob" href="apps/tandem/index.html" target="_blank" rel="noopener">Visit Tandem ↗</a></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="apps/tandem/index.html" target="_blank" rel="noopener">Visit Tandem →</a><a class="wob" href="app.html#work">More work →</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=19"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

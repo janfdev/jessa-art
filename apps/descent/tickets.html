@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<style>html { background: #fff; color-scheme: light only; }</style>   <!-- some phone browsers paint a dark page in dark mode unless the site says it is light -->
+<title>Get tickets · The Descent</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="fonts.js"></script>
+<script>try { if (sessionStorage.getItem("wave")) { sessionStorage.removeItem("wave"); document.documentElement.classList.add("wave-in"); setTimeout(() => document.documentElement.classList.remove("wave-in"), 2500); } } catch (e) {}</script>
+<link rel="stylesheet" href="footer.css">
+<style>
+  :root {
+    --sea-blue: #1d6aa3; --sea-light: #4aa3c9;
+    --ink: #0d0b10; --soft: #f1f3f6; --line: rgba(13, 11, 16, .14); --muted: #6b6874;
+    --sans: 'Instrument Sans', system-ui, sans-serif;
+    --display: 'Satoshi', 'Instrument Sans', system-ui, sans-serif;
+    --m: clamp(16px, 6vw, 96px);
+  }
+  * { box-sizing: border-box; }
+  html, body { overscroll-behavior: none; }
+  body { margin: 0; background: #fff; color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+
+  /* the nav, light on the white page */
+  .top { position: fixed; z-index: 10; left: 50%; transform: translateX(-50%); top: 22px; height: 64px; display: flex; align-items: stretch; gap: clamp(22px, 3vw, 44px); padding-left: 22px; border-radius: 999px; overflow: hidden;
+    background: rgba(255, 255, 255, .78); -webkit-backdrop-filter: blur(18px) saturate(1.2); backdrop-filter: blur(18px) saturate(1.2);
+    box-shadow: 0 0 20px rgba(0, 0, 0, .06), inset 0 0 0 1px rgba(0, 0, 0, .04); transition: background .2s ease, box-shadow .2s ease; }
+  .top .logo { display: flex; align-items: center; }
+  .top .logo img { width: 44px; height: 44px; transition: filter .2s ease; }
+  .top nav { display: flex; align-items: center; gap: clamp(18px, 3.2vw, 46px); padding-left: clamp(4px, 1vw, 12px); font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .top a { color: var(--ink); text-decoration: none; position: relative; white-space: nowrap; transition: color .2s ease; }
+  .top nav a::after { content: ""; position: absolute; left: 0; right: .16em; bottom: -7px; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.2, .7, .3, 1); }
+  .top nav a:hover::after { transform: none; }
+  .top .tix { display: flex; align-items: center; padding: 0 clamp(24px, 2.8vw, 38px) 0 clamp(22px, 2.6vw, 34px); background: var(--ink); color: #ffffff; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  body.dark .top { background: linear-gradient(180deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, .05) 60%, rgba(255, 255, 255, .09));
+    -webkit-backdrop-filter: blur(22px) saturate(1.7) brightness(1.1); backdrop-filter: blur(22px) saturate(1.7) brightness(1.1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -1px 0 rgba(255, 255, 255, .12), inset 0 0 0 1px rgba(255, 255, 255, .18), 0 10px 30px rgba(0, 0, 0, .25); }
+  body.dark .top nav a { color: #fff; }
+  body.dark .top .logo img { filter: invert(1); }
+  body.dark .top .tix { background: #ffffff; color: var(--ink); }
+  @media (max-width: 760px) { .top nav { display: none; } }
+
+  /* the booking: steps on the left, a summary that stays with you on the right */
+  .book { display: grid; grid-template-columns: minmax(0, 1fr) min(400px, 34vw); gap: clamp(32px, 5vw, 80px); padding: clamp(130px, 18vh, 170px) var(--m) clamp(80px, 12vh, 130px); }
+  .book > header { grid-column: 1 / -1; }
+  .book > header small { display: block; margin-bottom: 18px; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .book > header h1 { margin: 0; font: 900 clamp(48px, 7vw, 128px)/.88 var(--display); letter-spacing: -.035em; text-transform: uppercase; }
+  .step { padding: 28px 0 34px; border-top: 1px solid var(--line); }
+  .step h2 { display: flex; align-items: baseline; gap: 14px; margin: 0 0 20px; font: 700 clamp(20px, 1.7vw, 26px)/1.1 var(--display); text-transform: uppercase; }
+  .step h2 span { font: 500 12px/1 var(--sans); letter-spacing: .16em; }
+  /* days: a row of pills you can scroll sideways */
+  .days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+  .days::-webkit-scrollbar { display: none; }
+  .pick { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-width: 74px; height: 82px; padding: 0 14px; border-radius: 22px; border: 1.5px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; font: 500 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; transition: border-color .2s, background .2s, color .2s; }
+  .pick b { font: 900 26px/1 var(--display); letter-spacing: -.02em; }
+  .pick:hover { border-color: var(--ink); }
+  .pick[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .pick:disabled { opacity: .35; cursor: not-allowed; text-decoration: line-through; }
+  .times { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+  .times .pick { height: 60px; min-width: 0; flex-direction: column; font-size: 13px; letter-spacing: .04em; text-transform: none; }
+  .times .pick em { font: 500 10px/1 var(--sans); font-style: normal; letter-spacing: .12em; text-transform: uppercase; opacity: .6; }
+  /* who's coming: steppers */
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .row strong { display: block; font: 700 17px/1.2 var(--display); text-transform: uppercase; }
+  .row small { font: 400 14px/1.4 var(--sans); color: var(--muted); }
+  .stepper { display: flex; align-items: center; gap: 4px; }
+  .stepper button { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--ink); background: #fff; color: var(--ink); font: 500 20px/1 var(--sans); cursor: pointer; transition: background .2s, color .2s; }
+  .stepper button:hover:not(:disabled) { background: var(--ink); color: #fff; }
+  .stepper button:disabled { opacity: .25; cursor: not-allowed; }
+  .stepper output { width: 34px; text-align: center; font: 700 18px/1 var(--display); }
+  /* extras: toggle pills */
+  .extras { display: grid; gap: 8px; }
+  .extra { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 20px; border-radius: 22px; border: 1.5px solid var(--line); cursor: pointer; transition: border-color .2s, background .2s; }
+  .extra:hover { border-color: var(--ink); }
+  .extra input { position: absolute; opacity: 0; pointer-events: none; }
+  .extra .tick { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--ink); display: grid; place-items: center; transition: background .2s; }
+  .extra .tick::after { content: ""; width: 9px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: rotate(-45deg) translate(1px, -1px); opacity: 0; }
+  .extra:has(input:checked) { border-color: var(--ink); background: var(--soft); }
+  .extra:has(input:checked) .tick { background: var(--ink); }
+  .extra:has(input:checked) .tick::after { opacity: 1; }
+  .extra div { flex: 1; }
+  .extra strong { display: block; font: 700 16px/1.2 var(--display); text-transform: uppercase; }
+  .extra small { font: 400 14px/1.4 var(--sans); color: var(--muted); }
+  .extra b { font: 700 17px/1 var(--display); }
+  /* details */
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fields label { display: grid; gap: 8px; font: 500 11px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  .fields input { height: 52px; padding: 0 20px; border-radius: 999px; border: 1.5px solid var(--line); font: 400 16px/1 var(--sans); color: var(--ink); outline: none; transition: border-color .2s; }
+  .fields input:focus { border-color: var(--ink); }
+  .fields .wide { grid-column: 1 / -1; }
+  /* the summary */
+  .sum { align-self: start; position: sticky; top: 110px; padding: 28px; border-radius: 28px; background: var(--soft); }
+  .sum h2 { margin: 0 0 18px; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .sum .when { margin: 0 0 18px; font: 700 22px/1.15 var(--display); text-transform: uppercase; }
+  .sum ul { margin: 0 0 18px; padding: 0; list-style: none; }
+  .sum li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; font: 400 15px/1.3 var(--sans); }
+  .sum li.none { color: var(--muted); }
+  .sum .total { display: flex; justify-content: space-between; align-items: baseline; padding-top: 16px; margin-bottom: 20px; border-top: 1px solid var(--line); font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; }
+  .sum .total b { font: 900 40px/1 var(--display); letter-spacing: -.02em; }
+  .go { width: 100%; height: 56px; border-radius: 999px; border: 1.5px solid var(--ink); background: var(--ink); color: #fff; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; transition: background .25s, color .25s, opacity .25s; }
+  .go:hover:not(:disabled) { background: transparent; color: var(--ink); }
+  .go:disabled { opacity: .35; cursor: not-allowed; }
+  .sum .note { margin: 14px 0 0; font: 400 13px/1.45 var(--sans); color: var(--muted); }
+  /* booked */
+  .done { display: none; grid-column: 1 / -1; padding: 40px 0 0; }
+  .book.booked .step, .book.booked .sum { display: none; }
+  .book.booked .done { display: block; }
+  .done p { margin: 0 0 28px; max-width: 560px; font: 400 18px/1.6 var(--sans); color: #4a4750; }
+  .done img { display: block; width: min(300px, 60vw); margin: 0 0 30px; }
+  .btn { display: inline-flex; align-items: center; height: 50px; padding: 0 26px; border-radius: 999px; border: 1.5px solid var(--ink); text-decoration: none; font: 500 12px/1 var(--sans); letter-spacing: .16em; text-transform: uppercase; transition: background .25s, color .25s; }
+  .btn.solid { background: var(--ink); color: #fff; }
+  .btn.solid:hover { background: transparent; color: var(--ink); }
+  .btn:not(.solid):hover { background: var(--ink); color: #fff; }
+  .steps { min-width: 0; }   /* lets the day row scroll sideways instead of stretching the page */
+  @media (max-width: 900px) { .book { grid-template-columns: minmax(0, 1fr); } .sum { position: static; } }
+  @media (max-width: 560px) { .fields { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="logo" href="index.html#home" aria-label="The Descent, home"><img src="logo.svg" alt=""></a>
+  <nav aria-label="Main">
+    <a href="index.html#exhibits">Exhibits</a>
+    <a href="visit.html">Plan visit</a>
+    <a href="index.html#philosophy">Our philosophy</a>
+    <a href="index.html#events">Events</a>
+  </nav>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-controls="mm"><i></i>Menu</button>
+  <a href="tickets.html" class="tix" aria-current="page">Get tickets</a>
+</header>
+<div class="mm" id="mm" aria-hidden="true">
+  <div class="mm-head"><img src="logo.svg" alt=""><button class="mm-close" id="mmClose" aria-label="Close menu">×</button></div>
+  <nav aria-label="Menu"><a href="index.html#exhibits">Exhibits</a><a href="visit.html">Plan visit</a><a href="index.html#philosophy">Our philosophy</a><a href="index.html#events">Events</a></nav>
+  <div class="mm-foot"><span>Open every day<br>9 am to 6 pm</span><a href="tickets.html">Get tickets</a></div>
+</div>
+
+<form class="book" id="book" novalidate>
+  <header><small>Get tickets</small><h1>Book your dive</h1></header>
+  <div class="steps">
+    <section class="step"><h2><span>01</span>Pick a day</h2><div class="days" id="days"></div></section>
+    <section class="step"><h2><span>02</span>Pick a time</h2><div class="times" id="times"></div></section>
+    <section class="step"><h2><span>03</span>Who’s coming</h2><div id="who"></div></section>
+    <section class="step"><h2><span>04</span>Add a little extra</h2><div class="extras" id="extras"></div></section>
+    <section class="step"><h2><span>05</span>Your details</h2>
+      <div class="fields">
+        <label>First name<input name="first" autocomplete="given-name" required></label>
+        <label>Last name<input name="last" autocomplete="family-name" required></label>
+        <label class="wide">Email (we send your tickets here)<input name="email" type="email" autocomplete="email" required></label>
+      </div></section>
+  </div>
+  <aside class="sum" aria-live="polite">
+    <h2>Your visit</h2>
+    <p class="when" id="sWhen"></p>
+    <ul id="sList"></ul>
+    <div class="total"><span>Total</span><b id="sTotal">$0</b></div>
+    <button class="go" id="go" type="submit" disabled>Book tickets</button>
+    <p class="note" id="sNote">Add at least one ticket to continue.</p>
+  </aside>
+  <section class="done" id="done">
+    <img src="exhibits/octo-hero-cut.webp" alt="">
+    <p id="doneMsg"></p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn solid" href="visit.html">Plan your visit</a><a class="btn" href="index.html">Back to the dive</a></div>
+  </section>
+</form>
+
+<!-- footer -->
+<footer class="foot" id="foot">
+  <div class="ft-top">
+    <div class="ft-cta"><h2>Come say hi to the octopus.</h2>
+      <p>Get the tide report: new arrivals, baby seahorses and Jelly Nights, once a month. No spam, just sea.</p>
+      <form class="ft-news" onsubmit="event.preventDefault(); this.classList.add('done'); this.textContent = 'You’re on the list. See you underwater.';"><input type="email" placeholder="Your email" aria-label="Your email" required><button>Sign me up</button></form></div>
+    <div class="ft-col"><h3>Visit</h3><p>Open every day<br>9 am to 6 pm</p><p>1 Harbour Way<br>On the waterfront</p></div>
+    <div class="ft-col"><h3>Explore</h3><a href="index.html#exhibits">Exhibits</a><a href="visit.html">Plan visit</a><a href="index.html#philosophy">Our philosophy</a><a href="index.html#events">Events</a><a href="tickets.html">Get tickets</a></div>
+    <div class="ft-col"><h3>Follow along</h3><div class="ft-social">
+      <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".6"/></svg></a>
+      <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.4 2.6 2.2 4.4 5 4.6"/></svg></a>
+      <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.5 9.5v5l4-2.5z"/></svg></a>
+    </div></div>
+  </div>
+  <a class="ft-word" href="index.html#home" aria-label="The Descent, back to the top"><span class="ft-ship"><img src="boat.svg" alt=""></span><span class="ft-text">The Descent</span></a>
+  <div class="ft-base"><span>© 2026 The Descent · Aquarium of the deep</span><span>Made with salt water</span></div>
+  <script>
+    // the phone menu
+    (() => { const mm = document.getElementById('mm'), btn = document.getElementById('menuBtn'); if (!mm || !btn) return;
+      const set = on => { mm.classList.toggle('open', on); mm.setAttribute('aria-hidden', !on); document.documentElement.style.overflow = on ? 'hidden' : ''; };
+      btn.addEventListener('click', () => set(true)); document.getElementById('mmClose').addEventListener('click', () => set(false));
+      mm.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+      addEventListener('keydown', e => { if (e.key === 'Escape') set(false); }); })();
+    // the cursor: the dot follows exactly, the ring drifts after it and opens up over anything you can click
+    (() => {
+      if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      const root = document.documentElement, dot = document.createElement('div'), ring = document.createElement('div');
+      dot.className = 'cur-dot'; ring.className = 'cur-ring'; document.body.append(dot, ring); root.classList.add('cur', 'cur-out');
+      let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y, on = false;
+      addEventListener('pointermove', e => { x = e.clientX; y = e.clientY; if (!on) { on = true; rx = x; ry = y; root.classList.remove('cur-out'); } }, { passive: true });
+      document.addEventListener('pointerleave', () => { on = false; root.classList.add('cur-out'); });
+      addEventListener('pointerdown', () => root.classList.add('cur-down')); addEventListener('pointerup', () => root.classList.remove('cur-down'));
+      document.addEventListener('pointerover', e => root.classList.toggle('cur-hover', !!e.target.closest('a, button, label, [role=button], .ex, .pick, .sb, .win-cover')));
+      (function f() { rx += (x - rx) * .18; ry += (y - ry) * .18;
+        dot.style.transform = `translate3d(${x}px, ${y}px, 0)`; ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`; requestAnimationFrame(f); })();
+    })();
+    // the scroller: drag the pill, click the line, and it shows how deep you are
+    (() => {
+      const sb = document.createElement('div'); sb.className = 'sb'; sb.setAttribute('aria-hidden', 'true');
+      sb.innerHTML = '<div class="sb-thumb"></div><div class="sb-depth"></div>'; document.body.appendChild(sb);
+      const th = sb.firstChild, dp = sb.lastChild; let idle = 0, drag = null;
+      const max = () => Math.max(1, document.documentElement.scrollHeight - innerHeight);
+      function place() {
+        const k = Math.min(1, Math.max(0, scrollY / max())), room = sb.clientHeight - th.offsetHeight, y = k * room;
+        th.style.transform = `translateY(${y}px)`; dp.style.transform = ''; dp.style.top = (y + th.offsetHeight / 2 - 5) + 'px';
+        dp.textContent = `${Math.round(k * 1000).toLocaleString('en-US')} m`;
+      }
+      const wake = () => { sb.classList.add('on'); clearTimeout(idle); idle = setTimeout(() => sb.classList.remove('on'), 1100); };
+      addEventListener('scroll', () => { place(); wake(); }, { passive: true }); addEventListener('resize', place);
+      const go = clientY => { const r = sb.getBoundingClientRect(), room = r.height - th.offsetHeight; scrollTo(0, Math.min(1, Math.max(0, (clientY - r.top - (drag ? drag.off : th.offsetHeight / 2)) / room)) * max()); };
+      sb.addEventListener('pointerdown', e => { const tr = th.getBoundingClientRect(); drag = { off: e.target === th ? e.clientY - tr.top : th.offsetHeight / 2 };
+        sb.setPointerCapture(e.pointerId); sb.classList.add('drag'); go(e.clientY); e.preventDefault(); });
+      sb.addEventListener('pointermove', e => { if (drag) { go(e.clientY); wake(); } });
+      const up = () => { drag = null; sb.classList.remove('drag'); }; sb.addEventListener('pointerup', up); sb.addEventListener('pointercancel', up);
+      place(); requestAnimationFrame(place);
+    })();
+    // the moving logo on the other pages (the home page draws its own): the same 240-frame loop
+    (() => { const img = document.querySelector('.top .logo img'); if (!img) return;
+      const cv = document.createElement('canvas'), d = Math.min(2, devicePixelRatio || 1); cv.width = cv.height = 62 * d; img.replaceWith(cv);
+      const g = cv.getContext('2d'), sheet = new Image(); sheet.src = 'logoloop/sheet.webp';
+      (function f(now) { if (sheet.complete && sheet.naturalWidth) { const i = Math.floor(now / (1000 / 24)) % 240; g.clearRect(0, 0, cv.width, cv.height); g.drawImage(sheet, (i % 12) * 360, Math.floor(i / 12) * 360, 360, 360, 0, 0, cv.width, cv.height); } requestAnimationFrame(f); })(0); })();
+    // the page change: water rises over the page, you land on the next one, and the water carries on up and off it
+    (() => {
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const wrap = document.createElement('div'); wrap.className = 'wv'; wrap.setAttribute('aria-hidden', 'true');
+      wrap.innerHTML = `<svg width="100%" height="100%"><defs><linearGradient id="wvSea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16141c"/><stop offset=".5" stop-color="#0b0a0f"/><stop offset="1" stop-color="#030305"/></linearGradient><clipPath id="wvClip"><path id="wvClipP"/></clipPath></defs><path id="wvRib" fill="#2b2933"/><path id="wvSeaP" fill="url(#wvSea)"/><g id="wvDots" clip-path="url(#wvClip)" fill="#e9e6ef"></g></svg><img src="logo.svg" alt="">`;
+      document.body.appendChild(wrap);
+      const rib = wrap.querySelector('#wvRib'), sea = wrap.querySelector('#wvSeaP'), clipP = wrap.querySelector('#wvClipP'), dotsG = wrap.querySelector('#wvDots'), logo = wrap.querySelector('img');
+      // little specks drifting up through the black water
+      const DOTS = Array.from({ length: 140 }, () => ({ x: Math.random(), y: Math.random(), r: .6 + Math.random() * 1.8, sp: .02 + Math.random() * .05, a: .25 + Math.random() * .55 }));
+      dotsG.innerHTML = DOTS.map(d => `<circle r="${d.r.toFixed(1)}" opacity="${d.a.toFixed(2)}"/>`).join('');
+      const dotEls = [...dotsG.children];
+      const drift = t => { const W = innerWidth, H = innerHeight; DOTS.forEach((d, i) => { const yy = ((d.y - t * d.sp) % 1 + 1) % 1; dotEls[i].setAttribute('cx', (d.x * W + Math.sin(t + i) * 6).toFixed(1)); dotEls[i].setAttribute('cy', (yy * H).toFixed(1)); }); };
+      const ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      // edge: the wavy line at height e; fromTop: true = water above the line (leaving upward), false = water below it (rising)
+      function shape(e, fromTop, t) {
+        const W = innerWidth, H = innerHeight, y = (x, ph) => e + Math.sin(x / 170 + t * 5 + ph) * 18 + Math.sin(x / 73 - t * 4 + ph) * 7;
+        const path = (ph, off) => { let d = `M-20 ${fromTop ? -20 : H + 20} L-20 ${y(-20, ph) + off}`; for (let x = 0; x <= W + 20; x += 20) d += ` L${x} ${(y(x, ph) + off).toFixed(1)}`; return d + ` L${W + 20} ${fromTop ? -20 : H + 20} Z`; };
+        rib.setAttribute('d', path(1.3, fromTop ? 12 : -12)); const s = path(0, 0); sea.setAttribute('d', s); clipP.setAttribute('d', s); drift(t);
+      }
+      function run(ms, step, done) { const t0 = performance.now(); (function f(now) { const k = Math.min(1, (now - t0) / ms); step(ease(k), now / 1000); if (k < 1) requestAnimationFrame(f); else done && done(); })(t0); }
+      // arriving: the water is already over the page; it rises up and away
+      const arrived = document.documentElement.classList.contains('wave-in');
+      try { sessionStorage.removeItem('wave'); } catch (e) {}
+      if (arrived) {
+        shape(innerHeight + 60, true, 0); logo.style.opacity = 1; document.documentElement.classList.remove('wave-in'); wrap.classList.add('busy');
+        setTimeout(() => run(still ? 1 : 850, (k, t) => { shape((1 - k) * (innerHeight + 80) - 40, true, t); logo.style.opacity = 1 - Math.min(1, k * 2.5); logo.style.transform = `translateY(${-k * 60}px)`; },
+                             () => { wrap.classList.remove('busy'); rib.setAttribute('d', ''); sea.setAttribute('d', ''); clipP.setAttribute('d', ''); }), 120);
+      }
+      // leaving: any link to another page of the site
+      document.addEventListener('click', e => {
+        const a = e.target.closest('a[href]'); if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
+        const to = new URL(a.href, location.href); if (to.origin !== location.origin || (to.pathname === location.pathname && to.search === location.search)) return;
+        if (!/\.html$|\/$/.test(to.pathname)) return;
+        e.preventDefault(); wrap.classList.add('busy');
+        run(still ? 1 : 700, (k, t) => { shape((1 - k) * (innerHeight + 80) - 40 + 0, false, t); logo.style.opacity = Math.max(0, k * 2 - 1); logo.style.transform = `translateY(${(1 - k) * 40}px)`; },
+            () => { try { sessionStorage.setItem('wave', '1'); } catch (err) {} location.href = to.href; });
+      });
+      // coming back with the browser's back button: never leave the water up
+      addEventListener('pageshow', e => { if (e.persisted) { wrap.classList.remove('busy'); rib.setAttribute('d', ''); sea.setAttribute('d', ''); clipP.setAttribute('d', ''); logo.style.opacity = 0; } });
+    })();
+    // size the wordmark so it runs exactly edge to edge
+    (() => { const w = document.querySelector('.ft-word'), t = w.querySelector('.ft-text');
+      const fit = () => { w.style.fontSize = '100px'; const avail = w.clientWidth, k = avail / t.getBoundingClientRect().width; w.style.fontSize = (100 * k * .995) + 'px'; };
+      fit(); addEventListener('resize', fit); document.fonts && document.fonts.ready.then(fit); })();
+  </script>
+</footer>
+<!-- /footer -->
+
+<script>
+  // the booking form: everything is worked out here in the page (this concept site doesn't take payments)
+  const TICKETS = [['adult', 'Adult', '13 and up', 32], ['child', 'Child', '3 to 12', 22], ['senior', 'Senior', '65 and up', 26], ['tiny', 'Under 3', 'Always swim free', 0]];
+  const EXTRAS = [['feed', 'Octopus feeding talk', 'Meet a keeper at breakfast time, 11 am', 8], ['touch', 'Touch pool session', 'Fifteen quiet minutes with the rays', 6], ['guide', 'Field guide', 'A pocket book of everyone you’ll meet', 5]];
+  const TIMES = ['9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  const state = { day: 0, time: '10:00', n: { adult: 2, child: 1, senior: 0, tiny: 0 }, x: new Set() };
+  const D = new Date(), days = [...Array(14)].map((_, i) => new Date(D.getFullYear(), D.getMonth(), D.getDate() + i));
+  const fmt = (d, o) => d.toLocaleDateString('en-US', o);
+  const ampm = t => { const [h] = t.split(':').map(Number); return (h % 12 || 12) + (h < 12 ? ' am' : ' pm'); };
+  const left = (i, t) => ((i * 7 + TIMES.indexOf(t) * 3) % 11);          // a made-up but steady "spots left" for each slot
+
+  const $ = id => document.getElementById(id);
+  $('days').innerHTML = days.map((d, i) => `<button type="button" class="pick" data-day="${i}">${i === 0 ? 'Today' : fmt(d, { weekday: 'short' })}<b>${d.getDate()}</b></button>`).join('');
+  $('who').innerHTML = TICKETS.map(([k, name, note, p]) => `<div class="row"><div><strong>${name}</strong><small>${note} · ${p ? '$' + p : 'Free'}</small></div>
+    <div class="stepper"><button type="button" data-k="${k}" data-d="-1" aria-label="One fewer ${name}">−</button><output id="n-${k}"></output><button type="button" data-k="${k}" data-d="1" aria-label="One more ${name}">+</button></div></div>`).join('');
+  $('extras').innerHTML = EXTRAS.map(([k, name, note, p]) => `<label class="extra"><input type="checkbox" value="${k}"><span class="tick"></span><div><strong>${name}</strong><small>${note}</small></div><b>+$${p}</b></label>`).join('');
+
+  function renderTimes() {
+    const today = state.day === 0, nowH = new Date().getHours();
+    $('times').innerHTML = TIMES.map(t => { const l = left(state.day, t), past = today && Number(t.split(':')[0]) <= nowH, full = l === 0 || past;
+      return `<button type="button" class="pick" data-time="${t}" ${full ? 'disabled' : ''} aria-pressed="${state.time === t}">${ampm(t)}<em>${past ? 'Gone' : l === 0 ? 'Full' : l < 4 ? l + ' left' : 'Open'}</em></button>`; }).join('');
+    if ($('times').querySelector(`[data-time="${state.time}"]:disabled`)) { const free = $('times').querySelector('.pick:not(:disabled)'); state.time = free ? free.dataset.time : null; renderTimes(); }
+  }
+  function render() {
+    document.querySelectorAll('[data-day]').forEach(b => b.setAttribute('aria-pressed', +b.dataset.day === state.day));
+    renderTimes();
+    TICKETS.forEach(([k]) => { $('n-' + k).textContent = state.n[k]; });
+    document.querySelectorAll('.stepper button').forEach(b => { b.disabled = +b.dataset.d < 0 ? state.n[b.dataset.k] === 0 : state.n[b.dataset.k] >= 10; });
+    const people = TICKETS.reduce((s, [k]) => s + state.n[k], 0), paid = TICKETS.filter(([k]) => k !== 'tiny').reduce((s, [k]) => s + state.n[k], 0);
+    const lines = TICKETS.filter(([k]) => state.n[k]).map(([k, name, , p]) => [`${state.n[k]} × ${name}`, p * state.n[k]]);
+    EXTRAS.filter(([k]) => state.x.has(k)).forEach(([, name, , p]) => lines.push([`${people} × ${name}`, p * people]));
+    $('sWhen').textContent = `${fmt(days[state.day], { weekday: 'long', month: 'long', day: 'numeric' })}${state.time ? ' · ' + ampm(state.time) : ''}`;
+    $('sList').innerHTML = lines.length ? lines.map(([a, b]) => `<li><span>${a}</span><span>${b ? '$' + b : 'Free'}</span></li>`).join('') : '<li class="none">No tickets yet</li>';
+    $('sTotal').textContent = '$' + lines.reduce((s, l) => s + l[1], 0);
+    const ok = paid > 0 && state.time;
+    $('go').disabled = !ok;
+    $('sNote').textContent = !paid ? (people ? 'Little ones need a grown-up with them: add an adult or senior ticket.' : 'Add at least one ticket to continue.') : !state.time ? 'Pick a time to continue.' : 'Your tickets come to your email, ready to scan at the door.';
+  }
+  $('days').addEventListener('click', e => { const b = e.target.closest('[data-day]'); if (b) { state.day = +b.dataset.day; render(); } });
+  $('times').addEventListener('click', e => { const b = e.target.closest('[data-time]'); if (b && !b.disabled) { state.time = b.dataset.time; render(); } });
+  $('who').addEventListener('click', e => { const b = e.target.closest('[data-k]'); if (b && !b.disabled) { state.n[b.dataset.k] = Math.max(0, Math.min(10, state.n[b.dataset.k] + +b.dataset.d)); render(); } });
+  $('extras').addEventListener('change', e => { e.target.checked ? state.x.add(e.target.value) : state.x.delete(e.target.value); render(); });
+  $('book').addEventListener('submit', e => {
+    e.preventDefault();
+    const f = e.target, bad = [...f.querySelectorAll('.fields input')].find(i => !i.checkValidity());
+    if (bad) { bad.focus(); bad.reportValidity(); return; }
+    $('doneMsg').textContent = `You’re all set, ${f.first.value.trim()}! See you ${fmt(days[state.day], { weekday: 'long', month: 'long', day: 'numeric' })} at ${ampm(state.time)}. In the real thing your tickets would land in ${f.email.value.trim()} (this is a concept site, so nothing was booked).`;
+    f.classList.add('booked'); f.querySelector('header h1').textContent = 'See you underwater'; scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  if (new Date().getHours() >= Number(TIMES[TIMES.length - 1].split(':')[0])) state.day = 1;   // after the last entry, open on tomorrow
+  render();
+  // the nav turns to glass over the dark footer
+  const foot = document.getElementById('foot');
+  const navTone = () => document.body.classList.toggle('dark', foot.getBoundingClientRect().top < 90);
+  addEventListener('scroll', navTone, { passive: true }); navTone();
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

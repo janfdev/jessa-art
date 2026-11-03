@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rime</title>
+  <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    :root { --page: #f5f5f5; --ink: #0d0d0d; --soft: #6b6b6b; --line: rgba(13,13,13,.14); }
+    html, body { background: var(--page); color: var(--ink); }
+    body { font: 400 15px/1.7 "Montserrat", system-ui, sans-serif; overflow-x: clip; }
+
+    /* header: the mark top-left, the shop menu in the middle, account + bag on the right */
+    .top {
+      position: fixed; z-index: 5; top: 0; left: 0; right: 0;
+      display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+      padding: 28px clamp(20px, 3.4vw, 52px);
+      font: 500 11px/1 "Montserrat", system-ui, sans-serif; letter-spacing: .22em; text-transform: uppercase;
+    }
+    .top a { color: #0d0d0d; text-decoration: none; white-space: nowrap; }
+    .mark { justify-self: start; display: block; width: 44px; }
+    .mark svg { display: block; width: 100%; overflow: visible; }
+    .mark path { fill: none; stroke: #0d0d0d; stroke-width: 1.5px; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+    .menu, .util { display: flex; gap: clamp(22px, 2.6vw, 40px); list-style: none; padding: 0; }
+    .util { justify-self: end; }
+    /* hairline that draws in under a link on hover */
+    .menu a, .util a { position: relative; padding: 6px 0; }
+    .menu a::after, .util a::after {
+      content: ""; position: absolute; left: 0; right: .22em; bottom: 0; height: 1px; background: currentColor;
+      transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(.2,.7,.2,1);
+    }
+    .menu a:hover::after, .util a:hover::after, .menu a:focus-visible::after { transform: scaleX(1); }
+    .menu-btn { display: none; }
+
+    /* phones: links fold into a full-screen menu behind a two-line button */
+    @media (max-width: 860px) {
+      .top { grid-template-columns: 1fr auto; padding: 22px 20px; }
+      .top nav, .util .hide-sm { display: none; }
+      .util { gap: 22px; align-items: center; }
+      .menu-btn {
+        display: grid; gap: 6px; width: 26px; padding: 8px 0; background: none; border: 0; cursor: pointer;
+      }
+      .menu-btn i { display: block; height: 1.5px; background: #0d0d0d; transition: transform .35s ease; }
+      .menu-open .menu-btn i:first-child { transform: translateY(3.75px) rotate(45deg); }
+      .menu-open .menu-btn i:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+    }
+    .sheet {
+      position: fixed; z-index: 4; inset: 0; background: rgba(245,245,245,.94);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      display: grid; align-content: center; padding: 0 28px;
+      opacity: 0; visibility: hidden; transition: opacity .35s ease, visibility 0s .35s;
+    }
+    .menu-open .sheet { opacity: 1; visibility: visible; transition: opacity .35s ease; }
+    .sheet ul { list-style: none; padding: 0; display: grid; gap: 22px; }
+    .sheet a {
+      color: #0d0d0d; text-decoration: none; text-transform: uppercase;
+      font: 400 26px/1 "Montserrat", system-ui, sans-serif; letter-spacing: .24em;
+      display: inline-block; opacity: 0; transform: translateY(10px); transition: opacity .4s ease, transform .4s ease;
+    }
+    .menu-open .sheet a { opacity: 1; transform: none; }
+    .menu-open .sheet li:nth-child(2) a { transition-delay: .05s; } .menu-open .sheet li:nth-child(3) a { transition-delay: .1s; }
+    .menu-open .sheet li:nth-child(4) a { transition-delay: .15s; } .menu-open .sheet li:nth-child(5) a { transition-delay: .2s; }
+    .sheet .small { margin-top: 44px; gap: 16px; }
+    .sheet .small a { font-size: 12px; letter-spacing: .22em; color: #555; }
+
+    /* product: the piece large on the left, floating on glass; details on the right */
+    .product { min-height: 100vh; min-height: 100svh; display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(32px, 5vw, 96px);
+      align-items: center; padding: 120px clamp(20px, 5vw, 80px) 80px; }
+    .stage { position: relative; aspect-ratio: 1; width: min(100%, calc(100svh - 210px)); margin: 0 auto; border-radius: 28px; display: grid; place-items: center; padding: 12%;
+      background: linear-gradient(115deg, rgba(255,255,255,.7) 0%, rgba(255,255,255,0) 40%), linear-gradient(180deg, rgba(255,255,255,.5), rgba(255,255,255,.15));
+      border: 1px solid rgba(255,255,255,.8);
+      box-shadow: inset 0 1px 0 #fff, 0 50px 90px -50px rgba(0,0,0,.35), 0 1px 2px rgba(0,0,0,.05);
+      transform: perspective(1100px) rotateX(calc(var(--tx, 0) * 1deg)) rotateY(calc(var(--ty, 0) * 1deg)); }
+    .stage img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 30px 30px rgba(0,0,0,.2));
+      transform: translate(calc(var(--px, 0) * 1px), calc(var(--py, 0) * 1px)); }
+    .back { display: inline-block; margin-bottom: 36px; font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--soft); text-decoration: none; }
+    .back:hover { color: var(--ink); }
+    .what { font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--soft); }
+    h1 { margin: 14px 0 0; font: 400 clamp(38px, 4.6vw, 76px)/1.04 "Montserrat", system-ui, sans-serif; letter-spacing: .02em; text-transform: uppercase; }
+    .price { margin-top: 18px; font-size: 20px; letter-spacing: .08em; }
+    .lede { margin-top: 28px; max-width: 44ch; color: #2a2a2a; }
+    .specs { margin-top: 34px; border-top: 1px solid var(--line); max-width: 520px; }
+    .specs div { display: flex; justify-content: space-between; gap: 20px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .specs dt { color: var(--soft); letter-spacing: .14em; text-transform: uppercase; font-size: 11px; }
+    .buy { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; max-width: 520px; }
+    .btn { flex: 1; min-width: 180px; padding: 18px 26px; border-radius: 999px; border: 1px solid var(--ink); cursor: pointer;
+      font: 500 11px/1 "Montserrat", sans-serif; letter-spacing: .22em; text-transform: uppercase; transition: background .25s, color .25s; }
+    .btn.primary { background: var(--ink); color: #fff; } .btn.primary:hover { background: #333; }
+    .btn.ghost { background: transparent; color: var(--ink); } .btn.ghost:hover { background: var(--ink); color: #fff; }
+    .note { margin-top: 16px; font-size: 12px; color: var(--soft); }
+
+    /* the rest of his kit */
+    .more { padding: 40px clamp(20px, 5vw, 80px) 110px; }
+    .more h2 { font: 400 13px/1 "Montserrat", sans-serif; letter-spacing: .24em; text-transform: uppercase; margin-bottom: 28px; }
+    .row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px; }
+    .row a { display: grid; grid-template-rows: 1fr auto; aspect-ratio: .8; padding: 16px; border-radius: 16px; color: var(--ink); text-decoration: none;
+      font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+      background: linear-gradient(115deg, rgba(255,255,255,.6), rgba(255,255,255,0) 40%), rgba(255,255,255,.3); border: 1px solid rgba(255,255,255,.8);
+      box-shadow: inset 0 1px 0 #fff, 0 30px 50px -34px rgba(0,0,0,.3); transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s; }
+    .row a:hover { transform: translateY(-6px) rotate(-1deg); box-shadow: inset 0 1px 0 #fff, 0 40px 60px -34px rgba(0,0,0,.38); }
+    .row img { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+    .row span { display: flex; justify-content: space-between; margin-top: 10px; }
+
+    /* entrance */
+    .rise { opacity: 0; transform: translateY(18px); filter: blur(6px); animation: rise .8s cubic-bezier(.2,.85,.25,1) forwards; animation-delay: calc(var(--d, 0) * 70ms + 120ms); }
+    .stage-wrap { opacity: 0; transform: translateY(30px) scale(.96); animation: rise 1s cubic-bezier(.2,.85,.25,1) .05s forwards; }
+    @keyframes rise { to { opacity: 1; transform: none; filter: none; } }
+    @media (prefers-reduced-motion: reduce) { .rise, .stage-wrap { animation: none; opacity: 1; transform: none; filter: none; } }
+
+    @media (max-width: 860px) { html.has-rs .product, html.has-rs .more { padding-right: 54px; } }
+    @media (max-width: 860px) {
+      .product { grid-template-columns: 1fr; padding-top: 96px; gap: 36px; }
+      .row { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a class="mark" href="index.html" aria-label="Rime home">
+      <svg viewBox="0 0 48 24" aria-hidden="true"><path d="M2 22 L20 6 Q24 2.6 28 6 L46 22 M13.81 11.5 L24 16.2 L34.19 11.5"/></svg>
+    </a>
+    <nav aria-label="Shop">
+      <ul class="menu">
+        <li><a href="index.html#outerwear">Outerwear</a></li>
+        <li><a href="index.html#technical">Technical</a></li>
+        <li><a href="index.html#equipment">Equipment</a></li>
+        <li><a href="expeditions.html">Expeditions</a></li>
+        <li><a href="journal.html">Journal</a></li>
+      </ul>
+    </nav>
+    <ul class="util">
+      <li class="hide-sm"><a href="index.html#search">Search</a></li>
+      <li class="hide-sm"><a href="index.html#account">Account</a></li>
+      <li><a href="index.html#bag">Bag (0)</a></li>
+      <li><button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sheet"><i></i><i></i></button></li>
+    </ul>
+  </header>
+
+  <div class="sheet" id="sheet">
+    <ul>
+      <li><a href="index.html#outerwear">Outerwear</a></li>
+      <li><a href="index.html#technical">Technical</a></li>
+      <li><a href="index.html#equipment">Equipment</a></li>
+      <li><a href="expeditions.html">Expeditions</a></li>
+      <li><a href="journal.html">Journal</a></li>
+    </ul>
+    <ul class="small">
+      <li><a href="index.html#search">Search</a></li>
+      <li><a href="index.html#account">Account</a></li>
+    </ul>
+  </div>
+
+
+  <main class="product" data-chapter="Product">
+    <div class="stage-wrap"><div class="stage" id="stage"><img id="pImg" alt=""></div></div>
+    <div class="info">
+      <a class="back rise" style="--d:0" href="index.html#summit">&larr; Back to the summit</a>
+      <div class="what rise" style="--d:1" id="pWhat"></div>
+      <h1 class="rise" style="--d:2" id="pName"></h1>
+      <div class="price rise" style="--d:3" id="pPrice"></div>
+      <p class="lede rise" style="--d:4" id="pLede"></p>
+      <dl class="specs rise" style="--d:5" id="pSpecs"></dl>
+      <div class="buy rise" style="--d:6">
+        <button class="btn primary" id="addBtn">Add to bag</button>
+        <button class="btn ghost">Find in store</button>
+      </div>
+      <p class="note rise" style="--d:7">Free shipping and returns. Lifetime repairs on every Rime piece.</p>
+    </div>
+  </main>
+
+  <section class="more" data-chapter="More gear">
+    <h2>More for the climb</h2>
+    <div class="row" id="more"></div>
+  </section>
+
+  <script src="catalog.js"></script>
+  <script src="bag.js"></script>
+  <script>
+    /* phone menu: the button toggles the sheet; a link, Esc or widening the window closes it */
+    (() => {
+      const root = document.documentElement, btn = document.getElementById('menuBtn'), sheet = document.getElementById('sheet');
+      const set = open => {
+        root.classList.toggle('menu-open', open);
+        btn.setAttribute('aria-expanded', open);
+        btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      };
+      btn.addEventListener('click', () => set(!root.classList.contains('menu-open')));
+      sheet.addEventListener('click', e => { if (e.target.closest('a')) set(false); });
+      addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+      matchMedia('(min-width: 861px)').addEventListener('change', e => { if (e.matches) set(false); });
+    })();
+
+    /* placeholder catalogue: replace with real copy */
+    const ITEMS = window.RIME_GEAR;
+    const key = new URLSearchParams(location.search).get('p');
+    const id = ITEMS[key] ? key : 'helmet', it = ITEMS[id];
+    document.title = it.name + ' · Rime';
+    pImg.src = 'products/' + id + '.webp'; pImg.alt = it.name;
+    pWhat.textContent = it.what; pName.textContent = it.name; pPrice.textContent = it.price; pLede.textContent = it.lede;
+    pSpecs.innerHTML = it.specs.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    more.innerHTML = Object.entries(ITEMS).filter(([k, o]) => k !== id && o.cat === it.cat).concat(Object.entries(ITEMS).filter(([k, o]) => k !== id && o.cat !== it.cat)).slice(0, 5).map(([k, o]) =>
+      `<a href="product.html?p=${k}"><img src="products/${k}.webp" alt=""><span><b style="font-weight:500">${o.name}</b>${o.price}</span></a>`).join('');
+    addBtn.addEventListener('click', () => {
+      RimeBag.add(id); addBtn.textContent = 'Added'; RimeBag.open(id);
+      setTimeout(() => addBtn.textContent = 'Add to bag', 1600);
+    });
+
+    /* the glass stage turns toward the cursor, like the cards on the summit */
+    (() => {
+      if (matchMedia('(hover: none)').matches) return;
+      const st = document.getElementById('stage'); let x = 0, y = 0, ex = 0, ey = 0, on = 0, v = 0;
+      st.addEventListener('pointermove', e => { const r = st.getBoundingClientRect(); x = (e.clientX - r.left) / r.width - .5; y = (e.clientY - r.top) / r.height - .5; on = 1; });
+      st.addEventListener('pointerleave', () => { x = y = 0; on = 0; });
+      const tick = () => {
+        ex += (x - ex) * .08; ey += (y - ey) * .08; v += (on - v) * .08;
+        st.style.setProperty('--ty', (ex * 10).toFixed(2)); st.style.setProperty('--tx', (-ey * 8).toFixed(2));
+        st.style.setProperty('--px', (ex * 18).toFixed(2)); st.style.setProperty('--py', (ey * 14).toFixed(2));
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    })();
+  </script>
+  <script src="header.js"></script>
+  <script src="search.js"></script>
+  <script src="scroller.js"></script>
+  <script src="cursor.js"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

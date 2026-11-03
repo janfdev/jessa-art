@@ -1,0 +1,100 @@
+/* "Since launch" live pieces (mb-new.js): each sits in a window the same shape as the recordings around it */
+body.mboard .mb-vid .live { position: relative; aspect-ratio: 16 / 10; background: #fbf7fa radial-gradient(#efe3ec 1.3px, transparent 1.6px) 0 0 / 16px 16px; }
+
+/* Dress up Mochi: Mochi on the left, her closet on the right */
+body.mboard .du { display: grid; grid-template-columns: 1fr 1.15fr; gap: 12px; padding: 12px; }
+body.mboard .du-stage { position: relative; display: grid; place-items: end center; border-radius: 16px; overflow: hidden; padding-bottom: 12px;
+  background: radial-gradient(#f4d9e7 2px, transparent 2.4px) 0 0 / 22px 22px, linear-gradient(180deg, #ffeef6, #ffe2ee); }
+body.mboard .du-stage canvas { width: 92%; max-width: 236px; height: auto; image-rendering: pixelated; cursor: pointer; }
+body.mboard .du-say { position: absolute; left: 50%; top: 12px; margin: 0; padding: 6px 12px 8px; border-radius: 999px; background: #fff; font: 700 19px/1 'Caveat', cursive; color: #3d3640; white-space: nowrap;
+  box-shadow: 0 6px 14px rgba(110, 60, 100, .14); opacity: 0; transform: translate(-50%, 6px) scale(.9); transition: opacity .2s, transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+body.mboard .du-say.on { opacity: 1; transform: translate(-50%, 0) scale(1); }
+body.mboard .du-closet { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+body.mboard .du-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; padding: 3px; border-radius: 999px; background: #f3e9f0; }
+body.mboard .du-tabs button { padding: 7px 0; border: 0; border-radius: 999px; background: none; font: 700 11.5px/1 var(--font); color: #6b6370; cursor: pointer; }
+body.mboard .du-tabs button.on { background: #fff; color: #2f2a33; box-shadow: 0 2px 6px rgba(110, 60, 100, .12); }
+body.mboard .du-items { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; align-content: start; }
+body.mboard .du-item { aspect-ratio: 1; display: grid; place-items: center; padding: 0; border: 0; border-radius: 13px; background: #f8eef4; cursor: pointer; transition: transform .14s, background .14s; }
+body.mboard .du-item canvas { width: 72%; height: auto; image-rendering: pixelated; }
+body.mboard .du-item:hover { background: #ffe0ec; transform: translateY(-2px) rotate(-3deg); } body.mboard .du-item:nth-child(even):hover { transform: translateY(-2px) rotate(3deg); }
+body.mboard .du-item.on { background: #ffe0ec; box-shadow: inset 0 0 0 2px #e2649a; }
+body.mboard .du-sw { width: 56%; aspect-ratio: 1; border-radius: 10px; box-shadow: inset 0 0 0 1.5px rgba(0, 0, 0, .06); }
+body.mboard .du-item:focus-visible, body.mboard .du-tabs button:focus-visible, body.mboard .mu button:focus-visible { outline: 3px solid #e2649a; outline-offset: 2px; }
+
+/* Mochi's music: the app's widget, on a little board */
+body.mboard .mu-wrap { display: grid; place-items: center; }
+body.mboard .mu { width: min(300px, 86%); padding: 10px; border-radius: 20px; background: rgba(255, 255, 255, .94); box-shadow: 0 14px 34px rgba(120, 80, 120, .16), 0 0 0 1px rgba(120, 80, 120, .06); rotate: -1.5deg; }
+body.mboard .mu header { display: flex; justify-content: space-between; align-items: center; padding: 2px 6px 8px; font: 800 10.5px/1 var(--font); letter-spacing: .12em; text-transform: uppercase; color: #8d8595; }
+body.mboard .mu header i { width: 10px; height: 2px; border-radius: 1px; background: #b9b2c2; }
+body.mboard .mu-now { display: flex; align-items: center; gap: 10px; margin: 0 2px 10px; padding: 10px 12px; border-radius: 16px; background: linear-gradient(135deg, #ffe0ec, #ffd0e2); }
+body.mboard .mu-now[data-track="cloud-desk"] { background: linear-gradient(135deg, #e3efff, #cfe2ff); } body.mboard .mu-now[data-track="jelly-jog"] { background: linear-gradient(135deg, #fff5c8, #ffe9a6); }
+body.mboard .mu-art { width: 34px; height: 34px; image-rendering: pixelated; flex: none; }
+body.mboard .mu-now.on .mu-art { animation: muBob .75s ease-in-out infinite; }
+body.mboard .mu-meta { min-width: 0; display: grid; gap: 3px; } body.mboard .mu-meta b { font: 700 13px/1.15 var(--font); color: #2b2630; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } body.mboard .mu-meta small { font: 500 11px/1.25 var(--font); color: #6b6370; }
+body.mboard .mu-eq { margin-left: auto; display: flex; align-items: flex-end; gap: 2px; height: 14px; flex: none; }
+body.mboard .mu-eq i { width: 3px; height: 14px; background: #e2649a; border-radius: 1px; transform-origin: 50% 100%; transform: scaleY(.28); }
+body.mboard .mu-now[data-track="cloud-desk"] .mu-eq i { background: #5c9de8; } body.mboard .mu-now[data-track="jelly-jog"] .mu-eq i { background: #e0a800; }
+body.mboard .mu-now.on .mu-eq i { animation: muEq .9s steps(4) infinite; } body.mboard .mu-now.on .mu-eq i:nth-child(2) { animation-delay: -.3s; } body.mboard .mu-now.on .mu-eq i:nth-child(3) { animation-delay: -.6s; } body.mboard .mu-now.on .mu-eq i:nth-child(4) { animation-delay: -.15s; }
+@keyframes muBob { 50% { transform: translateY(-3px) rotate(-4deg); } }
+@keyframes muEq { 0% { transform: scaleY(.28); } 25% { transform: scaleY(.85); } 50% { transform: scaleY(.5); } 75% { transform: scaleY(1); } }
+body.mboard .mu-ctl { display: flex; align-items: center; gap: 10px; margin: 0 4px 10px; }
+body.mboard .mu-play { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border: 0; border-radius: 50%; background: #2b2630; color: #fff; cursor: pointer; box-shadow: 0 6px 14px rgba(40, 20, 60, .2); transition: transform .15s; }
+body.mboard .mu-play:hover { transform: scale(1.06); } body.mboard .mu-play:active { transform: scale(.96); }
+body.mboard .mu-play svg { width: 18px; height: 18px; fill: currentColor; } body.mboard .mu-play .i-pause, body.mboard .mu-play.on .i-play { display: none; } body.mboard .mu-play.on .i-pause { display: inline; }
+body.mboard .mu-vol { flex: 1; display: flex; align-items: center; gap: 7px; color: #6b6370; } body.mboard .mu-vol input { flex: 1; min-width: 0; accent-color: #e2649a; }
+body.mboard .mu-list { display: grid; gap: 3px; margin: 0 2px 2px; }
+body.mboard .mu-row { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border: 0; border-radius: 12px; background: none; cursor: pointer; text-align: left; }
+body.mboard .mu-row:hover { background: rgba(243, 237, 244, .9); } body.mboard .mu-row.cur { background: #ffe0ec; }
+body.mboard .mu-row img { width: 22px; height: 22px; image-rendering: pixelated; flex: none; }
+body.mboard .mu-row span { display: grid; gap: 1px; min-width: 0; } body.mboard .mu-row b { font: 700 12px/1.2 var(--font); color: #2b2630; } body.mboard .mu-row small { font: 500 10.5px/1.2 var(--font); color: #6b6370; }
+
+/* Windows: a Windows-style title bar (title on the left, minimize / maximize / close on the right) */
+body.mboard .mb-vid .win i.bar.winbar { justify-content: flex-start; align-items: center; gap: 8px; padding: 0 0 0 12px; height: 34px; font: 600 12px/1 var(--font); font-style: normal; color: #6b6370; }
+body.mboard .winbar img { width: 16px; height: 16px; border-radius: 4px; }
+body.mboard .winbar .ctl { margin-left: auto; display: flex; height: 100%; }
+body.mboard .winbar .ctl svg { width: 44px; height: 100%; padding: 0 16px; fill: none; stroke: #6b6370; stroke-width: 1.2; }
+body.mboard .mb-vid .win > img { display: block; width: 100%; height: auto; }
+
+@media (max-width: 560px) { body.mboard .du { grid-template-columns: 1fr; } body.mboard .mb-vid .live.du, body.mboard .mb-vid .live.mu-wrap { aspect-ratio: auto; } body.mboard .mu-wrap { padding: 20px 0; } body.mboard .du-stage { min-height: 190px; } }
+@media (prefers-reduced-motion: reduce) { body.mboard .du-item:hover { transform: none; } body.mboard .mu-now.on .mu-art, body.mboard .mu-now.on .mu-eq i { animation: none; } }
+
+/* lights off */
+html.night body.mboard .mb-vid .live { background: #1f1a24 radial-gradient(rgba(255, 255, 255, .07) 1.3px, transparent 1.6px) 0 0 / 16px 16px; }
+html.night body.mboard .du-stage { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .14); }
+html.night body.mboard .du-tabs { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .14); } html.night body.mboard .du-tabs button { color: var(--ink-soft); }
+html.night body.mboard .du-tabs button.on { background: #ece6f0; color: #17141b; }
+html.night body.mboard .du-item { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .14); } html.night body.mboard .du-item.on { box-shadow: inset 0 0 0 2px #ff9ec4; }
+html.night body.mboard .mb-vid .win i.bar.winbar { color: var(--ink-soft); } html.night body.mboard .winbar .ctl svg { stroke: var(--ink-soft); }
+
+/* What people are saying: a swipeable row of real comments in pastel cards, with Mochi sitting on the left edge */
+body.mboard .lv-wrap { position: relative; margin-top: 18px; }
+body.mboard .lv-track { display: flex; gap: 46px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-left: 150px; padding: 46px 30px 22px 150px; scrollbar-width: none; cursor: grab;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 60px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 60px), transparent); }
+body.mboard .lv-track::-webkit-scrollbar { display: none; }
+body.mboard .lv-track.drag { cursor: grabbing; scroll-snap-type: none; }
+body.mboard .lv { position: relative; flex: 0 0 290px; scroll-snap-align: start; align-self: flex-start; margin: 0; padding: 34px 6px 4px; color: #2b2630; transition: transform .3s cubic-bezier(.3, 1.6, .5, 1); user-select: none; }
+/* no box: a big pastel quote mark, the words right on the page */
+body.mboard .lv::before { content: "\201C"; position: absolute; left: -4px; top: -26px; font: 800 96px/1 var(--font, 'DM Sans'); color: var(--lvc); }
+body.mboard .lv:nth-child(5n+1) { --lvc: #ff9ec4; } body.mboard .lv:nth-child(5n+2) { --lvc: #f3d96a; } body.mboard .lv:nth-child(5n+3) { --lvc: #7ad3a3; } body.mboard .lv:nth-child(5n+4) { --lvc: #8cc1ff; } body.mboard .lv:nth-child(5n) { --lvc: #b89bff; }
+body.mboard .lv:nth-child(odd) { transform: rotate(-1.5deg); } body.mboard .lv:nth-child(even) { transform: rotate(1.2deg) translateY(18px); }
+body.mboard .lv:hover { transform: rotate(0) scale(1.03); }
+body.mboard .lv blockquote { position: relative; margin: 0; font: 700 21px/1.32 var(--font, 'DM Sans'); letter-spacing: -.015em; }
+body.mboard .lv figcaption { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; font: 700 21px/1.1 'Caveat', cursive; color: #6b6370; }
+body.mboard .lv figcaption i { font: 700 11.5px/1 var(--font, 'DM Sans'); font-style: normal; padding: 5px 9px; border-radius: 999px; color: #2b2630; background: color-mix(in srgb, var(--lvc) 35%, #fff); }
+body.mboard .lv-goo { position: absolute; left: -8px; bottom: 56px; z-index: 2; width: 150px; height: 176px; image-rendering: pixelated; pointer-events: none; filter: drop-shadow(0 6px 10px rgba(60, 120, 180, .25)); }
+body.mboard .lv-nav { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: -6px; padding: 0 4px; }
+body.mboard .lv-nav span { margin-right: auto; padding-left: 150px; font: 700 21px/1 'Caveat', cursive; color: #8a8190; }
+body.mboard .lv-nav button { width: 46px; height: 46px; border-radius: 50%; border: 0; background: #fff; box-shadow: 0 6px 16px rgba(120, 80, 120, .16); display: grid; place-items: center; cursor: pointer; transition: transform .25s cubic-bezier(.3, 1.6, .5, 1), opacity .2s; }
+body.mboard .lv-nav button:hover { transform: scale(1.08); } body.mboard .lv-nav button:disabled { opacity: .35; cursor: default; transform: none; }
+body.mboard .lv-nav svg { width: 20px; height: 20px; fill: none; stroke: #3d3640; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 760px) {
+  body.mboard .lv { flex-basis: calc(100vw - 140px); align-self: center; }   /* short quotes sit in the middle, so no empty gap under them */
+  body.mboard .lv:nth-child(even) { transform: rotate(1.2deg); }
+  body.mboard .lv-track { gap: 34px; padding: 40px 30px 8px 92px; scroll-padding-left: 92px; align-items: center; }
+  body.mboard .lv blockquote { font-size: 18px; }
+  body.mboard .lv-goo { width: 80px; height: 94px; left: -6px; bottom: auto; top: 50%; translate: 0 -60%; }
+  body.mboard .lv-nav span { padding-left: 92px; }
+  body.mboard .lv-nav span { padding-left: 96px; } body.mboard .lv-nav button { display: none; }
+}
+html.night body.mboard .lv { color: var(--ink); } html.night body.mboard .lv figcaption { color: var(--ink-soft); }
+html.night body.mboard .lv-nav button { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .25); } html.night body.mboard .lv-nav svg { stroke: var(--ink); }

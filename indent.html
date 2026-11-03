@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Indent · Jessa Wolfe</title>
+<meta name="description" content="Indent, a quieter place to read. A mobile-first community for writers finding their voice, designed by Jessa Wolfe." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page" data-zoom>
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <span class="chip wob crumb" id="crumb">/ Indent</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+<!-- ===== Case study ===== -->
+<main class="canvas">
+  <article class="case">
+    <div class="slot cs-title" data-name="01 · Indent">
+      <div class="tag">01 · Indent</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Indent, a quieter place to read</span><span class="typed"><span class="t" data-text="Indent, a quieter place to read"></span><span class="caret"></span></span></span></h1>
+        <nav class="subnav pasted"><a class="wob" href="#about">About the project</a><a class="wob" href="#loop">How it works</a><a class="wob" href="indent-prototype.html">Prototype</a><a class="wob" href="indent-flows.html">Flows</a></nav></div>
+    </div>
+    <div class="slot cs-cover paste" data-name="02 · Cover">
+      <div class="tag">02 · Cover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/cover.jpg" alt="Indent on a phone"></div>
+    </div>
+    <div class="facts group">
+    <div class="slot fact sub paste" data-name="03 · Role">
+      <div class="tag">03 · Role</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Role</div><div class="v">Product design: concept, IA, flows, UI, React prototype</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="04 · Type">
+      <div class="tag">04 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Type</div><div class="v">Self-initiated, mobile-first community</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="05 · Platform">
+      <div class="tag">05 · Platform</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Platform</div><div class="v">iOS and Android</div></div>
+    </div>
+    <div class="slot fact sub paste" data-name="06 · Year">
+      <div class="tag">06 · Year</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="k">Year</div><div class="v">2026</div></div>
+    </div>
+    </div>
+    <div class="group screens small">
+    <div class="slot screen sub paste" data-name="07 · Welcome">
+      <div class="tag">07 · Welcome</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/02-first-run-slide1-welcome.jpg" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="08 · Choose a door">
+      <div class="tag">08 · Choose a door</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/07-create-choose-a-door.jpg" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="09 · Your profile">
+      <div class="tag">09 · Your profile</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/14-create-your-profile.jpg" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="10 · The reader">
+      <div class="tag">10 · The reader</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/19-reading-reader-threshold.jpg" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="11 · Messages">
+      <div class="tag">11 · Messages</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/21-messages-inbox.jpg" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="12 · Publish">
+      <div class="tag">12 · Publish</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/28-compose-publish-sheet.jpg" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="13 · Profile">
+      <div class="tag">13 · Profile</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/32-profile-your-profile.jpg" alt=""></div>
+    </div>
+    <div class="slot screen sub paste" data-name="14 · A list">
+      <div class="tag">14 · A list</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><img src="image/indent/43-lists-a-list-opened.jpg" alt=""></div>
+    </div>
+    </div>
+    <div class="slot prose" id="about" data-name="15 · The question">
+      <div class="tag">15 · The question</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">The writing internet is loud and unkind to beginners.</span><span class="typed"><span class="t" data-text="The writing internet is loud and unkind to beginners."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">I kept thinking about the literary-minded amateur. Someone writing because they love writing, who wants their work read kindly and wants to read others. They have nowhere good to go. On every existing platform they end up buried, starved, lost, or intimidated.</p>
+        <p class="pasted">Indent is calmer than Wattpad, more discoverable than Substack, warmer than Scribophile. I designed it against the grain of the modern writing internet, on purpose.</p></div>
+    </div>
+    <div class="choices zig two four group">
+    <div class="slot choice sub paste" data-name="16 · Wattpad">
+      <div class="tag">16 · Wattpad</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">1</div><h3>Buried under genre fiction.</h3><p>Literary beginners disappear beneath leaderboards and YA serials. Discovery rewards volume, not voice.</p></div>
+    </div>
+    <div class="slot choice sub paste" data-name="17 · Substack">
+      <div class="tag">17 · Substack</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">2</div><h3>Starved without a list.</h3><p>Excellent if you arrive with an audience. Punishing if you don’t. No native discovery for new voices.</p></div>
+    </div>
+    <div class="slot choice sub paste" data-name="18 · Medium">
+      <div class="tag">18 · Medium</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">3</div><h3>Optimized for SEO, not story.</h3><p>Recipes for traffic crowd out the literary essay. The platform rewards titles that perform in search.</p></div>
+    </div>
+    <div class="slot choice sub paste" data-name="19 · Workshops">
+      <div class="tag">19 · Workshops</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">4</div><h3>Narrow or workshop-clinical.</h3><p>Scribophile, Royal Road, AO3. Excellent within their lanes. None feel like a calm, mobile-first home.</p></div>
+    </div>
+    </div>
+    <div class="slot prose quote butter" data-name="20 · Positioning">
+      <div class="tag">20 · Positioning</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">“The mobile-first home for people finding their voice. Reading is private, response is the currency, and the writing comes first.”</span><span class="typed"><span class="t" data-text="“The mobile-first home for people finding their voice. Reading is private, response is the currency, and the writing comes first.”"></span><span class="caret"></span></span></span></h2><p class="pasted">the Indent positioning statement</p></div>
+    </div>
+    <div class="slot prose" id="loop" data-name="21 · Give-to-Get">
+      <div class="tag">21 · Give-to-Get</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Give-to-Get. Reading kindly surfaces your own work.</span><span class="typed"><span class="t" data-text="Give-to-Get. Reading kindly surfaces your own work."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">The platform measures real reading behavior: pieces opened, time spent, comments left, comment quality. That weights Discover without making anyone’s reading public. You earn visibility by doing the work of reading, not performing it.</p><div class="bullets pasted"><div class="b wob"><b>Soft, never punitive.</b>Posting is always free. The engine adjusts reach, not permission.</div><div class="b wob"><b>Honest, never shaming.</b>“You’ve read 4 pieces this week, and your work is reaching 2× more readers.”</div><div class="b wob"><b>Reading streaks exist.</b>Posting streaks do not. No pressure to publish on a schedule.</div></div></div>
+    </div>
+    <div class="slot prose" id="rules" data-name="22 · Seven rules">
+      <div class="tag">22 · Seven rules</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Seven rules. Every design choice tested against them.</span><span class="typed"><span class="t" data-text="Seven rules. Every design choice tested against them."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">Values, not features. Each one a guardrail against the drift that makes other writing platforms feel hostile to beginners.</p><div class="bullets pasted"><div class="b wob"><b>The writing is the point.</b>Not engagement, not streaks, not metrics.</div><div class="b wob"><b>Reading is private. Sharing is a choice.</b>Reads and saves are invisible by default. Reactions are public because the reader chose so.</div><div class="b wob"><b>Publishing earns reading.</b>Thoughtful reading surfaces your own work.</div><div class="b wob"><b>Visibility, not ranking.</b>Follower counts exist as recognition. Never as a headline.</div><div class="b wob"><b>Slow social media.</b>Calm UI, chronological by default, no infinite scroll on writing surfaces.</div><div class="b wob"><b>Trust is non-negotiable.</b>Plagiarism, harassment, and bad faith are day-one problems.</div><div class="b wob"><b>Beautiful to read in.</b>Typography, spacing, dark mode, offline reading. Core product, not polish.</div></div></div>
+    </div>
+    <div class="choices zig six group" id="flows">
+    <div class="slot choice has-ex ex-sq sub paste" data-name="23 · Onboard">
+      <div class="tag">23 · Onboard</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">1</div><h3>Onboard with intention.</h3><p>Four steps with visible progress. Welcome, pick what you read, read three things, then an optional first paragraph about how you came to writing.</p><video class="ex" src="image/indent/slide-1-welcome-notebook-birds.mp4" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot choice has-ex ex-tall sub paste" data-name="24 · Publish">
+      <div class="tag">24 · Publish</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">2</div><h3>Publish a piece.</h3><p>Pick a shape: poem, short story, chapter. Every first publish lands in First Light for 72 hours, so newcomers get an equal spotlight.</p><img class="ex" src="image/indent/28-compose-publish-sheet.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-tall sub paste" data-name="25 · Read">
+      <div class="tag">25 · Read</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">3</div><h3>Read and respond, daily.</h3><p>Paper, sepia, or dark. Leave a reaction richer than a heart: felt this, made me think, wanted more.</p><img class="ex" src="image/indent/19-reading-reader-threshold.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-sq sub paste" data-name="26 · Discover">
+      <div class="tag">26 · Discover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">4</div><h3>Discover what to read next.</h3><p>First Light shelf, a weekly Editor’s Pick, and sort tabs. Hand-curated for the first six months. No infinite scroll.</p><video class="ex" src="image/indent/slide-5-discover-reading-grass.mp4" muted loop playsinline autoplay></video></div>
+    </div>
+    <div class="slot choice has-ex ex-tall sub paste" data-name="27 · Follow">
+      <div class="tag">27 · Follow</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">5</div><h3>Follow and be notified.</h3><p>Active-signal notifications only: responses to your work, new chapters in series you read, a mentor’s note.</p><img class="ex" src="image/indent/21-messages-inbox.jpg" alt="" loading="lazy"></div>
+    </div>
+    <div class="slot choice has-ex ex-sq sub paste" data-name="28 · Share">
+      <div class="tag">28 · Share</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="n">6</div><h3>Share and converse.</h3><p>Share a piece with anyone. It lands in a message thread as a tappable card that opens straight into the reader.</p><video class="ex" src="image/indent/slide-4-share-paper-planes.mp4" muted loop playsinline autoplay></video></div>
+    </div>
+    </div>
+    <div class="cast five group">
+    <div class="slot member sub paste" data-name="29 · Welcome">
+      <div class="tag">29 · Welcome</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/indent/slide-1-welcome-notebook-birds.mp4" autoplay muted loop playsinline></video><h4>Welcome</h4><p>A notebook, some birds.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="30 · Write">
+      <div class="tag">30 · Write</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/indent/slide-2-write-messy-desk.mp4" autoplay muted loop playsinline></video><h4>Write</h4><p>A messy desk is allowed.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="31 · Make space">
+      <div class="tag">31 · Make space</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/indent/slide-3-make-space-indent.mp4" autoplay muted loop playsinline></video><h4>Make space</h4><p>The indent, literally.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="32 · Share">
+      <div class="tag">32 · Share</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/indent/slide-4-share-paper-planes.mp4" autoplay muted loop playsinline></video><h4>Share</h4><p>Paper planes.</p></div>
+    </div>
+    <div class="slot member sub paste" data-name="33 · Discover">
+      <div class="tag">33 · Discover</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><video src="image/indent/slide-5-discover-reading-grass.mp4" autoplay muted loop playsinline></video><h4>Discover</h4><p>Reading in the grass.</p></div>
+    </div>
+    </div>
+    <div class="brandgrid group" id="look">
+    <div class="slot bcard sub paste" data-name="34 · Palette">
+      <div class="tag">34 · Palette</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="swatches"><i style="background:#D05C08"></i><i style="background:#C36A75"></i><i style="background:#F9F4EA;outline:1px solid #eee"></i><i style="background:#1A1815"></i><i style="background:#8C8579"></i></div><h4>A coffeehouse, not a software company.</h4><p>Orange, rose, cream paper, ink. Warm, unhurried, direct. The design language is a posture, the same one I want the community to take.</p></div>
+    </div>
+    <div class="slot bcard sub paste" data-name="35 · Type">
+      <div class="tag">35 · Type</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="typecard"><span class="serif">A quieter place to read.</span><span class="sans">Fraunces for display and reading. Inter for UI.</span></div><h4>Literary serif, calm sans.</h4><p>Cream paper underneath, a literary serif on top, a single calligraphic mark for the wordmark.</p></div>
+    </div>
+    </div>
+    <div class="slot prose" data-name="36 · Loose end">
+      <div class="tag">36 · Loose end</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h3><span class="typing"><span class="ghost" aria-hidden="true">The one thing I’d flag before launch.</span><span class="typed"><span class="t" data-text="The one thing I’d flag before launch."></span><span class="caret"></span></span></span></h3>
+        <p class="pasted">The prototype shows public per-piece view counts. That was a stakeholder request, and it conflicts with the brief’s locked privacy principle. My call: make view counts author-only. A small UI change with a large cultural consequence, exactly the kind of decision that deserves an explicit sign-off, not a quiet ship.</p>
+        <a class="cta pasted" href="indent-prototype.html">Click through the prototype <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8"/></svg></a></div>
+    </div>
+    <div class="slot prose quote" data-name="37 · North star">
+      <div class="tag">37 · North star</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">Reading is private. Response is the currency. The writing comes first.</span><span class="typed"><span class="t" data-text="Reading is private. Response is the currency. The writing comes first."></span><span class="caret"></span></span></span></h2><p class="pasted">What’s defensible about Indent long-term is culture, not features. A kinder Wattpad could be copied. The first hundred members and the norms they set cannot.</p></div>
+    </div>
+    <div class="slot prose tools" id="tools" data-name="38 · Tools">
+      <div class="tag">38 · Tools</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h2><span class="typing"><span class="ghost" aria-hidden="true">What I built it with.</span><span class="typed"><span class="t" data-text="What I built it with."></span><span class="caret"></span></span></span></h2>
+        <p class="pasted">From concept to a working prototype.</p>
+        <div class="row pasted"><div class="tlc"><img src="image/tools/figma.svg" alt=""><b>Figma</b><small>Concept, IA, flows and UI</small></div><div class="tlc"><img src="image/tools/claude.svg" alt=""><b>Claude</b><small>The React prototype</small></div><div class="tlc"><img src="image/tools/higgsfield.png" alt=""><b>Higgsfield</b><small>Imagery</small></div><div class="tlc"><img src="image/tools/html5.svg" alt=""><b>HTML</b><small>Structure, built by hand</small></div><div class="tlc"><img src="image/tools/css.svg" alt=""><b>CSS</b><small>Layout, styling and motion</small></div><div class="tlc"><img src="image/tools/javascript.svg" alt=""><b>JavaScript</b><small>Interactions and the working prototype</small></div></div></div>
+    </div>
+    <div class="cs-end"><a class="wob" href="indent-flows.html">See every screen as a flow →</a><a class="wob" href="indent-prototype.html">Open the prototype →</a><a class="wob" href="app.html#work">← Back to work</a><a class="wob" href="app.html#hi">Say hi</a></div>
+  </article>
+</main>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

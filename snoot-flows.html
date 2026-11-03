@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="only light" />
+<link rel="icon" type="image/svg+xml" href="image/favicon.svg?v=2" />
+<link rel="icon" href="favicon.ico" sizes="48x48" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<script src="favfloat.js?v=2" defer></script>
+<title>Snoot flows · Jessa Wolfe</title>
+<meta name="description" content="Every Snoot screen, laid out as a flow." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="play.css?v=61" />
+<link rel="stylesheet" href="case.css?v=82" />
+<link rel="stylesheet" href="night.css?v=53" />
+<script src="night.js?v=31"></script>
+</head>
+<body class="case-page snoot flows-page">
+
+<!-- ===== Chrome: pages pill (top-left) ===== -->
+<nav class="pages" id="pages" aria-label="Pages">
+  <a class="file" href="app.html"><img class="logo" src="image/logo.svg?v=2" alt="Jessa Wolfe"><span class="t sr">Jessa Wolfe</span></a>
+  <a class="chip wob" href="app.html">Home</a>
+  <a class="chip wob" href="app.html#about">About</a>
+  <a class="chip wob active" href="app.html#work">Work</a>
+  <a class="chip wob" href="app.html#talks">Talks</a>
+  <a class="chip wob" href="app.html#hi">Say hi</a>
+  <a class="chip wob crumb" href="snoot.html">/ Snoot</a>
+  <span class="chip wob crumb" id="crumb">/ Flows</span>
+</nav>
+
+<!-- ===== Chrome: toolbar blob (bottom-center). Icons are placeholders; drop your own into image/icons/ ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="wobble" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.015 0.03" numOctaves="2" seed="3" result="n">
+      <animate attributeName="baseFrequency" dur="14s" values="0.015 0.03;0.019 0.026;0.015 0.03" repeatCount="indefinite" />
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wob" x="-6%" y="-10%" width="112%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.02" numOctaves="2" seed="7" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="6" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+  <filter id="wobs" x="-10%" y="-20%" width="120%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03 0.05" numOctaves="2" seed="11" result="n" />
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G" />
+  </filter>
+</svg>
+<div class="toolbar" id="toolbar" aria-label="Tools">
+  <div class="blob two"></div>
+  <div class="blob"></div>
+  <button class="tool active" data-tool="move" aria-label="Move"><span class="tip">Move</span>
+    <svg viewBox="0 0 24 24"><path d="M5 3.5l14 8-6.5 1.5L10 20z"/></svg></button>
+  <button class="tool" data-tool="frame" aria-label="Frame"><span class="tip">Frame</span>
+    <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="5"/><path d="M4 9h16M9 4v16"/></svg></button>
+  <button class="tool" data-tool="text" aria-label="Text"><span class="tip">Text</span>
+    <svg viewBox="0 0 24 24"><path d="M5 6.5V5h14v1.5M12 5v14M9.5 19h5"/></svg></button>
+  <button class="tool" data-tool="pen" aria-label="Pen"><span class="tip">Pen</span>
+    <svg viewBox="0 0 24 24"><path d="M4 20c2-6 6-11 12-15l3 3C15 12 10 16 4 20z"/><path d="M4 20l4-1"/></svg></button>
+  <span class="tbsep"></span>
+  <button class="tool" data-tool="sticker" aria-label="Sticker"><span class="tip">Sticker</span>
+    <svg viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9 6.8 19.6l1-5.8L3.5 9.7l5.9-.9z"/></svg></button>
+  <button class="tool" data-tool="comment" aria-label="Comment"><span class="tip">Comment</span>
+    <svg viewBox="0 0 24 24"><path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3h-6l-4 3v-3H7a3 3 0 0 1-3-3z"/></svg></button>
+</div>
+
+<!-- ===== Chrome: who's here (top-right): Jessa, then you ===== -->
+<div class="people" aria-label="People in this file">
+  <div class="dot j" title="Jessa Wolfe"><span>J</span><span class="lbl">Jessa Wolfe (that’s me)</span></div>
+  <button class="dot you mint" id="you" aria-label="That's you. Click for a new name.">
+    <span class="ini" id="youIni">?</span>
+    <span class="lbl" id="youLbl">You’re “Dreamer”. Click to be someone else.</span>
+  </button>
+</div>
+
+<!-- ===== Cursors ===== -->
+<div class="cur jessa" id="jessa">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub">Jessa Wolfe</div>
+  <span class="ring" aria-hidden="true"></span>
+  <div class="held" id="held"></div>
+</div>
+<div class="cur visitor" id="visitor">
+  <svg class="tipv" viewBox="-1 -1 12.3 10.9"><path d="M3.4554 0.917919C4.24277 -0.305972 6.03201 -0.305974 6.81938 0.917917L9.94507 5.7765C11.0536 7.49959 9.16221 9.57694 7.34302 8.63439L6.05709 7.96814C5.48011 7.6692 4.79386 7.66921 4.21689 7.96817L2.93214 8.63388C1.11295 9.57651 -0.778528 7.49915 0.330012 5.77603L3.4554 0.917919Z"/></svg>
+  <div class="bub" id="visitorName">Dreamer</div>
+</div>
+
+
+
+<main class="canvas">
+  <article class="case flows" id="flows">
+    <div class="slot cs-title flow-head" data-name="00 · Flows">
+      <div class="tag">00 · Flows</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><h1><span class="typing"><span class="ghost" aria-hidden="true">Every Snoot screen</span><span class="typed"><span class="t" data-text="Every Snoot screen"></span><span class="caret"></span></span></span></h1>
+        <p class="pasted lead">Here’s every screen in Snoot, laid out the way you’d move through them. Rows scroll sideways and little branches hang below. Tap any screen to look closer.</p>
+        <nav class="subnav pasted"><a class="wob mode active" data-mode="app" href="#app">App · 31 screens</a><a class="wob" href="snoot-prototype.html">Prototype</a><a class="wob" href="snoot.html">← Case study</a></nav></div>
+    </div>
+    <div class="flow-group on" id="app">
+    <div class="slot flow-sec" data-name="01 · Getting started" id="app-1">
+      <div class="tag">01 · Getting started</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sec-title"><span class="typing"><span class="ghost" aria-hidden="true">Getting started</span><span class="typed"><span class="t" data-text="Getting started"></span><span class="caret"></span></span></span></div>
+        <div class="row"><div class="step"><figure class="node" data-i="0" data-g="app" data-label="Welcome"><figcaption><i></i>Welcome</figcaption><button class="shot" aria-label="Open Welcome"><img src="image/snoot/screens/A1-Welcome.png" alt="Welcome" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="1" data-g="app" data-label="Create account"><figcaption><i></i>Create account</figcaption><button class="shot" aria-label="Open Create account"><img src="image/snoot/screens/A2-Account.png" alt="Create account" loading="lazy"></button></figure><svg class="arr down" viewBox="0 0 24 40"><path d="M12 3c-2 10 2 20 -1 31"/><path d="M5 27l6.5 8 6.5-8"/></svg><figure class="node err" data-i="2" data-g="app" data-label="When an email is wrong"><figcaption><i></i>When an email is wrong</figcaption><button class="shot" aria-label="Open When an email is wrong"><img src="image/snoot/screens/A2-Account-errors.png" alt="When an email is wrong" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="3" data-g="app" data-label="Ready to go"><figcaption><i></i>Ready to go</figcaption><button class="shot" aria-label="Open Ready to go"><img src="image/snoot/screens/A2-Account-ready.png" alt="Ready to go" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="4" data-g="app" data-label="Who’s your dog?"><figcaption><i></i>Who’s your dog?</figcaption><button class="shot" aria-label="Open Who’s your dog?"><img src="image/snoot/screens/A3-DogName.png" alt="Who’s your dog?" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="5" data-g="app" data-label="About Pixel"><figcaption><i></i>About Pixel</figcaption><button class="shot" aria-label="Open About Pixel"><img src="image/snoot/screens/A4-DogDetails.png" alt="About Pixel" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="6" data-g="app" data-label="Pixel’s vet"><figcaption><i></i>Pixel’s vet</figcaption><button class="shot" aria-label="Open Pixel’s vet"><img src="image/snoot/screens/A5-Vet.png" alt="Pixel’s vet" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="7" data-g="app" data-label="Add records"><figcaption><i></i>Add records</figcaption><button class="shot" aria-label="Open Add records"><img src="image/snoot/screens/A6-Records.png" alt="Add records" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="8" data-g="app" data-label="What to remind"><figcaption><i></i>What to remind</figcaption><button class="shot" aria-label="Open What to remind"><img src="image/snoot/screens/A7-Reminders.png" alt="What to remind" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="9" data-g="app" data-label="All set"><figcaption><i></i>All set</figcaption><button class="shot" aria-label="Open All set"><img src="image/snoot/screens/A8-AllSet.png" alt="All set" loading="lazy"></button></figure></div></div></div>
+    </div>
+    <div class="slot flow-sec" data-name="02 · Home" id="app-2">
+      <div class="tag">02 · Home</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sec-title"><span class="typing"><span class="ghost" aria-hidden="true">Home</span><span class="typed"><span class="t" data-text="Home"></span><span class="caret"></span></span></span></div>
+        <div class="row"><div class="step"><figure class="node" data-i="10" data-g="app" data-label="Home"><figcaption><i></i>Home</figcaption><button class="shot" aria-label="Open Home"><img src="image/snoot/screens/1-Main.png" alt="Home" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="11" data-g="app" data-label="Switch dog"><figcaption><i></i>Switch dog</figcaption><button class="shot" aria-label="Open Switch dog"><img src="image/snoot/screens/E4-SwitchDog.png" alt="Switch dog" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="12" data-g="app" data-label="Notifications"><figcaption><i></i>Notifications</figcaption><button class="shot" aria-label="Open Notifications"><img src="image/snoot/screens/E3-Notifications.png" alt="Notifications" loading="lazy"></button></figure></div></div></div>
+    </div>
+    <div class="slot flow-sec" data-name="03 · Something’s off" id="app-3">
+      <div class="tag">03 · Something’s off</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sec-title"><span class="typing"><span class="ghost" aria-hidden="true">Something’s off</span><span class="typed"><span class="t" data-text="Something’s off"></span><span class="caret"></span></span></span></div>
+        <div class="row"><div class="step"><figure class="node" data-i="13" data-g="app" data-label="What’s going on"><figcaption><i></i>What’s going on</figcaption><button class="shot" aria-label="Open What’s going on"><img src="image/snoot/screens/2-SomethingOff.png" alt="What’s going on" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="14" data-g="app" data-label="A few questions"><figcaption><i></i>A few questions</figcaption><button class="shot" aria-label="Open A few questions"><img src="image/snoot/screens/C1-Details.png" alt="A few questions" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="15" data-g="app" data-label="What we’d do"><figcaption><i></i>What we’d do</figcaption><button class="shot" aria-label="Open What we’d do"><img src="image/snoot/screens/3-NextStep.png" alt="What we’d do" loading="lazy"></button></figure></div></div></div>
+    </div>
+    <div class="slot flow-sec" data-name="04 · Paperwork" id="app-4">
+      <div class="tag">04 · Paperwork</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sec-title"><span class="typing"><span class="ghost" aria-hidden="true">Paperwork</span><span class="typed"><span class="t" data-text="Paperwork"></span><span class="caret"></span></span></span></div>
+        <div class="row"><div class="step"><figure class="node" data-i="16" data-g="app" data-label="Add paperwork"><figcaption><i></i>Add paperwork</figcaption><button class="shot" aria-label="Open Add paperwork"><img src="image/snoot/screens/B1-AddPaperwork.png" alt="Add paperwork" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="17" data-g="app" data-label="Camera"><figcaption><i></i>Camera</figcaption><button class="shot" aria-label="Open Camera"><img src="image/snoot/screens/B2-Camera.png" alt="Camera" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node load" data-i="18" data-g="app" data-label="Reading"><figcaption><i></i>Reading</figcaption><button class="shot" aria-label="Open Reading"><img src="image/snoot/screens/B3-Reading-progress.png" alt="Reading" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="19" data-g="app" data-label="Got it"><figcaption><i></i>Got it</figcaption><button class="shot" aria-label="Open Got it"><img src="image/snoot/screens/B3-Reading.png" alt="Got it" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="20" data-g="app" data-label="Check what we found"><figcaption><i></i>Check what we found</figcaption><button class="shot" aria-label="Open Check what we found"><img src="image/snoot/screens/5-ScanReview.png" alt="Check what we found" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="21" data-g="app" data-label="Saved"><figcaption><i></i>Saved</figcaption><button class="shot" aria-label="Open Saved"><img src="image/snoot/screens/B4-Saved.png" alt="Saved" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="22" data-g="app" data-label="Add by hand"><figcaption><i></i>Add by hand</figcaption><button class="shot" aria-label="Open Add by hand"><img src="image/snoot/screens/B5-ByHand.png" alt="Add by hand" loading="lazy"></button></figure></div></div></div>
+    </div>
+    <div class="slot flow-sec" data-name="05 · Pixel’s profile" id="app-5">
+      <div class="tag">05 · Pixel’s profile</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sec-title"><span class="typing"><span class="ghost" aria-hidden="true">Pixel’s profile</span><span class="typed"><span class="t" data-text="Pixel’s profile"></span><span class="caret"></span></span></span></div>
+        <div class="row"><div class="step"><figure class="node" data-i="23" data-g="app" data-label="Profile"><figcaption><i></i>Profile</figcaption><button class="shot" aria-label="Open Profile"><img src="image/snoot/screens/4-Profile.png" alt="Profile" loading="lazy"></button></figure></div></div></div>
+    </div>
+    <div class="slot flow-sec" data-name="06 · Sharing" id="app-6">
+      <div class="tag">06 · Sharing</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sec-title"><span class="typing"><span class="ghost" aria-hidden="true">Sharing</span><span class="typed"><span class="t" data-text="Sharing"></span><span class="caret"></span></span></span></div>
+        <div class="row"><div class="step"><figure class="node" data-i="24" data-g="app" data-label="Share"><figcaption><i></i>Share</figcaption><button class="shot" aria-label="Open Share"><img src="image/snoot/screens/6-Share.png" alt="Share" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="25" data-g="app" data-label="Kind of link"><figcaption><i></i>Kind of link</figcaption><button class="shot" aria-label="Open Kind of link"><img src="image/snoot/screens/D1-LinkType.png" alt="Kind of link" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="26" data-g="app" data-label="What it shows"><figcaption><i></i>What it shows</figcaption><button class="shot" aria-label="Open What it shows"><img src="image/snoot/screens/D2-LinkOptions.png" alt="What it shows" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="27" data-g="app" data-label="Link ready"><figcaption><i></i>Link ready</figcaption><button class="shot" aria-label="Open Link ready"><img src="image/snoot/screens/D3-LinkReady.png" alt="Link ready" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="28" data-g="app" data-label="What the sitter sees"><figcaption><i></i>What the sitter sees</figcaption><button class="shot" aria-label="Open What the sitter sees"><img src="image/snoot/screens/7-SitterLink.png" alt="What the sitter sees" loading="lazy"></button></figure></div></div></div>
+    </div>
+    <div class="slot flow-sec" data-name="07 · Reminders" id="app-7">
+      <div class="tag">07 · Reminders</div>
+      <div class="box"><i class="h tl"></i><i class="h tr"></i><i class="h bl"></i><i class="h br"></i><span class="pill">0 × 0</span></div>
+      <div class="content"><div class="sec-title"><span class="typing"><span class="ghost" aria-hidden="true">Reminders</span><span class="typed"><span class="t" data-text="Reminders"></span><span class="caret"></span></span></span></div>
+        <div class="row"><div class="step"><figure class="node" data-i="29" data-g="app" data-label="Reminders"><figcaption><i></i>Reminders</figcaption><button class="shot" aria-label="Open Reminders"><img src="image/snoot/screens/E1-Reminders.png" alt="Reminders" loading="lazy"></button></figure></div><svg class="arr" viewBox="0 0 48 24"><path d="M3 12.5c10 -2 22 2 36 -1"/><path d="M33 6l8 5.5-8 6"/></svg><div class="step"><figure class="node" data-i="30" data-g="app" data-label="New reminder"><figcaption><i></i>New reminder</figcaption><button class="shot" aria-label="Open New reminder"><img src="image/snoot/screens/E2-AddReminder.png" alt="New reminder" loading="lazy"></button></figure></div></div></div>
+    </div>
+    </div>
+  </article>
+</main>
+
+<div class="lb" id="lb" hidden>
+  <button class="lb-x wob" id="lbX" aria-label="Close">×</button>
+  <button class="lb-nav prev wob" id="lbPrev" aria-label="Previous">←</button>
+  <figure class="lb-fig"><img id="lbImg" alt=""><figcaption id="lbCap" class="wob"></figcaption></figure>
+  <button class="lb-nav next wob" id="lbNext" aria-label="Next">→</button>
+</div>
+
+<script src="case.js?v=37"></script>
+<script src="play.js?v=46"></script>
+<script src="presence-config.js"></script>
+<script src="presence.js?v=23"></script>
+<script src="comments.js?v=18"></script>
+<script>
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  /* Lightbox, prev/next through every screen */
+  const lb = $('#lb'), img = $('#lbImg'), cap = $('#lbCap'); let cur = null;
+  function open(node) {
+    cur = node; img.src = $('img', node).src; img.alt = node.dataset.label; cap.textContent = node.dataset.label;
+    lb.hidden = false; requestAnimationFrame(() => lb.classList.add('in')); document.body.classList.add('lb-open');
+  }
+  function close() { lb.classList.remove('in'); document.body.classList.remove('lb-open'); setTimeout(() => { lb.hidden = true; }, 250); }
+  function step(d) { const all = $$(`.node[data-g="${cur.dataset.g}"]`); const i = all.indexOf(cur); open(all[(i + d + all.length) % all.length]); }
+  document.addEventListener('click', e => { const b = e.target.closest('.node .shot'); if (b) open(b.closest('.node')); });
+  $('#lbX').addEventListener('click', close); $('#lbPrev').addEventListener('click', () => step(-1)); $('#lbNext').addEventListener('click', () => step(1));
+  lb.addEventListener('click', e => { if (e.target === lb) close(); });
+  addEventListener('keydown', e => { if (lb.hidden) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowRight') step(1); if (e.key === 'ArrowLeft') step(-1); });
+})();
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>

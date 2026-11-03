@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>/* public build: embedded, sound is off until the visitor turns it on (added by build-public.py) */
+(()=>{if(window.top===window) return; let on=false; try{on=sessionStorage.getItem("lum-sound")==="on";}catch(e){}
+  window.LUM_SOUND=on; const media=new Set(), gains=[];
+  const P=HTMLMediaElement.prototype, play=P.play;
+  P.play=function(){if(this.tagName==="AUDIO"){media.add(this); this.muted=!window.LUM_SOUND;} return play.apply(this,arguments);};
+  const AC=window.AudioContext||window.webkitAudioContext;
+  if(AC){const W=function(...a){const c=new AC(...a), g=c.createGain(); g.gain.value=window.LUM_SOUND?1:0; g.connect(c.destination);
+      Object.defineProperty(c,"destination",{get:()=>g}); gains.push(g); return c;}; W.prototype=AC.prototype; window.AudioContext=window.webkitAudioContext=W;}
+  const set=v=>{window.LUM_SOUND=v; media.forEach(m=>m.muted=!v); document.querySelectorAll("audio").forEach(m=>m.muted=!v);
+    gains.forEach(g=>g.gain.value=v?1:0); document.querySelectorAll("iframe").forEach(f=>{try{f.contentWindow.postMessage({lumSound:v},"*");}catch(e){}});};
+  addEventListener("message",e=>{if(e.data&&typeof e.data.lumSound==="boolean") set(e.data.lumSound);});})();</script>
+
+<meta charset="utf-8">
+<link rel="icon" href="favicon.svg?v=1" type="image/svg+xml"><link rel="apple-touch-icon" href="favicon-180.png">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Luminance Title</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Gowun+Batang:wght@400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Luminance title screen: the wordmark centre stage on a night-blue field, a halo ring with a meteor circling it, and the Start button */
+:root{
+  --ink:#02060f;
+  --night:#06142c;
+  --deep:#0a2a55;
+  --cyan:#33c6ff;
+  --ice:#bff4ff;
+  --white:#f4fdff;
+  --display:"Michroma","Eurostile",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --kr:"Gowun Batang",serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(ellipse 80% 70% at 50% 46%,var(--deep) 0%,var(--night) 45%,var(--ink) 100%);color:var(--white);overflow:hidden;font-family:var(--mono);
+  cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 3 L5 24 L10.5 19 L21 18.5 Z' fill='none' stroke='%2333c6ff' stroke-opacity='.3' stroke-width='5' stroke-linejoin='round'/%3E%3Cpath d='M5 3 L5 24 L10.5 19 L21 18.5 Z' fill='%230b2c5e' stroke='%23bff4ff' stroke-width='1.6' stroke-linejoin='round'/%3E%3Cpath d='M7.4 8.5 L7.4 18.5' stroke='%2333c6ff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E") 5 3,default}
+
+/* ---------- atmosphere ---------- */
+/* darker towards the edges, so the eye settles on the centre */
+.vignette{position:fixed;inset:0;pointer-events:none;z-index:1;background:radial-gradient(ellipse 75% 70% at 50% 46%,transparent 35%,rgba(1,4,10,.55) 75%,rgba(0,2,6,.92) 100%)}
+.stage{z-index:2}
+.floor{position:fixed;left:-50%;right:-50%;bottom:-6%;height:42%;pointer-events:none;transform-origin:50% 100%;transform:perspective(420px) rotateX(64deg);
+  background:repeating-linear-gradient(90deg,rgba(127,227,255,.16) 0 1px,transparent 1px 70px),repeating-linear-gradient(0deg,rgba(127,227,255,.13) 0 1px,transparent 1px 46px);
+  -webkit-mask:linear-gradient(0deg,#000 10%,transparent 85%);mask:linear-gradient(0deg,#000 10%,transparent 85%)}
+/* hologram city along the bottom: a 3D line model of Seoul 3062 that builds itself as the camera drifts through it */
+#build{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;
+  /* clear around the logo and ring, fading out at the top and the far edges; the bottom stays open for the train */
+  -webkit-mask:radial-gradient(ellipse 44% 24% at 50% 42%,transparent 60%,#000 100%),linear-gradient(0deg,#000 55%,transparent 98%),linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);-webkit-mask-composite:source-in,source-in;
+  mask:radial-gradient(ellipse 44% 24% at 50% 42%,transparent 60%,#000 100%) intersect,linear-gradient(0deg,#000 55%,transparent 98%) intersect,linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.cap{position:fixed;left:24px;bottom:18px;z-index:3;font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:rgba(159,216,255,.55);opacity:0;transition:opacity .8s}
+.cap.on{opacity:1}
+.cap b{font-weight:500;color:var(--ice)}
+#motes{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* ---------- centre stage ---------- */
+.stage{position:fixed;inset:0;display:grid;place-items:center;padding:24px}
+.lockup{position:relative;display:grid;justify-items:center;gap:22px}
+/* halo ring behind the wordmark */
+.halo{position:absolute;left:50%;top:50%;width:min(560px,86vw,66vh);aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;overflow:visible}   /* centred on the wordmark and its lines */
+.halo .ring{fill:none;stroke:rgba(127,227,255,.22);stroke-width:1}
+.halo .ring2{fill:none;stroke:rgba(127,227,255,.12);stroke-width:.8;stroke-dasharray:2 7}
+.halo .bloom{fill:url(#haloFill)}
+/* the wordmark */
+.word{position:relative;display:flex;align-items:center;font-family:var(--display);font-size:clamp(30px,6.4vw,88px);line-height:1;letter-spacing:.34em;margin-right:-.34em;
+  color:var(--white);text-shadow:0 0 18px rgba(127,227,255,.55),0 0 46px rgba(51,198,255,.25);white-space:nowrap}
+.word .ch{display:inline-block}
+/* the I is a pillar of light, like the Aevum tower, with a beacon on top */
+.word .pillar{position:relative;display:inline-block;width:.1em;height:1.32em;margin:0 .34em 0 .06em;border-radius:.05em;
+  background:linear-gradient(180deg,#bff4ff,#fff 18%,#fff 82%,#bff4ff);border-radius:999px;
+  box-shadow:0 0 10px 2px rgba(191,244,255,.9),0 0 30px 8px rgba(51,198,255,.55),0 0 80px 20px rgba(51,198,255,.25)}
+.word .pillar::before{content:"";position:absolute;left:50%;top:-.34em;width:.13em;height:.13em;margin-left:-.065em;border-radius:50%;background:#fff;
+  box-shadow:0 0 8px 3px #fff,0 0 22px 8px rgba(51,198,255,.7)}
+.sub{display:grid;justify-items:center;gap:10px}
+.sub .kr{font-family:var(--kr);font-size:clamp(13px,1.4vw,17px);letter-spacing:.9em;margin-right:-.9em;color:rgba(191,244,255,.82)}
+.sub .tag{font-size:11px;letter-spacing:.5em;margin-right:-.5em;text-transform:uppercase;color:rgba(159,216,255,.6)}
+.sub .tag b{font-weight:500;color:var(--ice)}
+
+/* ---------- start ---------- */
+/* Start sits on its own, low on the screen below the horizon */
+.start{position:fixed;z-index:2;left:50%;bottom:max(7vh,40px);transform:translateX(-50%);display:grid;justify-items:center;gap:16px}
+.btn{all:unset;position:relative;cursor:inherit;display:inline-flex;align-items:center;justify-content:center;min-width:248px;height:58px;padding:0 44px;border-radius:999px;
+  font-family:var(--display);font-size:13px;letter-spacing:.62em;text-indent:.62em;text-transform:uppercase;color:var(--white);
+  background:rgba(14,40,80,.32);border:.5px solid rgba(191,244,255,.35);
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.28),inset 0 0 24px rgba(51,198,255,.08),0 12px 40px rgba(0,8,24,.45);
+  backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),background .3s,box-shadow .3s,letter-spacing .4s}
+.btn:hover,.btn:focus-visible{transform:translateY(-2px);background:rgba(30,70,120,.4);letter-spacing:.7em;
+  box-shadow:inset 0 .5px 0 rgba(255,255,255,.4),inset 0 0 30px rgba(51,198,255,.18),0 0 34px rgba(51,198,255,.3),0 16px 44px rgba(0,8,24,.5)}
+.btn:focus-visible{outline:none}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn .trk{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.hint{font-size:10px;letter-spacing:.42em;margin-right:-.42em;text-transform:uppercase;color:rgba(159,216,255,.5)}
+.hint kbd{font:inherit;color:var(--ice);border:.5px solid rgba(191,244,255,.35);border-radius:4px;padding:2px 6px;margin-left:.3em;letter-spacing:.2em}
+.build{position:fixed;z-index:3;right:18px;bottom:14px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(159,216,255,.35)}
+
+/* start: a flash of light that fills the screen */
+.flash{position:fixed;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 50%,#fff 0,rgba(191,244,255,.9) 30%,rgba(51,198,255,.4) 60%,transparent 80%)}
+.flash.go{animation:flash 1.1s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes flash{0%{opacity:0;transform:scale(.2)}35%{opacity:1;transform:scale(1.4)}100%{opacity:0;transform:scale(2.2)}}
+
+/* ---------- intro sequence ---------- */
+@media (prefers-reduced-motion:no-preference){
+  .word .pillar{animation:ignite 1.1s cubic-bezier(.2,.8,.2,1) .25s both}
+  @keyframes ignite{0%{transform:scaleY(0);opacity:0}40%{opacity:1}100%{transform:scaleY(1);opacity:1}}
+  .word .pillar::before{animation:beacon 2.6s ease-in-out 1.3s infinite}
+  @keyframes beacon{0%,100%{opacity:1}50%{opacity:.45}}
+  .word .ch{animation:focus 1.2s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.9s + var(--i) * .09s)}
+  @keyframes focus{0%{opacity:0;filter:blur(14px);transform:translateY(.08em) scale(1.08)}100%{opacity:1;filter:none;transform:none}}
+  .halo .ring{stroke-dasharray:1100;stroke-dashoffset:1100;animation:draw 2s cubic-bezier(.4,0,.2,1) .5s forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .halo .ring2{animation:spin 90s linear infinite;transform-origin:50% 50%}
+  @keyframes spin{to{transform:rotate(-360deg)}}
+  .halo .bloom{animation:bloomin 2.4s ease-out .3s both}
+  @keyframes bloomin{from{opacity:0}}
+  .sub{animation:rise 1s cubic-bezier(.2,.8,.2,1) 1.9s both}
+  .start{animation:rise 1s cubic-bezier(.2,.8,.2,1) 2.4s both}
+  @keyframes rise{from{opacity:0;translate:0 12px}}
+  .hint{animation:breathe 2.8s ease-in-out 3.4s infinite}
+  @keyframes breathe{50%{opacity:.4}}
+}
+@media (max-width:600px){.btn{min-width:200px;height:52px;font-size:12.5px}.word{letter-spacing:.24em;margin-right:-.24em}.word .pillar{margin:0 .24em 0 .04em}}
+</style>
+</head>
+<body>
+<div class="vignette" aria-hidden="true"></div>
+<canvas id="motes" aria-hidden="true"></canvas>
+<div class="floor" aria-hidden="true"></div>
+<canvas id="build" aria-hidden="true"></canvas>
+<div class="cap" id="cap" aria-hidden="true"></div>
+
+<main class="stage">
+  <div class="lockup">
+    <svg class="halo" viewBox="0 0 400 400" aria-hidden="true">
+      <defs><radialGradient id="haloFill"><stop offset="0" stop-color="#33c6ff" stop-opacity=".16"/><stop offset=".55" stop-color="#33c6ff" stop-opacity=".05"/><stop offset="1" stop-color="#33c6ff" stop-opacity="0"/></radialGradient></defs>
+      <circle class="bloom" cx="200" cy="200" r="200"/>
+      <circle class="ring2" cx="200" cy="200" r="150"/>
+      <circle class="ring" id="ring" cx="200" cy="200" r="174"/>
+    </svg>
+    <h1 class="word" aria-label="Luminance">
+      <span class="ch" style="--i:3" aria-hidden="true">L</span><span class="ch" style="--i:2" aria-hidden="true">U</span><span class="ch" style="--i:1" aria-hidden="true">M</span><span class="pillar" aria-hidden="true"></span><span class="ch" style="--i:1" aria-hidden="true">N</span><span class="ch" style="--i:2" aria-hidden="true">A</span><span class="ch" style="--i:3" aria-hidden="true">N</span><span class="ch" style="--i:4" aria-hidden="true">C</span><span class="ch" style="--i:5" aria-hidden="true">E</span>
+    </h1>
+    <div class="sub"><span class="kr" lang="ko">루미넌스</span><span class="tag">Seoul · <b>3062</b></span></div>
+  </div>
+  <div class="start">
+    <button type="button" class="btn" id="startBtn">Start</button>
+    <span class="hint">Press <kbd>Enter</kbd></span>
+  </div>
+</main>
+<div class="build">Storyboard build · EP 01</div>
+<div class="flash" id="flash" aria-hidden="true"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const EMBED=new URLSearchParams(location.search).has("embed");
+const P=(()=>{try{return EMBED?parent:null}catch(e){return null}})();
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* drifting motes of light */
+(function(){
+  const cv=document.getElementById("motes"), ctx=cv.getContext("2d"); let W,H,dpr, motes=[];
+  const size=()=>{dpr=Math.min(2,devicePixelRatio||1); W=innerWidth; H=innerHeight; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    motes=Array.from({length:Math.round(W*H/16000)},()=>({x:Math.random()*W,y:Math.random()*H,r:.4+Math.random()*1.4,v:4+Math.random()*12,ph:Math.random()*6.3,tw:.6+Math.random()*1.6}));};
+  size(); addEventListener("resize",size);
+  let last=performance.now();
+  (function step(now){
+    const dt=Math.min(.05,(now-last)/1000); last=now; ctx.clearRect(0,0,W,H);
+    for(const m of motes){
+      if(!reduce){m.y-=m.v*dt; m.x+=Math.sin(now/2400+m.ph)*4*dt; if(m.y<-5){m.y=H+5; m.x=Math.random()*W;}}
+      const a=.25+.5*(.5+.5*Math.sin(now/1000*m.tw+m.ph)), cx=W/2, cy=H*.46, d=Math.hypot(m.x-cx,m.y-cy)/Math.max(W,H);
+      ctx.fillStyle=`rgba(191,244,255,${(a*(1.1-d)).toFixed(3)})`; ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,6.283); ctx.fill();
+    }
+    requestAnimationFrame(step);
+  })(last);
+})();
+
+/* meteor: a bright centre with a tapered streak running out both ways, following any SVG outline */
+function meteor(svg,path,{speed=150,gap=3.4,nb=36,nf=22,size=2.3,delay=0}={}){
+  if(reduce) return;
+  const u="m"+Math.random().toString(36).slice(2,7), NS="http://www.w3.org/2000/svg";
+  const col=f=>`rgb(${Math.round(255-(255-51)*f)},${Math.round(255-(255-198)*f)},255)`;
+  const pts=[...Array.from({length:nb},(_,k)=>({d:-k,f:k/nb})),...Array.from({length:nf-1},(_,k)=>({d:k+1,f:(k+1)/nf}))];
+  const defs=document.createElementNS(NS,"defs");
+  defs.innerHTML=`<filter id="${u}" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceGraphic" stdDeviation=".7" result="c"/><feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="c"/></feMerge></filter>`;
+  const g=document.createElementNS(NS,"g"); g.setAttribute("filter",`url(#${u})`);
+  pts.forEach(p=>{const c=document.createElementNS(NS,"circle"); c.setAttribute("fill",col(p.f)); g.appendChild(c);});
+  svg.append(defs,g);
+  const dots=[...g.children], ph=Math.random(); let t0=null;
+  (function spin(now){
+    if(!svg.isConnected) return;
+    if(t0===null) t0=now+delay;
+    const L=path.getTotalLength(), k=Math.max(0,now-t0)/1000;
+    if(L&&now>=t0){
+      const s=((k*speed/L+ph)%1)*L, pulse=1+Math.sin(k*4)*.08, fade=Math.min(1,k/1.2);
+      dots.forEach((c,i)=>{const p=pts[i], q=path.getPointAtLength(((s+p.d*gap)%L+L)%L), f=1-p.f;
+        c.setAttribute("cx",q.x); c.setAttribute("cy",q.y);
+        c.setAttribute("r",(size*(p.d?1:pulse)*Math.pow(f,.55)+.25).toFixed(2));
+        c.setAttribute("opacity",(Math.pow(f,1.5)*fade).toFixed(3));});
+    }
+    requestAnimationFrame(spin);
+  })(performance.now());
+}
+// the halo's meteor, once the ring has drawn in; the Start button's, once the button arrives
+meteor(document.querySelector(".halo"),document.getElementById("ring"),{speed:110,gap:3,size:2,delay:2300});
+(function(){
+  const b=document.getElementById("startBtn"), NS="http://www.w3.org/2000/svg", svg=document.createElementNS(NS,"svg"), rect=document.createElementNS(NS,"rect");
+  svg.setAttribute("class","trk"); svg.setAttribute("aria-hidden","true"); rect.setAttribute("fill","none"); svg.appendChild(rect); b.appendChild(svg);
+  const fit=()=>{const w=b.offsetWidth,h=b.offsetHeight; rect.setAttribute("width",w); rect.setAttribute("height",h); rect.setAttribute("rx",h/2);};
+  new ResizeObserver(fit).observe(b); fit();
+  meteor(svg,rect,{speed:120,gap:2.8,nb:30,nf:18,size:1.9,delay:3000});
+})();
+
+/* ---------- hologram city: districts of Seoul 3062 in 3D lines, framing the logo from the sides ----------
+   The middle stays clear. A district shoots in from beyond each edge, angled in perspective, its buildings growing as it lands.
+   After a while it pulls away out and back into the distance, and the next district shoots in on that side.
+   The two sides take turns. The maglev glides across the bottom, just above Start */
+(function(){
+  if(!window.THREE) return;
+  const cv=document.getElementById("build"), cap=document.getElementById("cap");
+  const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true}); renderer.setClearColor(0x000000,0); renderer.localClippingEnabled=true;
+  const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(50,1,1,5000);
+  let V=560;   // half the visible width at z=0
+  const size=()=>{const w=cv.clientWidth,h=cv.clientHeight; renderer.setPixelRatio(Math.min(2,devicePixelRatio||1)); renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix();
+    V=Math.tan(camera.fov*Math.PI/360)*560*camera.aspect;};
+  camera.position.set(0,70,560); camera.lookAt(0,190,0);   // low and looking up, so the ground sits near the bottom and districts rise up the sides
+  size(); addEventListener("resize",size);
+  let seed=5; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647, rr=(a,b)=>a+rnd()*(b-a);
+  const NS=THREE;
+  const mkMat=(c,o)=>{const m=new NS.LineBasicMaterial({color:c,transparent:true,opacity:o,blending:NS.AdditiveBlending,depthWrite:false}); m.userData.o=o; return m;};
+  const edges=(geo,m)=>new NS.LineSegments(new NS.EdgesGeometry(geo,1),m);
+  const segs=(pts,m)=>{const g=new NS.BufferGeometry(); g.setAttribute("position",new NS.Float32BufferAttribute(pts,3)); return new NS.LineSegments(g,m);};
+  const box=(w,h,d,y=0)=>{const b=new NS.BoxGeometry(w,h,d); b.translate(0,y+h/2,0); return b;};
+  const floorLines=(w,h,d,step)=>{const p=[]; for(let y=step;y<h;y+=step) p.push(-w/2,y,d/2, w/2,y,d/2, w/2,y,d/2, w/2,y,-d/2, -w/2,y,d/2, -w/2,y,-d/2); return p;};
+  function hipRoof(w,d,y,rh){const e=4, v=[-w/2-e,y,d/2+e, w/2+e,y,d/2+e, w/2+e,y,-d/2-e, -w/2-e,y,-d/2-e, -w*.22,y+rh,0, w*.22,y+rh,0];
+    const geo=new NS.BufferGeometry(); geo.setAttribute("position",new NS.Float32BufferAttribute(v,3)); geo.setIndex([0,1,5,0,5,4, 2,3,4,2,4,5, 1,2,5, 3,0,4]); return geo;}
+
+  /* line art: trace an image's edges into glowing cyan lines, so a portrait or prop reads like the wireframe city */
+  const ART={}, artWait={};
+  function lineArt(name,src,w,keep,soft=1){
+    // edge tracing, Canny style: soften, find edges, thin each to one pixel, keep only the strongest outlines.
+    // keep = roughly what share of pixels may become line
+    const img=new Image(); img.onload=()=>{
+      const h=Math.round(w*img.height/img.width), c=document.createElement("canvas"); c.width=w; c.height=h; const x=c.getContext("2d"); x.drawImage(img,0,0,w,h);
+      const px=x.getImageData(0,0,w,h).data, N=w*h, L=new Float32Array(N), B=new Float32Array(N), T=new Float32Array(N);
+      for(let i=0;i<N;i++) L[i]=(px[i*4]*.3+px[i*4+1]*.59+px[i*4+2]*.11)*(px[i*4+3]/255);
+      const K=[.06,.24,.4,.24,.06];   // gaussian blur, two passes
+      for(let pass=0;pass<soft;pass++){const S0=pass?B:L;   // more passes = softer, so fine textures drop out and only main contours remain
+      for(let y=0;y<h;y++) for(let xx=0;xx<w;xx++){let v=0; for(let k=-2;k<=2;k++) v+=K[k+2]*S0[y*w+Math.min(w-1,Math.max(0,xx+k))]; T[y*w+xx]=v;}
+      for(let y=0;y<h;y++) for(let xx=0;xx<w;xx++){let v=0; for(let k=-2;k<=2;k++) v+=K[k+2]*T[Math.min(h-1,Math.max(0,y+k))*w+xx]; B[y*w+xx]=v;}}
+      const M=new Float32Array(N), Dr=new Uint8Array(N);
+      for(let y=1;y<h-1;y++) for(let xx=1;xx<w-1;xx++){const i=y*w+xx,
+        gx=-B[i-w-1]-2*B[i-1]-B[i+w-1]+B[i-w+1]+2*B[i+1]+B[i+w+1], gy=-B[i-w-1]-2*B[i-w]-B[i-w+1]+B[i+w-1]+2*B[i+w]+B[i+w+1];
+        M[i]=Math.hypot(gx,gy); let a=Math.atan2(gy,gx)*180/Math.PI; if(a<0) a+=180; Dr[i]=a<22.5||a>=157.5?0:a<67.5?1:a<112.5?2:3;}
+      const S=new Float32Array(N);   // keep only ridge pixels (one pixel wide)
+      for(let y=1;y<h-1;y++) for(let xx=1;xx<w-1;xx++){const i=y*w+xx, m=M[i], d=Dr[i];
+        const [a,b]=d===0?[M[i-1],M[i+1]]:d===1?[M[i-w-1],M[i+w+1]]:d===2?[M[i-w],M[i+w]]:[M[i-w+1],M[i+w-1]];
+        if(m>=a&&m>=b) S[i]=m;}
+      const sorted=Float32Array.from(S).sort(), hi=sorted[Math.floor(N*(1-keep))]||1, lo=hi*.45;
+      const E=new Uint8Array(N), stack=[];
+      for(let i=0;i<N;i++) if(S[i]>=hi){E[i]=1; stack.push(i);}
+      while(stack.length){const i=stack.pop(); for(const o of [-w-1,-w,-w+1,-1,1,w-1,w,w+1]){const j=i+o; if(j>0&&j<N&&!E[j]&&S[j]>=lo){E[j]=1; stack.push(j);}}}
+      const out=x.createImageData(w,h), o=out.data;
+      for(let i=0;i<N;i++) if(E[i]){o[i*4]=127; o[i*4+1]=227; o[i*4+2]=255; o[i*4+3]=255;}
+      x.putImageData(out,0,0);
+      const tex=new NS.CanvasTexture(c); tex.anisotropy=4; ART[name]=tex; (artWait[name]||[]).forEach(m=>{m.map=tex; m.needsUpdate=true;});};
+    img.src=src;
+  }
+  const artMat=(name,o)=>{const m=new NS.MeshBasicMaterial({map:ART[name]||null,transparent:true,opacity:o,blending:NS.AdditiveBlending,depthWrite:false,side:NS.DoubleSide});
+    if(!ART[name]) (artWait[name]=artWait[name]||[]).push(m); m.userData.o=o; return m;};
+  const FLOAT=[];   // pieces that bob and turn gently
+  const TURN=[];   // pieces that slowly turn on the spot
+
+  /* districts: each returns a list of buildings [{g (group), mats, delay}], laid out around its own origin.
+     side = -1 builds for the left (the near edge points right, towards the logo), +1 for the right */
+  function bld(parts,delay){const g=new NS.Group(), mats=[]; parts((geo,c,o,kind)=>{
+    if(kind==="art"){const m=artMat(c,o); mats.push(m); const mesh=new NS.Mesh(geo,m); g.add(mesh); return mesh;}
+    const m=mkMat(c,o); mats.push(m); const obj=kind==="segs"?segs(geo,m):kind==="line"?new NS.Line(geo,m):edges(geo,m); g.add(obj); return obj;}); return {g,mats,delay};}
+  // a hanok: posts and lattice windows under a giwa roof with sagging eaves that sweep up at the corners,
+  // curved hips rising to a ridge with lifted ends, and tile rows running down the slopes
+  function hanok(W,D,H,R,x,z,delay){
+    const b=bld(add=>{
+      const bays=5, bw=W/bays, P=[], L=[];
+      add(box(W,H,D),0x7fe3ff,.4);
+      for(let i=0;i<=bays;i++){const px=-W/2+i*bw; P.push(px,0,D/2+.2, px,H,D/2+.2);}   // posts
+      P.push(-W/2,H-10,D/2+.2, W/2,H-10,D/2+.2);   // the beam
+      add(P,0xbff4ff,.7,"segs");
+      for(let i=0;i<bays;i++){const x0=-W/2+i*bw+bw*.14, x1=x0+bw*.72, y0=H*.22, y1=H*.78;   // lattice doors
+        L.push(x0,y0,D/2+.4, x1,y0,D/2+.4, x1,y0,D/2+.4, x1,y1,D/2+.4, x1,y1,D/2+.4, x0,y1,D/2+.4, x0,y1,D/2+.4, x0,y0,D/2+.4);
+        for(let k=1;k<4;k++){const xx=x0+(x1-x0)*k/4; L.push(xx,y0,D/2+.4, xx,y1,D/2+.4);}
+        for(let k=1;k<6;k++){const yy=y0+(y1-y0)*k/6; L.push(x0,yy,D/2+.4, x1,yy,D/2+.4);}}
+      add(L,0x7fe3ff,.35,"segs");
+      // the roof
+      const o=W*.13, ex=W/2+o, ez=D/2+o, ey=H+4, lift=R*.32, rx=W*.26, ry=H+R;
+      const eave=(u)=>ey+lift*Math.pow(Math.abs(u),2.4);   // sags in the middle, sweeps up at the ends
+      const E=[];
+      const edge=(ax,az,bx,bz)=>{for(let i=0;i<16;i++){const u0=-1+i/8, u1=-1+(i+1)/8, m=(u)=>[(ax+bx)/2+(bx-ax)/2*u,eave(u),(az+bz)/2+(bz-az)/2*u]; E.push(...m(u0),...m(u1));}};
+      edge(-ex,ez,ex,ez); edge(-ex,-ez,ex,-ez); edge(-ex,-ez,-ex,ez); edge(ex,-ez,ex,ez);
+      add(E,0xdffaff,.9,"segs");
+      const RG=[-rx,ry,0, rx,ry,0, -rx,ry,0, -rx-8,ry+7,0, rx,ry,0, rx+8,ry+7,0, -rx,ry+3,0, rx,ry+3,0];   // ridge cap with lifted ends
+      // curved hips from each corner up to the ridge ends
+      [[-1,-1],[-1,1],[1,-1],[1,1]].forEach(([sx,sz])=>{let prev=null; for(let i=0;i<=10;i++){const t=i/10, x=sx*ex+(sx*rx-sx*ex)*t, z=sz*ez*(1-t), y=eave(1)+(ry-eave(1))*t-R*.18*Math.sin(Math.PI*t);
+        if(prev) RG.push(...prev,x,y,z); prev=[x,y,z];}});
+      add(RG,0xdffaff,.85,"segs");
+      // tile rows down the front and back slopes
+      const T=[]; for(let i=-14;i<=14;i++){const u=i/14, xb=u*ex, xt=u*rx; [1,-1].forEach(sz=>{let prev=null; for(let k=0;k<=6;k++){const t=k/6, x=xb+(xt-xb)*t, z=sz*ez*(1-t), y=eave(u)+(ry-eave(u))*t-R*.14*Math.sin(Math.PI*t); if(prev) T.push(...prev,x,y,z); prev=[x,y,z];}});}
+      add(T,0x7fe3ff,.22,"segs");
+    },delay);
+    b.g.position.set(x,0,z); return b;}
+  const D={
+    oldSeoul(){const out=[];
+      // just two big hanok, so the rooflines read; their bases stay below the screen as they grow in
+      [hanok(185,110,150,80,70,0,0),hanok(140,92,118,60,250,-170,.5)].forEach(h=>{h.g.userData.outward=true; out.push(h);});   // both lean towards their screen edge
+      return out;},
+    namsan(){seed=17; const out=[];
+      out.push(bld(add=>{for(let i=0;i<14;i++){const f=i/14, R=170*Math.pow(1-f,.75), pts=[];
+          for(let a=0;a<=72;a++){const t=a/72*6.283, n=1+.08*Math.sin(t*3+i)+.05*Math.sin(t*7+i*2); pts.push(new NS.Vector3(Math.cos(t)*R*n,f*210,Math.sin(t)*R*n*.5));}
+          add(new NS.BufferGeometry().setFromPoints(pts),0x7fe3ff,.55-f*.25,"line");}},0));
+      out.push(bld(add=>{const tw=new NS.CylinderGeometry(2.2,4,52,8); tw.translate(0,210+26,0); add(tw,0xbff4ff,.85);
+        const dk=new NS.CylinderGeometry(10,7,7,14); dk.translate(0,210+48,0); add(dk,0xbff4ff,.9);
+        add([0,210+52,0, 0,210+90,0],0xffffff,.95,"segs");},.5));
+      out[1].g.position.set(-10,0,-10);
+      return out;},
+    newCity(){seed=29; const out=[];
+      for(let i=0;i<9;i++){const w=rr(24,38), h=rr(100,210), x=-220+i*52+rr(-8,8), z=rr(-140,-10), round=rnd()<.35;
+        const b=bld(add=>{
+          if(round){const c=new NS.CylinderGeometry(w/2,w/2,h,14); c.translate(0,h/2,0); add(c,0x7fe3ff,.55); add(floorLines(w*.7,h,w*.7,14),0x7fe3ff,.14,"segs");}
+          else{add(box(w,h*.6,w),0x7fe3ff,.55); add(box(w*.75,h*.3,w*.75,h*.6),0x7fe3ff,.55); add(box(w*.45,h*.1,w*.45,h*.9),0xbff4ff,.75); add(floorLines(w,h*.6,w,12),0x7fe3ff,.14,"segs");}
+        },rr(0,1)); b.g.position.set(x,0,z); out.push(b);}
+      return out;},
+    aevum(){seed=31; const out=[];
+      out.push(bld(add=>{
+        // a faceted hexagonal spire: a broad stepped podium, a long straight shaft that narrows in crisp setbacks,
+        // an open sky-deck ring near the top, then a thin needle. Sharp angles everywhere, no rounded tip
+        const prof=[[0,0],[42,0],[42,10],[30,10],[30,18],[20,18],[17,120],[14,120],[12.5,200],[10,200],[8,232],[3,240],[1.2,300],[0,300]].map(([r,y])=>new NS.Vector2(r,y));
+        add(new NS.LatheGeometry(prof,6),0xbff4ff,.6);
+        const ring=new NS.TorusGeometry(19,.6,4,6); ring.rotateX(Math.PI/2); ring.translate(0,214,0); add(ring,0xbff4ff,.7);   // sky deck
+        [0,1,2].forEach(i=>{const ang=i*Math.PI/3; add([Math.cos(ang)*19,206,Math.sin(ang)*19, Math.cos(ang)*19,222,Math.sin(ang)*19, -Math.cos(ang)*19,206,-Math.sin(ang)*19, -Math.cos(ang)*19,222,-Math.sin(ang)*19],0x7fe3ff,.5,"segs");});
+        add([0,20,18, 0,196,11],0x33c6ff,1,"segs");},0));   // the blue core down its face
+      out.push(bld(add=>{[80,115,150].forEach((R,i)=>{const pts=[]; for(let a=0;a<=64;a++){const t=a/64*6.283; pts.push(new NS.Vector3(Math.cos(t)*R,1,Math.sin(t)*R*.9));}
+          add(new NS.BufferGeometry().setFromPoints(pts),0x7fe3ff,i===1?.5:.3,"line");});
+        for(let k=0;k<5;k++){const seg=new NS.CylinderGeometry(98,98,11,16,1,true,.6+k*1.15,.7); seg.translate(0,5.5,0); add(seg,0x7fe3ff,.4);}},.35));
+      return out;},
+    book(){let bookModel; const b=bld(add=>{
+        // Ji-yoo's Pinocchio as a line model: hard covers, a page block, a banded spine and the title plate
+        const W=150, H=210, T=44, c=.6;   // width, height, thickness
+        const bk=new NS.Group(); bk.position.set(0,165,0); bk.rotation.set(-.08,.4,.05);
+        const put=(geo,col,o,kind)=>{const obj=add(geo,col,o,kind); bk.add(obj); return obj;};
+        put(box(W,H,4,-H/2).translate(0,0,T/2-2),0xdffaff,.85);    // front cover
+        put(box(W,H,4,-H/2).translate(0,0,-T/2+2),0xbff4ff,.6);    // back cover
+        put(box(W-8,H-10,T-8,-H/2+5).translate(4,0,0),0x7fe3ff,.35);   // page block
+        const P=[]; for(let i=1;i<14;i++){const z=-T/2+4+(T-8)*i/14; P.push(W/2,-H/2+6,z, W/2,H/2-5,z);} put(P,0x7fe3ff,.3,"segs");   // page edges
+        const S=[]; for(let i=0;i<=24;i++){const a=Math.PI/2+Math.PI*i/24, a2=Math.PI/2+Math.PI*(i+1)/24;   // rounded spine
+          S.push(-W/2+Math.cos(a)*6,-H/2,Math.sin(a)*T/2, -W/2+Math.cos(a2)*6,-H/2,Math.sin(a2)*T/2, -W/2+Math.cos(a)*6,H/2,Math.sin(a)*T/2, -W/2+Math.cos(a2)*6,H/2,Math.sin(a2)*T/2);}
+        [-.62,-.3,.3,.62].forEach(f=>{const y=f*H/2; for(let i=0;i<24;i++){const a=Math.PI/2+Math.PI*i/24, a2=Math.PI/2+Math.PI*(i+1)/24; S.push(-W/2+Math.cos(a)*8,y,Math.sin(a)*T/2, -W/2+Math.cos(a2)*8,y,Math.sin(a2)*T/2);}});   // spine bands
+        put(S,0xbff4ff,.6,"segs");
+        const z=T/2+.5, C=[];
+        const rect=(x0,y0,x1,y1)=>C.push(x0,y0,z, x1,y0,z, x1,y0,z, x1,y1,z, x1,y1,z, x0,y1,z, x0,y1,z, x0,y0,z);
+        rect(-W/2+10,-H/2+10,W/2-10,H/2-10);   // inset border on the cover
+        rect(-42,H/2-48,42,H/2-26); C.push(-30,H/2-37,z, 30,H/2-37,z);   // title plate and its lettering line
+        put(C,0xdffaff,.75,"segs");
+        add(new NS.RingGeometry(80,81.5,64).rotateX(-Math.PI/2).translate(0,60,0),0x7fe3ff,.45);   // projector rings below it
+        add(new NS.RingGeometry(55,56,64).rotateX(-Math.PI/2).translate(0,60,0),0x7fe3ff,.3);
+        add([0,60,0, 0,75,0],0x33c6ff,.5,"segs");
+        bookModel=bk; FLOAT.push({mesh:bk,y:165});
+      },0);
+      b.g.add(bookModel);
+      // inward a touch so it sits fully on screen
+      b.g.userData.inward=true; b.g.position.x=40; b.reveal=true; return [b];},
+    mira(){const b=bld(add=>{
+      // Mira-class as a 3D wireframe bust: a modelled bald head (brow, eye sockets, nose, lips, jaw, chin),
+      // neck and shoulders, drawn as contour rings and meridians like a scan, turning slowly in the frame
+      // head profile, chin (v=-1) to crown (v=1): half-width at each height
+      const PROF=[[-1,.0],[-.97,.3],[-.88,.5],[-.7,.66],[-.45,.78],[-.15,.85],[.12,.9],[.32,.9],[.52,.85],[.72,.72],[.88,.5],[.97,.25],[1,0]];
+      const wAt=v=>{for(let i=1;i<PROF.length;i++) if(v<=PROF[i][0]){const [a,wa]=PROF[i-1],[b,wb]=PROF[i], t=(v-a)/(b-a), e=t*t*(3-2*t); return wa+(wb-wa)*e;} return 0;};
+      const head=(u,v)=>{   // u around the head (front at +z)
+        const du=Math.atan2(Math.sin(u-Math.PI/2),Math.cos(u-Math.PI/2)), f=Math.max(0,Math.cos(du));
+        let r=wAt(v);
+        r*=1-.1*f*Math.max(0,.5-Math.abs(v))*2;   // a flatter face
+        r+=.3*Math.exp(-Math.pow(du/.13,2)-Math.pow((v+.14)/.15,2))*f;   // nose
+        r+=.09*Math.exp(-Math.pow((v-.17)/.06,2))*f*f;   // brow
+        r-=.11*Math.exp(-Math.pow((Math.abs(du)-.36)/.14,2)-Math.pow((v-.05)/.08,2));   // eye sockets
+        r+=.07*Math.exp(-Math.pow(du/.25,2)-Math.pow((v+.45)/.06,2))*f; r-=.04*Math.exp(-Math.pow(du/.3,2)-Math.pow((v+.58)/.04,2))*f; r+=.09*Math.exp(-Math.pow(du/.3,2)-Math.pow((v+.78)/.09,2))*f;   // lips, the dip under them, the chin
+        r+=.06*Math.exp(-Math.pow((Math.abs(du)-.75)/.25,2)-Math.pow((v+.12)/.12,2));   // cheekbones
+        return new NS.Vector3(Math.cos(u)*9.4*r,v*15,Math.sin(u)*11.5*r);
+      };
+      const HL=[], seg=(a,b)=>HL.push(a.x,a.y,a.z,b.x,b.y,b.z);
+      for(let j=-9;j<=9;j++){const v=j/10; for(let i=0;i<64;i++) seg(head(i/64*6.283,v),head((i+1)/64*6.283,v));}   // contour rings
+      for(let i=0;i<16;i++){const u=i/16*6.283; for(let j=-30;j<30;j++) seg(head(u,j/30),head(u,(j+1)/30));}   // meridians
+      const PL=[]; for(let j=-60;j<60;j++){const a=head(Math.PI/2,j/60), b=head(Math.PI/2,(j+1)/60); PL.push(a.x,a.y,a.z,b.x,b.y,b.z);}
+      add(PL,0xffffff,.9,"segs");   // the face's centre line: brow, nose, lips, chin
+      // neck: a clean cylinder from under the jaw
+      const nk=(a,y,r)=>new NS.Vector3(Math.cos(a)*r,y,Math.sin(a)*r*1.1-.5);
+      [-11,-21].forEach(y=>{for(let i=0;i<32;i++) seg(nk(i/32*6.283,y,5.2),nk((i+1)/32*6.283,y,5.2));});
+      for(let i=0;i<12;i++){const a=i/12*6.283; seg(nk(a,-11,5.2),nk(a,-21,5.2));}
+      // shoulders: a sculpted bust, cut flat at the bottom
+      const sh=(a,k)=>{const y=-21-k*11, rx=5.2+(30-5.2)*Math.pow(Math.sin(k*Math.PI/2),.7), rz=5.7+(10-5.7)*k, drop=k*Math.pow(Math.abs(Math.cos(a)),1.5)*3; return new NS.Vector3(Math.cos(a)*rx,y-drop,Math.sin(a)*rz);};
+      [0,.35,.7,1].forEach(k=>{for(let i=0;i<48;i++) seg(sh(i/48*6.283,k),sh((i+1)/48*6.283,k));});
+      for(let i=0;i<20;i++){const a=i/20*6.283; for(let k=0;k<10;k++) seg(sh(a,k/10),sh(a,(k+1)/10));}
+      add(HL,0xbff4ff,.55,"segs");
+      const dot=add(new NS.CircleGeometry(1.2,12),0xffffff,.95); dot.position.set(0,-26,7.2);   // her dot
+
+      },0);
+      // a big, still bust standing on its own, its flat base below the screen; built up by the scan line
+      const S=4.4; b.g.children.forEach(c=>{c.scale.setScalar(S); c.position.multiplyScalar(S); c.position.y+=35*S+30;});   // shoulders rising from just below the screen
+      b.g.userData.inward=true; b.g.position.x=30; b.reveal=true; b.faceIn=true; return [b];},
+    seongbuk(){seed=41; const out=[];
+      for(let i=0;i<7;i++){const w=rr(46,62), h=rr(70,125), x=-200+i*66+rr(-6,6), z=rr(-170,-40);
+        const b=bld(add=>{add(box(w,h,16),0x7fe3ff,.5); add(floorLines(w,h,16,7),0x7fe3ff,.2,"segs");},rr(0,.9)); b.g.position.set(x,0,z); out.push(b);}
+      return out;},
+  };
+  const ORDER=[["oldSeoul","<b>Old Seoul</b> · Hae's street"],["namsan","<b>Namsan</b> · N Seoul Tower"],["newCity","<b>The new city</b>"],["aevum","<b>Aevum Tower</b> · south-east"],["seongbuk","<b>Seongbuk-gu</b>"],["book","<b>Pinocchio</b> · Ji-yoo's book"]];
+
+  /* two stages at the edges. Each runs: shoot in (2.6s) → hold → pull away (2.4s) → next district. Sides are offset by half a cycle */
+  const IN=3, HOLD=7, OUTT=2.4, CYCLE=IN+HOLD+OUTT, BASE=-110;   // BASE: ground level for the districts, below the bottom edge
+  const stages=[-1,1].map((side,si)=>({side,cur:null,idx:-1,offset:si*CYCLE/2}));
+  function mount(st,n,si){
+    if(st.cur){scene.remove(st.cur.group); st.cur.parts.forEach(p=>p.mats.forEach(m=>m.dispose()));}
+    for(let i=TURN.length-1;i>=0;i--){let o=TURN[i]; while(o.parent&&o.parent!==scene) o=o.parent; if(!o.parent) TURN.splice(i,1);}
+    for(let i=FLOAT.length-1;i>=0;i--) if(!FLOAT[i].mesh.parent||!FLOAT[i].mesh.parent.parent||!FLOAT[i].mesh.parent.parent.parent) FLOAT.splice(i,1);
+    const [key,label]=ORDER[(n+si*3)%ORDER.length];   // each side walks the whole list, three apart, set by the clock
+    const group=new NS.Group(), parts=D[key](); parts.forEach(p=>{p.g.position.x*=.62; if(p.g.userData.inward) p.g.position.x=-st.side*Math.abs(p.g.position.x); if(p.g.userData.outward) p.g.position.x=st.side*Math.abs(p.g.position.x); if(p.faceIn) p.g.rotation.y=-st.side*1.25; /* a three-quarter view towards the logo, so the profile reads */ group.add(p.g);});   // pack each district into its corner
+    const tall=new NS.Box3().setFromObject(group).max.y, k=Math.min(1.25,(key==="book"?290:key==="mira"?400:300)/Math.max(1,tall));   // same scale every way, so nothing looks squashed
+    group.scale.setScalar(k); scene.add(group);
+    st.cur={group,parts,label};
+  }
+  const ease=p=>p<=0?0:p>=1?1:1-Math.pow(1-p,3), easeIn=p=>p<=0?0:p>=1?1:p*p*p;
+
+  /* ground grid */
+  const grid=new NS.GridHelper(4000,80,0x33c6ff,0x33c6ff); grid.material.transparent=true; grid.material.opacity=.12; grid.material.depthWrite=false; grid.position.y=-110; scene.add(grid);
+
+  /* the maglev: a guideway across the bottom and a proper train with a nose, windows and a skirt */
+  const TZ=150, TY=48;   // raised so the train runs above the Start button
+  const guide=new NS.Group(); scene.add(guide);
+  const gm=mkMat(0x9ff0ff,.7), pm=mkMat(0x7fe3ff,.3);
+  // the line follows the far edge of a soft egg shape: close to the screen at the left, a little further away in the middle, close again at the right
+  const track=new NS.CatmullRomCurve3([[-1300,430],[-850,300],[-420,150],[0,90],[420,150],[850,300],[1300,430]].map(([x,z])=>new NS.Vector3(x,TY-46*Math.pow(Math.abs(x)/1300,1.6),z)),false,"centripetal");   // ends dip a little, so the arch reads from this low camera
+  const TL=track.getLength(), tp=track.getSpacedPoints(300);
+  const off=(p,i,d)=>{const t=track.getTangentAt(i/300); return new NS.Vector3(p.x-t.z*d,p.y,p.z+t.x*d);};
+  [6,-6].forEach(d=>guide.add(new NS.Line(new NS.BufferGeometry().setFromPoints(tp.map((p,i)=>off(p,i,d))),gm)));
+  guide.add(new NS.Line(new NS.BufferGeometry().setFromPoints(tp.map((p,i)=>off(p,i,6).setY(p.y-4))),gm));
+  const py=[]; for(let i=0;i<=300;i+=6){const p=tp[i], a=off(p,i,10), b=off(p,i,-10); py.push(p.x,-120,p.z, p.x,p.y-4,p.z, a.x,p.y-4,a.z, b.x,p.y-4,b.z);} guide.add(segs(py,pm));
+  const train=new NS.Group(); scene.add(train);
+  const bodyM=mkMat(0xdffaff,.9), winM=mkMat(0xffffff,.85), dimM=mkMat(0x7fe3ff,.45);
+  function carShape(kind,L){const s=new NS.Shape(), H=15;
+    if(kind==="mid"){s.moveTo(2,0); s.lineTo(L-2,0); s.quadraticCurveTo(L,0,L,2); s.lineTo(L,H-3); s.quadraticCurveTo(L,H,L-3,H); s.lineTo(3,H); s.quadraticCurveTo(0,H,0,H-3); s.lineTo(0,2); s.quadraticCurveTo(0,0,2,0);}
+    else{ // a long tapered nose at +x
+      s.moveTo(2,0); s.lineTo(L-26,0); s.bezierCurveTo(L-8,0,L+2,2,L,5); s.bezierCurveTo(L-4,10,L-16,H,L-34,H); s.lineTo(3,H); s.quadraticCurveTo(0,H,0,H-3); s.lineTo(0,2); s.quadraticCurveTo(0,0,2,0);}
+    return s;}
+  const CARS=["head","mid","mid","mid","tail"], LEN={head:74,mid:56,tail:74}, GAP=4;
+  // laid out from the front: the head's nose leads at x=0, each car behind it towards -x; the tail is turned round so its nose points back
+  let right=0;
+  CARS.forEach((kind,i)=>{
+    const L=LEN[kind], geo=new NS.ExtrudeGeometry(carShape(kind,L),{depth:12,bevelEnabled:false,curveSegments:10}); geo.translate(0,0,-6);
+    const car=new NS.Group(); car.add(new NS.LineSegments(new NS.EdgesGeometry(geo,18),bodyM));
+    // window row (a rounded slot per window), skirt line, door outlines, and the cockpit windscreen on the nosed cars
+    const w=[], first=kind==="mid"?5:8, last=kind==="mid"?L-5:L-40;
+    for(let x=first;x+7<=last;x+=9) w.push(x,8,6.05, x+7,8,6.05, x+7,8,6.05, x+7,11.5,6.05, x+7,11.5,6.05, x,11.5,6.05, x,11.5,6.05, x,8,6.05);
+    w.push(0,2.5,6.05, L-(kind==="mid"?0:20),2.5,6.05);
+    if(kind==="mid") [L*.3,L*.7].forEach(x=>w.push(x,1,6.05, x,13,6.05, x+5,1,6.05, x+5,13,6.05));
+    else w.push(L-34,13.2,6.05, L-12,8.5,6.05, L-34,9,6.05, L-16,6.5,6.05);
+    car.add(segs(w,winM));
+    if(kind==="tail"){car.rotation.y=Math.PI; car.position.x=right;}   // turned round: spans right-L .. right
+    else car.position.x=right-L;
+    train.add(car);
+    if(i<CARS.length-1){const x0=right-L-GAP; train.add(segs([x0,4,4, x0+GAP,4,4, x0,12,4, x0+GAP,12,4, x0,4,-4, x0+GAP,4,-4],dimM));}   // gangway
+    right-=L+GAP;
+  });
+  const TRAIN_LEN=-right;
+  // re-seat each car on a pivot at its own centre, remembering how far behind the nose that centre is
+  const carPivots=[];
+  [...train.children].forEach(c=>{if(c.type!=="Group") {train.remove(c); return;}   // gangways can't bend, so they go
+    const bb=new NS.Box3().setFromObject(c), mid=(bb.min.x+bb.max.x)/2, piv=new NS.Group();
+    train.remove(c); c.position.x-=mid; piv.add(c); scene.add(piv); carPivots.push({piv,back:-mid});});
+  // headlight
+  const hl=new NS.Sprite(new NS.SpriteMaterial({map:(()=>{const c=document.createElement("canvas");c.width=c.height=64;const x=c.getContext("2d"),g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.3,"rgba(191,244,255,.6)");g.addColorStop(1,"rgba(51,198,255,0)");x.fillStyle=g;x.fillRect(0,0,64,64);return new NS.CanvasTexture(c);})(),blending:NS.AdditiveBlending,depthWrite:false,transparent:true}));
+  hl.scale.set(46,46,1); scene.add(hl);
+
+  const t0=performance.now()-(+new URLSearchParams(location.search).get("bt")||0)*1000;   // ?bt=seconds jumps ahead, for previewing
+  let lastCap="";
+  (function step(now){
+    const t=reduce?6:(now-t0)/1000;
+    let capNow=null;
+    stages.forEach((st,si)=>{
+      const tt=t+CYCLE-st.offset, n=Math.floor(tt/CYCLE), ph=tt-n*CYCLE;
+      if(n!==st.idx){st.idx=n; mount(st,n,si);}
+      const {group,parts,label}=st.cur, home=st.side*(V*.84);
+      // shoot in from beyond the edge (and a little back), then hold, then pull away out and back
+      // no sliding: each district stands in its corner with its base below the bottom of the screen.
+      // It grows up into view, building by building, and on the way out sinks back down and fades
+      const pin=ease(ph/IN), pout=easeIn((ph-IN-HOLD)/OUTT);
+      group.position.set(home,BASE-pout*160,-20); group.rotation.y=-st.side*.16;
+      const vis=(1-pout)*Math.min(1,pin*2);
+      parts.forEach(p=>{const gp=ease((ph-p.delay)/(IN*.9));
+        if(p.reveal){   // built by a rising scan line, not stretched
+          if(!p.clip){p.clip=new NS.Plane(new NS.Vector3(0,-1,0),0); p.mats.forEach(m=>{m.clippingPlanes=[p.clip]; m.needsUpdate=true;}); const bb=new NS.Box3().setFromObject(p.g); p.y0=bb.min.y-4; p.y1=bb.max.y+8;}
+          p.clip.constant=p.y0+(p.y1-p.y0)*gp; p.g.visible=vis>.01;   // a steady scan line from the bottom up
+        } else {p.g.scale.y=Math.max(.001,gp); p.g.visible=gp>.002&&vis>.01;}
+        const hot=gp<1?1.5:1; p.mats.forEach(m=>m.opacity=m.userData.o*vis*hot*(.78+.22*Math.sin(t*.7+p.delay*9)));});
+      if(ph>IN*.5&&ph<IN+HOLD&&!capNow) capNow=label;
+    });
+    // the train glides across every so often, alternating direction
+    const TR=16, k=(t%TR)/TR, dir=Math.floor(t/TR)%2?-1:1;
+    // the nose travels the whole curve, cars following at their spacing; direction alternates each pass
+    const head=(TL+TRAIN_LEN)*Math.min(1,k*1.25), on=k*1.25<1;
+    const place=(obj,d,yOff)=>{if(d<0||d>TL){obj.visible=false; return;} const u=dir>0?d/TL:1-d/TL, p=track.getPointAt(u), tg=track.getTangentAt(u).multiplyScalar(dir);
+      obj.visible=on; obj.position.set(p.x,p.y+yOff,p.z); obj.rotation.set(0,-Math.atan2(tg.z,tg.x),Math.atan2(tg.y,Math.hypot(tg.x,tg.z)));};   // tilt with the slope too
+    carPivots.forEach(c=>place(c.piv,head-c.back,2));
+    place(hl,head+2,7);
+    if(capNow&&capNow!==lastCap){lastCap=capNow; cap.classList.remove("on"); setTimeout(()=>{cap.innerHTML=capNow; cap.classList.add("on");},400);}
+    FLOAT.forEach((f,i)=>{if(!f.mesh.parent) return; f.mesh.position.y=f.y+Math.sin(t*1.1+i)*3;});   // a gentle float, no turning
+    TURN.forEach((g,i)=>{if(g.parent) g.rotation.y=Math.sin(t*.35+i*2)*.7;});
+    renderer.render(scene,camera);
+    if(!reduce) requestAnimationFrame(step);
+  })(performance.now());
+})();
+
+/* start: a flash of light, then into the storyboard */
+const startBtn=document.getElementById("startBtn"), flash=document.getElementById("flash");
+let starting=false;
+function start(){
+  if(starting) return; starting=true;
+  try{P&&P.LUMsfx&&P.LUMsfx("open");}catch(e){}
+  flash.classList.remove("go"); void flash.offsetWidth; flash.classList.add("go");
+  setTimeout(()=>{if(!P){location.href="play-01.html";return;} try{P&&P.LUMstart&&P.LUMstart();}catch(e){} starting=false;},650);
+}
+startBtn.onclick=start;
+addEventListener("keydown",e=>{if(e.key==="Enter"&&document.activeElement!==startBtn) start();});
+// sounds through the storyboard: tick on hover
+startBtn.addEventListener("pointerenter",()=>{try{P&&P.LUMsfx&&P.LUMsfx("tick");}catch(e){}});
+// browsers hold music until the page is touched; the first touch here lets the storyboard start the intro
+["pointerdown","keydown"].forEach(ev=>addEventListener(ev,()=>{try{P&&P.LUMintro&&P.LUMintro.kick();}catch(e){}},{capture:true}));
+</script>
+</body>
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpbh-mt'},{'server':'p3plmcpnl494782'},{'dcenter':'p3'},{'cp_id':'7611390'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='https://img1.wsimg.com/traffic-assets/js/tccl.min.js'></script></html>
